@@ -10,9 +10,8 @@ import {
   TrendingUp,
   Settings,
   Globe,
-  Moon,
-  Sun,
-  Bell
+  Bell,
+  Shield
 } from 'lucide-react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import {
@@ -28,15 +27,12 @@ import {
   SidebarMenuItem,
   SidebarSeparator,
 } from '@/components/ui/sidebar';
-import { Button } from '@/components/ui/button';
-import { useTheme } from '@/hooks/useTheme';
 import { useLanguage } from '@/hooks/useLanguage';
 
 export function AppSidebar() {
   const navigate = useNavigate();
   const location = useLocation();
-  const { theme, toggleTheme } = useTheme();
-  const { language, toggleLanguage } = useLanguage();
+  const { language } = useLanguage();
 
   const menuItems = [
     {
@@ -45,27 +41,27 @@ export function AppSidebar() {
       icon: Home,
     },
     {
-      title: language === 'pt' ? 'Campanhas' : 'Campaigns',
+      title: language === 'pt' ? 'Campanhas' : language === 'es' ? 'Campañas' : language === 'ru' ? 'Кампании' : language === 'de' ? 'Kampagnen' : 'Campaigns',
       url: '/campaigns',
       icon: BarChart3,
     },
     {
-      title: language === 'pt' ? 'Relatórios' : 'Reports',
+      title: language === 'pt' ? 'Relatórios' : language === 'es' ? 'Informes' : language === 'ru' ? 'Отчеты' : language === 'de' ? 'Berichte' : 'Reports',
       url: '/reports',
       icon: Calendar,
     },
     {
-      title: language === 'pt' ? 'Usuários' : 'Users',
+      title: language === 'pt' ? 'Usuários' : language === 'es' ? 'Usuarios' : language === 'ru' ? 'Пользователи' : language === 'de' ? 'Benutzer' : 'Users',
       url: '/users',
       icon: Users,
     },
     {
-      title: language === 'pt' ? 'Assinatura' : 'Subscription',
+      title: language === 'pt' ? 'Assinatura' : language === 'es' ? 'Suscripción' : language === 'ru' ? 'Подписка' : language === 'de' ? 'Abonnement' : 'Subscription',
       url: '/subscription',
       icon: CreditCard,
     },
     {
-      title: language === 'pt' ? 'Contas de ADS' : 'ADS Accounts',
+      title: language === 'pt' ? 'Contas de ADS' : language === 'es' ? 'Cuentas de ADS' : language === 'ru' ? 'Рекламные аккаунты' : language === 'de' ? 'ADS-Konten' : 'ADS Accounts',
       url: '/ads-accounts',
       icon: Globe,
     },
@@ -75,12 +71,12 @@ export function AppSidebar() {
       icon: MessageSquare,
     },
     {
-      title: language === 'pt' ? 'Taxas' : 'Rates',
+      title: language === 'pt' ? 'Taxas' : language === 'es' ? 'Tarifas' : language === 'ru' ? 'Тарифы' : language === 'de' ? 'Gebühren' : 'Rates',
       url: '/rates',
       icon: TrendingUp,
     },
     {
-      title: language === 'pt' ? 'Notificações' : 'Notifications',
+      title: language === 'pt' ? 'Notificações' : language === 'es' ? 'Notificaciones' : language === 'ru' ? 'Уведомления' : language === 'de' ? 'Benachrichtigungen' : 'Notifications',
       url: '/notifications',
       icon: Bell,
     },
@@ -93,10 +89,10 @@ export function AppSidebar() {
       <SidebarHeader className="p-4 bg-gradient-to-r from-orange-50 to-orange-100 dark:from-orange-900/20 dark:to-orange-800/20">
         <div className="flex items-center space-x-2">
           <div className="w-8 h-8 bg-gradient-to-r from-orange-500 to-orange-600 rounded-lg flex items-center justify-center shadow-lg">
-            <span className="text-white font-bold text-sm">AG</span>
+            <Shield className="text-white w-5 h-5" />
           </div>
           <span className="font-bold text-lg bg-gradient-to-r from-orange-600 to-orange-700 bg-clip-text text-transparent">
-            AdGuardAI
+            ADGuard.AI
           </span>
         </div>
       </SidebarHeader>
@@ -104,7 +100,7 @@ export function AppSidebar() {
       <SidebarContent>
         <SidebarGroup>
           <SidebarGroupLabel className="text-orange-600 dark:text-orange-400">
-            {language === 'pt' ? 'Menu Principal' : 'Main Menu'}
+            {language === 'pt' ? 'Menu Principal' : language === 'es' ? 'Menú Principal' : language === 'ru' ? 'Главное меню' : language === 'de' ? 'Hauptmenü' : 'Main Menu'}
           </SidebarGroupLabel>
           <SidebarGroupContent>
             <SidebarMenu>
@@ -131,7 +127,7 @@ export function AppSidebar() {
         
         <SidebarGroup>
           <SidebarGroupLabel className="text-orange-600 dark:text-orange-400">
-            {language === 'pt' ? 'Configurações' : 'Settings'}
+            {language === 'pt' ? 'Configurações' : language === 'es' ? 'Configuraciones' : language === 'ru' ? 'Настройки' : language === 'de' ? 'Einstellungen' : 'Settings'}
           </SidebarGroupLabel>
           <SidebarGroupContent>
             <SidebarMenu>
@@ -144,7 +140,7 @@ export function AppSidebar() {
                 >
                   <button className="w-full flex items-center">
                     <Settings className={`mr-2 h-4 w-4 ${isActive('/settings') ? 'text-orange-600' : ''}`} />
-                    <span className={isActive('/settings') ? 'text-orange-700 font-medium' : ''}>{language === 'pt' ? 'Configurações' : 'Settings'}</span>
+                    <span className={isActive('/settings') ? 'text-orange-700 font-medium' : ''}>{language === 'pt' ? 'Configurações' : language === 'es' ? 'Configuraciones' : language === 'ru' ? 'Настройки' : language === 'de' ? 'Einstellungen' : 'Settings'}</span>
                   </button>
                 </SidebarMenuButton>
               </SidebarMenuItem>
@@ -153,41 +149,10 @@ export function AppSidebar() {
         </SidebarGroup>
       </SidebarContent>
       
-      <SidebarFooter className="p-4 space-y-2 bg-gradient-to-r from-orange-50 to-orange-100 dark:from-orange-900/20 dark:to-orange-800/20">
-        <Button
-          variant="outline"
-          size="sm"
-          onClick={toggleTheme}
-          className="w-full justify-start border-orange-200 hover:bg-orange-100 dark:hover:bg-orange-900/20"
-        >
-          {theme === 'dark' ? (
-            <>
-              <Sun className="mr-2 h-4 w-4 text-orange-600" />
-              <span className="text-orange-700 dark:text-orange-300">
-                {language === 'pt' ? 'Modo Claro' : 'Light Mode'}
-              </span>
-            </>
-          ) : (
-            <>
-              <Moon className="mr-2 h-4 w-4 text-orange-600" />
-              <span className="text-orange-700 dark:text-orange-300">
-                {language === 'pt' ? 'Modo Escuro' : 'Dark Mode'}
-              </span>
-            </>
-          )}
-        </Button>
-        
-        <Button
-          variant="outline"
-          size="sm"
-          onClick={toggleLanguage}
-          className="w-full justify-start border-orange-200 hover:bg-orange-100 dark:hover:bg-orange-900/20"
-        >
-          <Globe className="mr-2 h-4 w-4 text-orange-600" />
-          <span className="text-orange-700 dark:text-orange-300">
-            {language === 'pt' ? 'English' : 'Português'}
-          </span>
-        </Button>
+      <SidebarFooter className="p-4 bg-gradient-to-r from-orange-50 to-orange-100 dark:from-orange-900/20 dark:to-orange-800/20">
+        <div className="text-center text-xs text-orange-600 dark:text-orange-400">
+          © 2024 ADGuard.AI
+        </div>
       </SidebarFooter>
     </Sidebar>
   );

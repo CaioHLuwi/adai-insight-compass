@@ -8,6 +8,7 @@ import { SidebarProvider, SidebarInset, SidebarTrigger } from "@/components/ui/s
 import { AppSidebar } from "@/components/AppSidebar";
 import { ThemeProvider } from "@/hooks/useTheme";
 import { LanguageProvider } from "@/hooks/useLanguage";
+import { HeaderControls } from "@/components/HeaderControls";
 import Index from "./pages/Index";
 import Campaigns from "./pages/Campaigns";
 import Users from "./pages/Users";
@@ -16,6 +17,7 @@ import Rates from "./pages/Rates";
 import Notifications from "./pages/Notifications";
 import Chatbot from "./pages/Chatbot";
 import Settings from "./pages/Settings";
+import AdsAccounts from "./pages/AdsAccounts";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -32,8 +34,9 @@ const App = () => (
               <div className="min-h-screen flex w-full bg-gradient-to-br from-orange-50 via-white to-orange-100 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900">
                 <AppSidebar />
                 <SidebarInset className="flex-1">
-                  <header className="flex h-16 shrink-0 items-center gap-2 border-b border-orange-200 dark:border-orange-800 px-4 bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm">
+                  <header className="flex h-16 shrink-0 items-center justify-between gap-2 border-b border-orange-200 dark:border-orange-800 px-4 bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm">
                     <SidebarTrigger className="-ml-1 text-orange-600 hover:bg-orange-100 dark:hover:bg-orange-900/20" />
+                    <HeaderControls />
                   </header>
                   <main className="flex-1">
                     <Routes>
@@ -42,7 +45,7 @@ const App = () => (
                       <Route path="/reports" element={<div className="p-6"><h1 className="text-3xl font-bold bg-gradient-to-r from-orange-500 to-orange-600 bg-clip-text text-transparent">Reports - Coming Soon</h1></div>} />
                       <Route path="/users" element={<Users />} />
                       <Route path="/subscription" element={<Subscription />} />
-                      <Route path="/ads-accounts" element={<div className="p-6"><h1 className="text-3xl font-bold bg-gradient-to-r from-orange-500 to-orange-600 bg-clip-text text-transparent">ADS Accounts - Coming Soon</h1></div>} />
+                      <Route path="/ads-accounts" element={<AdsAccounts />} />
                       <Route path="/chatbot" element={<Chatbot />} />
                       <Route path="/rates" element={<Rates />} />
                       <Route path="/notifications" element={<Notifications />} />

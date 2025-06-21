@@ -1,7 +1,7 @@
 
 import React, { createContext, useContext, useState } from 'react';
 
-type Language = 'en' | 'pt';
+type Language = 'en' | 'pt' | 'es' | 'ru' | 'de';
 
 type LanguageProviderProps = {
   children: React.ReactNode;
@@ -38,7 +38,10 @@ export function LanguageProvider({
       setLanguage(language);
     },
     toggleLanguage: () => {
-      const newLanguage = language === 'en' ? 'pt' : 'en';
+      const languages: Language[] = ['en', 'pt', 'es', 'ru', 'de'];
+      const currentIndex = languages.indexOf(language);
+      const nextIndex = (currentIndex + 1) % languages.length;
+      const newLanguage = languages[nextIndex];
       localStorage.setItem('app-language', newLanguage);
       setLanguage(newLanguage);
     },

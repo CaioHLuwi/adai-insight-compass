@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { TrendingUp, TrendingDown, AlertTriangle, DollarSign, MousePointer, Target, Zap } from 'lucide-react';
 import { useLanguage } from '@/hooks/useLanguage';
@@ -11,12 +10,22 @@ interface AnomalyAlert {
   campaign?: string;
 }
 
+interface DashboardField {
+  id: string;
+  name: string;
+  nameTranslations: Record<string, string>;
+  category: 'revenue' | 'costs' | 'metrics';
+  isVisible: boolean;
+  order: number;
+}
+
 interface SummaryDashboardProps {
   totalSpendToday: number;
   avgCPC: number;
   avgCPA: number;
   conversionsToday: number;
   recentAnomalies: AnomalyAlert[];
+  visibleFields?: DashboardField[];
 }
 
 const SummaryDashboard: React.FC<SummaryDashboardProps> = ({
@@ -24,20 +33,21 @@ const SummaryDashboard: React.FC<SummaryDashboardProps> = ({
   avgCPC,
   avgCPA,
   conversionsToday,
-  recentAnomalies
+  recentAnomalies,
+  visibleFields = []
 }) => {
   const { language } = useLanguage();
 
   const formatCurrency = (amount: number) => {
-    return new Intl.NumberFormat(language === 'pt' ? 'pt-BR' : 'en-US', {
+    return new Intl.NumberFormat(language === 'pt' ? 'pt-BR' : language === 'es' ? 'es-ES' : language === 'ru' ? 'ru-RU' : language === 'de' ? 'de-DE' : 'en-US', {
       style: 'currency',
-      currency: language === 'pt' ? 'BRL' : 'USD',
+      currency: language === 'pt' ? 'BRL' : language === 'de' ? 'EUR' : language === 'ru' ? 'RUB' : 'USD',
       minimumFractionDigits: 2
     }).format(amount);
   };
 
   const formatTime = (timestamp: string) => {
-    return new Date(timestamp).toLocaleDateString(language === 'pt' ? 'pt-BR' : 'en-US', {
+    return new Date(timestamp).toLocaleDateString(language === 'pt' ? 'pt-BR' : language === 'es' ? 'es-ES' : language === 'ru' ? 'ru-RU' : language === 'de' ? 'de-DE' : 'en-US', {
       month: 'short',
       day: 'numeric',
       hour: '2-digit',
@@ -58,40 +68,121 @@ const SummaryDashboard: React.FC<SummaryDashboardProps> = ({
     }
   };
 
-  const kpiCards = [
+  const getFieldValue = (fieldId: string) => {
+    const sampleData: Record<string, any> = {
+      gross_revenue: formatCurrency(5694.64),
+      spend: formatCurrency(totalSpendToday),
+      roas: '2.85x',
+      profit: formatCurrency(2847.32),
+      net_revenue: formatCurrency(4847.32),
+      sales_payment: '152',
+      pending_sales: '8',
+      roi: '185%',
+      profit_margin: '50%',
+      refunded_sales: '3',
+      chargeback_sales: '1',
+      returned_sales: '2',
+      refund_rate: '1.97%',
+      chargeback: formatCurrency(45.20),
+      arpu: formatCurrency(37.47),
+      tax: formatCurrency(569.46),
+      product_costs: formatCurrency(1200.00),
+      fee: formatCurrency(142.37),
+      sales_product: '152',
+      revenue_product: formatCurrency(5694.64),
+      approval_rate: '94.7%',
+      sales_day: '152',
+      cpa: formatCurrency(avgCPA)
+    };
+    return sampleData[fieldId] || '0';
+  };
+
+  const getFieldIcon = (fieldId: string) => {
+    const iconMap: Record<string, any> = {
+      gross_revenue: DollarSign,
+      spend: MousePointer,
+      roas: Target,
+      profit: TrendingUp,
+      net_revenue: DollarSign,
+      sales_payment: Zap,
+      pending_sales: Target,
+      cpa: Target
+    };
+    return iconMap[fieldId] || DollarSign;
+  };
+
+  const getFieldName = (field: DashboardField) => {
+    return field.nameTranslations[language] || field.nameTranslations['en'] || field.name;
+  };
+
+  // Default fields if none provided
+  const defaultFields = [
     {
-      title: language === 'pt' ? 'Gasto Total Hoje' : 'Total Spend Today',
-      value: formatCurrency(totalSpendToday),
-      icon: DollarSign,
-      gradient: 'from-orange-400 to-orange-600',
-      textColor: 'text-orange-600',
-      bgColor: 'bg-gradient-to-r from-orange-50 to-orange-100 dark:from-orange-900/20 dark:to-orange-800/20'
+      id: 'gross_revenue',
+      nameTranslations: {
+        en: 'Total Spend Today',
+        pt: 'Gasto Total Hoje',
+        es: 'Gasto Total Hoy',
+        ru: 'Общие расходы сегодня',
+        de: 'Gesamtausgaben heute'
+      },
+      category: 'costs' as const,
+      isVisible: true,
+      order: 1
     },
     {
-      title: language === 'pt' ? 'CPC Médio' : 'Average CPC',
-      value: formatCurrency(avgCPC),
-      icon: MousePointer,
-      gradient: 'from-green-400 to-green-600',
-      textColor: 'text-green-600',
-      bgColor: 'bg-gradient-to-r from-green-50 to-green-100 dark:from-green-900/20 dark:to-green-800/20'
+      id: 'spend',
+      nameTranslations: {
+        en: 'Average CPC',
+        pt: 'CPC Médio',
+        es: 'CPC Promedio',
+        ru: 'Средний CPC',
+        de: 'Durchschnittlicher CPC'
+      },
+      category: 'metrics' as const,
+      isVisible: true,
+      order: 2
     },
     {
-      title: language === 'pt' ? 'CPA Médio' : 'Average CPA',
-      value: formatCurrency(avgCPA),
-      icon: Target,
-      gradient: 'from-purple-400 to-purple-600',
-      textColor: 'text-purple-600',
-      bgColor: 'bg-gradient-to-r from-purple-50 to-purple-100 dark:from-purple-900/20 dark:to-purple-800/20'
+      id: 'roas',
+      nameTranslations: {
+        en: 'Average CPA',
+        pt: 'CPA Médio',
+        es: 'CPA Promedio',
+        ru: 'Средний CPA',
+        de: 'Durchschnittlicher CPA'
+      },
+      category: 'metrics' as const,
+      isVisible: true,
+      order: 3
     },
     {
-      title: language === 'pt' ? 'Conversões Hoje' : 'Conversions Today',
-      value: conversionsToday.toLocaleString(),
-      icon: Zap,
-      gradient: 'from-blue-400 to-blue-600',
-      textColor: 'text-blue-600',
-      bgColor: 'bg-gradient-to-r from-blue-50 to-blue-100 dark:from-blue-900/20 dark:to-blue-800/20'
+      id: 'profit',
+      nameTranslations: {
+        en: 'Conversions Today',
+        pt: 'Conversões Hoje',
+        es: 'Conversiones Hoy',
+        ru: 'Конверсии сегодня',
+        de: 'Konversionen heute'
+      },
+      category: 'metrics' as const,
+      isVisible: true,
+      order: 4
     }
   ];
+
+  const fieldsToDisplay = visibleFields.length > 0 ? visibleFields : defaultFields;
+
+  // Map default values for default fields
+  const getDefaultFieldValue = (fieldId: string) => {
+    switch (fieldId) {
+      case 'gross_revenue': return formatCurrency(totalSpendToday);
+      case 'spend': return formatCurrency(avgCPC);
+      case 'roas': return formatCurrency(avgCPA);
+      case 'profit': return conversionsToday.toLocaleString();
+      default: return getFieldValue(fieldId);
+    }
+  };
 
   return (
     <div className="space-y-8">
@@ -99,30 +190,44 @@ const SummaryDashboard: React.FC<SummaryDashboardProps> = ({
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-3xl font-bold bg-gradient-to-r from-orange-600 to-orange-700 bg-clip-text text-transparent">
-            {language === 'pt' ? 'Visão Geral do Dashboard' : 'Dashboard Overview'}
+            {language === 'pt' ? 'Visão Geral do Dashboard' : 
+             language === 'es' ? 'Resumen del Dashboard' :
+             language === 'ru' ? 'Обзор панели' :
+             language === 'de' ? 'Dashboard-Übersicht' :
+             'Dashboard Overview'}
           </h1>
           <p className="text-gray-600 dark:text-gray-300 mt-2">
-            {language === 'pt' ? 'Monitore o desempenho dos seus anúncios em tempo real' : 'Monitor your ad performance in real-time'}
+            {language === 'pt' ? 'Monitore o desempenho dos seus anúncios em tempo real' : 
+             language === 'es' ? 'Monitorea el rendimiento de tus anuncios en tiempo real' :
+             language === 'ru' ? 'Отслеживайте эффективность ваших объявлений в реальном времени' :
+             language === 'de' ? 'Überwachen Sie die Leistung Ihrer Anzeigen in Echtzeit' :
+             'Monitor your ad performance in real-time'}
           </p>
         </div>
         <div className="flex items-center space-x-2 text-sm text-gray-500 dark:text-gray-400">
           <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
-          <span>{language === 'pt' ? 'Dados ao vivo' : 'Live data'}</span>
+          <span>{language === 'pt' ? 'Dados ao vivo' : 
+                 language === 'es' ? 'Datos en vivo' :
+                 language === 'ru' ? 'Данные в реальном времени' :
+                 language === 'de' ? 'Live-Daten' :
+                 'Live data'}</span>
         </div>
       </div>
 
       {/* KPI Cards Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-        {kpiCards.map((kpi, index) => {
-          const Icon = kpi.icon;
+        {fieldsToDisplay.map((field, index) => {
+          const Icon = getFieldIcon(field.id);
+          const value = visibleFields.length > 0 ? getFieldValue(field.id) : getDefaultFieldValue(field.id);
+          
           return (
             <div
-              key={kpi.title}
+              key={field.id}
               className="bg-white dark:bg-gray-800 rounded-xl shadow-lg border border-gray-100 dark:border-gray-700 p-6 hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1"
             >
               <div className="flex items-center justify-between mb-4">
-                <div className={`p-3 rounded-lg ${kpi.bgColor}`}>
-                  <Icon className={`w-6 h-6 ${kpi.textColor}`} />
+                <div className="p-3 rounded-lg bg-gradient-to-r from-orange-50 to-orange-100 dark:from-orange-900/20 dark:to-orange-800/20">
+                  <Icon className="w-6 h-6 text-orange-600" />
                 </div>
                 <div className="flex items-center space-x-1">
                   <TrendingUp className="w-4 h-4 text-green-500" />
@@ -130,8 +235,8 @@ const SummaryDashboard: React.FC<SummaryDashboardProps> = ({
                 </div>
               </div>
               <div>
-                <p className="text-sm font-medium text-gray-600 dark:text-gray-300 mb-1">{kpi.title}</p>
-                <p className="text-2xl font-bold text-gray-900 dark:text-white">{kpi.value}</p>
+                <p className="text-sm font-medium text-gray-600 dark:text-gray-300 mb-1">{getFieldName(field)}</p>
+                <p className="text-2xl font-bold text-gray-900 dark:text-white">{value}</p>
               </div>
             </div>
           );
@@ -147,15 +252,27 @@ const SummaryDashboard: React.FC<SummaryDashboardProps> = ({
             </div>
             <div>
               <h2 className="text-xl font-bold text-gray-900 dark:text-white">
-                {language === 'pt' ? 'Alertas de Anomalia Recentes' : 'Recent Anomaly Alerts'}
+                {language === 'pt' ? 'Alertas de Anomalia Recentes' : 
+                 language === 'es' ? 'Alertas de Anomalía Recientes' :
+                 language === 'ru' ? 'Последние предупреждения об аномалиях' :
+                 language === 'de' ? 'Aktuelle Anomalie-Warnungen' :
+                 'Recent Anomaly Alerts'}
               </h2>
               <p className="text-gray-600 dark:text-gray-300 text-sm">
-                {language === 'pt' ? 'Últimas 3 anomalias detectadas' : 'Latest 3 detected anomalies'}
+                {language === 'pt' ? 'Últimas 3 anomalias detectadas' : 
+                 language === 'es' ? 'Últimas 3 anomalías detectadas' :
+                 language === 'ru' ? 'Последние 3 обнаруженные аномалии' :
+                 language === 'de' ? 'Letzte 3 erkannte Anomalien' :
+                 'Latest 3 detected anomalies'}
               </p>
             </div>
           </div>
           <span className="bg-gradient-to-r from-red-100 to-red-200 text-red-800 dark:from-red-900/30 dark:to-red-800/30 dark:text-red-300 text-xs font-medium px-3 py-1 rounded-full">
-            {recentAnomalies.length} {language === 'pt' ? 'Ativas' : 'Active'}
+            {recentAnomalies.length} {language === 'pt' ? 'Ativas' : 
+                                     language === 'es' ? 'Activas' :
+                                     language === 'ru' ? 'Активные' :
+                                     language === 'de' ? 'Aktiv' :
+                                     'Active'}
           </span>
         </div>
 
@@ -172,7 +289,16 @@ const SummaryDashboard: React.FC<SummaryDashboardProps> = ({
                       <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium capitalize ${getSeverityColor(anomaly.severity)}`}>
                         {language === 'pt' ? 
                           (anomaly.severity === 'high' ? 'Alta' : 
-                           anomaly.severity === 'medium' ? 'Média' : 'Baixa') : 
+                           anomaly.severity === 'medium' ? 'Média' : 'Baixa') :
+                         language === 'es' ?
+                          (anomaly.severity === 'high' ? 'Alta' : 
+                           anomaly.severity === 'medium' ? 'Media' : 'Baja') :
+                         language === 'ru' ?
+                          (anomaly.severity === 'high' ? 'Высокая' : 
+                           anomaly.severity === 'medium' ? 'Средняя' : 'Низкая') :
+                         language === 'de' ?
+                          (anomaly.severity === 'high' ? 'Hoch' : 
+                           anomaly.severity === 'medium' ? 'Mittel' : 'Niedrig') :
                           anomaly.severity}
                       </span>
                       {anomaly.campaign && (
@@ -193,10 +319,18 @@ const SummaryDashboard: React.FC<SummaryDashboardProps> = ({
             <div className="text-center py-8">
               <AlertTriangle className="w-12 h-12 text-gray-300 dark:text-gray-600 mx-auto mb-4" />
               <p className="text-gray-500 dark:text-gray-400 text-lg font-medium">
-                {language === 'pt' ? 'Nenhuma anomalia detectada' : 'No anomalies detected'}
+                {language === 'pt' ? 'Nenhuma anomalia detectada' : 
+                 language === 'es' ? 'No se detectaron anomalías' :
+                 language === 'ru' ? 'Аномалий не обнаружено' :
+                 language === 'de' ? 'Keine Anomalien erkannt' :
+                 'No anomalies detected'}
               </p>
               <p className="text-gray-400 dark:text-gray-500 text-sm">
-                {language === 'pt' ? 'Suas campanhas estão funcionando perfeitamente' : 'Your campaigns are running smoothly'}
+                {language === 'pt' ? 'Suas campanhas estão funcionando perfeitamente' : 
+                 language === 'es' ? 'Tus campañas funcionan perfectamente' :
+                 language === 'ru' ? 'Ваши кампании работают отлично' :
+                 language === 'de' ? 'Ihre Kampagnen laufen reibungslos' :
+                 'Your campaigns are running smoothly'}
               </p>
             </div>
           )}
@@ -205,7 +339,11 @@ const SummaryDashboard: React.FC<SummaryDashboardProps> = ({
         {recentAnomalies.length > 3 && (
           <div className="mt-6 pt-4 border-t border-gray-100 dark:border-gray-700">
             <button className="text-orange-600 hover:text-orange-800 dark:text-orange-400 dark:hover:text-orange-300 font-medium text-sm transition-colors duration-200">
-              {language === 'pt' ? 'Ver todas as anomalias →' : 'View all anomalies →'}
+              {language === 'pt' ? 'Ver todas as anomalias →' : 
+               language === 'es' ? 'Ver todas las anomalías →' :
+               language === 'ru' ? 'Посмотреть все аномалии →' :
+               language === 'de' ? 'Alle Anomalien anzeigen →' :
+               'View all anomalies →'}
             </button>
           </div>
         )}
