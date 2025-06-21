@@ -18,31 +18,33 @@ import Notifications from "./pages/Notifications";
 import Chatbot from "./pages/Chatbot";
 import Settings from "./pages/Settings";
 import AdsAccounts from "./pages/AdsAccounts";
+import EditAccount from "./pages/EditAccount";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
 
 const App = () => (
   <QueryClientProvider client={queryClient}>
-    <ThemeProvider defaultTheme="light" storageKey="vite-ui-theme">
+    <ThemeProvider defaultTheme="dark" storageKey="vite-ui-theme">
       <LanguageProvider defaultLanguage="en">
         <TooltipProvider>
           <Toaster />
           <Sonner />
           <BrowserRouter>
             <SidebarProvider>
-              <div className="min-h-screen flex w-full bg-gradient-to-br from-orange-50 via-white to-orange-100 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900">
+              <div className="min-h-screen flex w-full bg-gray-900 relative">
+                <div className="animated-bg"></div>
                 <AppSidebar />
                 <SidebarInset className="flex-1">
-                  <header className="flex h-16 shrink-0 items-center justify-between gap-2 border-b border-orange-200 dark:border-orange-800 px-4 bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm">
-                    <SidebarTrigger className="-ml-1 text-orange-600 hover:bg-orange-100 dark:hover:bg-orange-900/20" />
+                  <header className="flex h-16 shrink-0 items-center justify-between gap-2 border-b border-yellow-500/20 px-4 bg-gray-800/80 backdrop-blur-sm">
+                    <SidebarTrigger className="-ml-1 text-yellow-400 hover:bg-yellow-500/10" />
                     <HeaderControls />
                   </header>
                   <main className="flex-1">
                     <Routes>
                       <Route path="/" element={<Index />} />
                       <Route path="/campaigns" element={<Campaigns />} />
-                      <Route path="/reports" element={<div className="p-6"><h1 className="text-3xl font-bold bg-gradient-to-r from-orange-500 to-orange-600 bg-clip-text text-transparent">Reports - Coming Soon</h1></div>} />
+                      <Route path="/reports" element={<div className="p-6"><h1 className="text-3xl font-bold bg-gradient-to-r from-yellow-400 to-yellow-600 bg-clip-text text-transparent">Reports - Coming Soon</h1></div>} />
                       <Route path="/users" element={<Users />} />
                       <Route path="/subscription" element={<Subscription />} />
                       <Route path="/ads-accounts" element={<AdsAccounts />} />
@@ -50,6 +52,7 @@ const App = () => (
                       <Route path="/rates" element={<Rates />} />
                       <Route path="/notifications" element={<Notifications />} />
                       <Route path="/settings" element={<Settings />} />
+                      <Route path="/edit-account" element={<EditAccount />} />
                       <Route path="*" element={<NotFound />} />
                     </Routes>
                   </main>

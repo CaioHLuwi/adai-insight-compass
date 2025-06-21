@@ -11,7 +11,8 @@ import {
   Settings,
   Globe,
   Bell,
-  Shield
+  Shield,
+  Copyright
 } from 'lucide-react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import {
@@ -85,21 +86,21 @@ export function AppSidebar() {
   const isActive = (url: string) => location.pathname === url;
 
   return (
-    <Sidebar>
-      <SidebarHeader className="p-4 bg-gradient-to-r from-orange-50 to-orange-100 dark:from-orange-900/20 dark:to-orange-800/20">
+    <Sidebar className="bg-gray-900 border-yellow-500/20">
+      <SidebarHeader className="p-4 bg-gradient-to-r from-gray-800/80 to-gray-900/80 backdrop-blur-sm border-b border-yellow-500/20">
         <div className="flex items-center space-x-2">
-          <div className="w-8 h-8 bg-gradient-to-r from-orange-500 to-orange-600 rounded-lg flex items-center justify-center shadow-lg">
-            <Shield className="text-white w-5 h-5" />
+          <div className="w-8 h-8 bg-gradient-to-r from-yellow-400 to-yellow-600 rounded-lg flex items-center justify-center shadow-lg">
+            <Shield className="text-gray-900 w-5 h-5" />
           </div>
-          <span className="font-bold text-lg bg-gradient-to-r from-orange-600 to-orange-700 bg-clip-text text-transparent">
+          <span className="font-bold text-lg bg-gradient-to-r from-yellow-400 to-yellow-600 bg-clip-text text-transparent">
             ADGuard.AI
           </span>
         </div>
       </SidebarHeader>
       
-      <SidebarContent>
+      <SidebarContent className="bg-gray-900">
         <SidebarGroup>
-          <SidebarGroupLabel className="text-orange-600 dark:text-orange-400">
+          <SidebarGroupLabel className="text-yellow-400">
             {language === 'pt' ? 'Menu Principal' : language === 'es' ? 'Menú Principal' : language === 'ru' ? 'Главное меню' : language === 'de' ? 'Hauptmenü' : 'Main Menu'}
           </SidebarGroupLabel>
           <SidebarGroupContent>
@@ -110,11 +111,11 @@ export function AppSidebar() {
                     asChild 
                     isActive={isActive(item.url)}
                     onClick={() => navigate(item.url)}
-                    className={isActive(item.url) ? 'bg-gradient-to-r from-orange-100 to-orange-200 dark:from-orange-900/30 dark:to-orange-800/30 border-l-3 border-orange-500' : 'hover:bg-orange-50 dark:hover:bg-orange-900/10'}
+                    className={isActive(item.url) ? 'bg-gradient-to-r from-yellow-500/20 to-yellow-600/20 border-l-3 border-yellow-500 text-yellow-400' : 'hover:bg-yellow-500/10 text-gray-300 hover:text-yellow-400'}
                   >
                     <button className="w-full flex items-center">
-                      <item.icon className={`mr-2 h-4 w-4 ${isActive(item.url) ? 'text-orange-600' : ''}`} />
-                      <span className={isActive(item.url) ? 'text-orange-700 font-medium' : ''}>{item.title}</span>
+                      <item.icon className={`mr-2 h-4 w-4 ${isActive(item.url) ? 'text-yellow-400' : ''}`} />
+                      <span className={isActive(item.url) ? 'text-yellow-400 font-medium' : ''}>{item.title}</span>
                     </button>
                   </SidebarMenuButton>
                 </SidebarMenuItem>
@@ -123,10 +124,10 @@ export function AppSidebar() {
           </SidebarGroupContent>
         </SidebarGroup>
         
-        <SidebarSeparator className="bg-orange-200 dark:bg-orange-800" />
+        <SidebarSeparator className="bg-yellow-500/20" />
         
         <SidebarGroup>
-          <SidebarGroupLabel className="text-orange-600 dark:text-orange-400">
+          <SidebarGroupLabel className="text-yellow-400">
             {language === 'pt' ? 'Configurações' : language === 'es' ? 'Configuraciones' : language === 'ru' ? 'Настройки' : language === 'de' ? 'Einstellungen' : 'Settings'}
           </SidebarGroupLabel>
           <SidebarGroupContent>
@@ -136,11 +137,11 @@ export function AppSidebar() {
                   asChild 
                   isActive={isActive('/settings')}
                   onClick={() => navigate('/settings')}
-                  className={isActive('/settings') ? 'bg-gradient-to-r from-orange-100 to-orange-200 dark:from-orange-900/30 dark:to-orange-800/30' : 'hover:bg-orange-50 dark:hover:bg-orange-900/10'}
+                  className={isActive('/settings') ? 'bg-gradient-to-r from-yellow-500/20 to-yellow-600/20 border-l-3 border-yellow-500 text-yellow-400' : 'hover:bg-yellow-500/10 text-gray-300 hover:text-yellow-400'}
                 >
                   <button className="w-full flex items-center">
-                    <Settings className={`mr-2 h-4 w-4 ${isActive('/settings') ? 'text-orange-600' : ''}`} />
-                    <span className={isActive('/settings') ? 'text-orange-700 font-medium' : ''}>{language === 'pt' ? 'Configurações' : language === 'es' ? 'Configuraciones' : language === 'ru' ? 'Настройки' : language === 'de' ? 'Einstellungen' : 'Settings'}</span>
+                    <Settings className={`mr-2 h-4 w-4 ${isActive('/settings') ? 'text-yellow-400' : ''}`} />
+                    <span className={isActive('/settings') ? 'text-yellow-400 font-medium' : ''}>{language === 'pt' ? 'Configurações' : language === 'es' ? 'Configuraciones' : language === 'ru' ? 'Настройки' : language === 'de' ? 'Einstellungen' : 'Settings'}</span>
                   </button>
                 </SidebarMenuButton>
               </SidebarMenuItem>
@@ -149,9 +150,14 @@ export function AppSidebar() {
         </SidebarGroup>
       </SidebarContent>
       
-      <SidebarFooter className="p-4 bg-gradient-to-r from-orange-50 to-orange-100 dark:from-orange-900/20 dark:to-orange-800/20">
-        <div className="text-center text-xs text-orange-600 dark:text-orange-400">
-          © 2024 ADGuard.AI
+      <SidebarFooter className="p-4 bg-gradient-to-r from-gray-800/80 to-gray-900/80 backdrop-blur-sm border-t border-yellow-500/20">
+        <div className="text-center text-xs text-gray-400 space-y-1">
+          <div className="flex items-center justify-center">
+            <Copyright className="w-3 h-3 mr-1" />
+            <span>2025 ADGuard.AI</span>
+          </div>
+          <div>created by Caio Henrique and Pedro Rossini</div>
+          <div className="text-yellow-400 font-medium">ZEUZ Midia company</div>
         </div>
       </SidebarFooter>
     </Sidebar>

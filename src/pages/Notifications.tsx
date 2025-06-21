@@ -200,7 +200,6 @@ const Notifications = () => {
   };
 
   const handleSaveSettings = () => {
-    // Save settings to localStorage or backend
     localStorage.setItem('notification-settings', JSON.stringify(settings));
     toast({
       title: "Settings saved",
@@ -210,20 +209,21 @@ const Notifications = () => {
 
   return (
     <div className="p-6 max-w-4xl mx-auto">
+      <div className="animated-bg"></div>
       <div className="flex items-center justify-between mb-6">
         <div>
-          <h1 className="text-3xl font-bold bg-gradient-to-r from-orange-600 to-orange-700 bg-clip-text text-transparent">
+          <h1 className="text-3xl font-bold bg-gradient-to-r from-yellow-400 to-yellow-600 bg-clip-text text-transparent">
             {getText('title')}
           </h1>
-          <p className="text-gray-600 dark:text-gray-300 mt-2">
+          <p className="text-gray-300 mt-2">
             {getText('subtitle')}
           </p>
         </div>
         <div className="flex items-center space-x-2">
-          <div className="w-8 h-8 bg-gradient-to-r from-orange-500 to-orange-600 rounded-lg flex items-center justify-center shadow-lg">
-            <Shield className="text-white w-5 h-5" />
+          <div className="w-8 h-8 bg-gradient-to-r from-yellow-400 to-yellow-600 rounded-lg flex items-center justify-center shadow-lg">
+            <Shield className="text-gray-900 w-5 h-5" />
           </div>
-          <span className="font-bold text-lg bg-gradient-to-r from-orange-600 to-orange-700 bg-clip-text text-transparent">
+          <span className="font-bold text-lg bg-gradient-to-r from-yellow-400 to-yellow-600 bg-clip-text text-transparent">
             ADGuard.AI
           </span>
         </div>
@@ -232,18 +232,18 @@ const Notifications = () => {
       <div className="space-y-6">
         {/* Browser Permission Card */}
         {notificationPermission !== 'granted' && (
-          <Card className="bg-gradient-to-r from-orange-50 to-orange-100 dark:from-orange-900/20 dark:to-orange-800/20 border-orange-200 dark:border-orange-800">
+          <Card className="bg-gradient-to-r from-gray-800/80 to-gray-900/80 backdrop-blur-sm border-yellow-500/20">
             <CardHeader>
-              <CardTitle className="flex items-center text-orange-700 dark:text-orange-300">
+              <CardTitle className="flex items-center text-yellow-400">
                 <BellRing className="w-5 h-5 mr-2" />
                 {getText('enableNotifications')}
               </CardTitle>
             </CardHeader>
             <CardContent>
-              <p className="text-orange-600 dark:text-orange-400 mb-4">
+              <p className="text-gray-300 mb-4">
                 {getText('notificationsBlocked')}
               </p>
-              <Button onClick={requestNotificationPermission} className="bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700">
+              <Button onClick={requestNotificationPermission} className="bg-gradient-to-r from-yellow-400 to-yellow-600 text-gray-900 hover:from-yellow-500 hover:to-yellow-700">
                 <Bell className="w-4 h-4 mr-2" />
                 {getText('enableNotifications')}
               </Button>
@@ -252,31 +252,31 @@ const Notifications = () => {
         )}
 
         {/* Notification Settings Card */}
-        <Card className="bg-white dark:bg-gray-800 shadow-lg border border-gray-100 dark:border-gray-700">
+        <Card className="bg-gradient-to-r from-gray-800/80 to-gray-900/80 backdrop-blur-sm border-yellow-500/20">
           <CardHeader>
-            <CardTitle className="text-xl font-bold text-gray-900 dark:text-white">
+            <CardTitle className="text-xl font-bold text-white">
               Notification Settings
             </CardTitle>
           </CardHeader>
           <CardContent className="space-y-6">
             {/* Approved Sales Notifications */}
             <div>
-              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+              <label className="block text-sm font-medium text-gray-300 mb-2">
                 {getText('approvedSales')}
               </label>
               <Select value={settings.approvedSales} onValueChange={(value: any) => setSettings({...settings, approvedSales: value})}>
-                <SelectTrigger className="border-orange-200 focus:ring-orange-500">
+                <SelectTrigger className="border-yellow-500/20 focus:ring-yellow-500 bg-gray-700 text-white">
                   <SelectValue />
                 </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="disabled">
+                <SelectContent className="bg-gray-700 border-yellow-500/20">
+                  <SelectItem value="disabled" className="text-white hover:bg-gray-600">
                     {language === 'pt' ? 'Desabilitado' : 
                      language === 'es' ? 'Deshabilitado' :
                      language === 'ru' ? 'Отключено' :
                      language === 'de' ? 'Deaktiviert' :
                      'Disabled'}
                   </SelectItem>
-                  <SelectItem value="enabled">
+                  <SelectItem value="enabled" className="text-white hover:bg-gray-600">
                     {language === 'pt' ? 'Habilitado' : 
                      language === 'es' ? 'Habilitado' :
                      language === 'ru' ? 'Включено' :
@@ -289,29 +289,29 @@ const Notifications = () => {
 
             {/* Sales Value Display */}
             <div>
-              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+              <label className="block text-sm font-medium text-gray-300 mb-2">
                 {getText('salesValue')}
               </label>
               <Select value={settings.salesValue} onValueChange={(value: any) => setSettings({...settings, salesValue: value})}>
-                <SelectTrigger className="border-orange-200 focus:ring-orange-500">
+                <SelectTrigger className="border-yellow-500/20 focus:ring-yellow-500 bg-gray-700 text-white">
                   <SelectValue />
                 </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="commission">
+                <SelectContent className="bg-gray-700 border-yellow-500/20">
+                  <SelectItem value="commission" className="text-white hover:bg-gray-600">
                     {language === 'pt' ? 'Comissão' : 
                      language === 'es' ? 'Comisión' :
                      language === 'ru' ? 'Комиссия' :
                      language === 'de' ? 'Provision' :
                      'Commission'}
                   </SelectItem>
-                  <SelectItem value="total">
+                  <SelectItem value="total" className="text-white hover:bg-gray-600">
                     {language === 'pt' ? 'Total' : 
                      language === 'es' ? 'Total' :
                      language === 'ru' ? 'Общая сумма' :
                      language === 'de' ? 'Gesamt' :
                      'Total'}
                   </SelectItem>
-                  <SelectItem value="net">
+                  <SelectItem value="net" className="text-white hover:bg-gray-600">
                     {language === 'pt' ? 'Líquido' : 
                      language === 'es' ? 'Neto' :
                      language === 'ru' ? 'Чистая сумма' :
@@ -324,22 +324,22 @@ const Notifications = () => {
 
             {/* Product Name Display */}
             <div>
-              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+              <label className="block text-sm font-medium text-gray-300 mb-2">
                 {getText('productName')}
               </label>
               <Select value={settings.productName} onValueChange={(value: any) => setSettings({...settings, productName: value})}>
-                <SelectTrigger className="border-orange-200 focus:ring-orange-500">
+                <SelectTrigger className="border-yellow-500/20 focus:ring-yellow-500 bg-gray-700 text-white">
                   <SelectValue />
                 </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="show">
+                <SelectContent className="bg-gray-700 border-yellow-500/20">
+                  <SelectItem value="show" className="text-white hover:bg-gray-600">
                     {language === 'pt' ? 'Mostrar' : 
                      language === 'es' ? 'Mostrar' :
                      language === 'ru' ? 'Показать' :
                      language === 'de' ? 'Anzeigen' :
                      'Show'}
                   </SelectItem>
-                  <SelectItem value="hide">
+                  <SelectItem value="hide" className="text-white hover:bg-gray-600">
                     {language === 'pt' ? 'Esconder' : 
                      language === 'es' ? 'Ocultar' :
                      language === 'ru' ? 'Скрыть' :
@@ -352,22 +352,22 @@ const Notifications = () => {
 
             {/* Dashboard Name Display */}
             <div>
-              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+              <label className="block text-sm font-medium text-gray-300 mb-2">
                 {getText('dashboardName')}
               </label>
               <Select value={settings.dashboardName} onValueChange={(value: any) => setSettings({...settings, dashboardName: value})}>
-                <SelectTrigger className="border-orange-200 focus:ring-orange-500">
+                <SelectTrigger className="border-yellow-500/20 focus:ring-yellow-500 bg-gray-700 text-white">
                   <SelectValue />
                 </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="show">
+                <SelectContent className="bg-gray-700 border-yellow-500/20">
+                  <SelectItem value="show" className="text-white hover:bg-gray-600">
                     {language === 'pt' ? 'Mostrar' : 
                      language === 'es' ? 'Mostrar' :
                      language === 'ru' ? 'Показать' :
                      language === 'de' ? 'Anzeigen' :
                      'Show'}
                   </SelectItem>
-                  <SelectItem value="hide">
+                  <SelectItem value="hide" className="text-white hover:bg-gray-600">
                     {language === 'pt' ? 'Esconder' : 
                      language === 'es' ? 'Ocultar' :
                      language === 'ru' ? 'Скрыть' :
@@ -379,20 +379,20 @@ const Notifications = () => {
             </div>
 
             {/* Action Buttons */}
-            <div className="flex items-center justify-between pt-4 border-t border-gray-100 dark:border-gray-700">
+            <div className="flex items-center justify-between pt-4 border-t border-gray-600">
               <Button
                 variant="outline"
                 onClick={showTestNotification}
-                className="border-orange-200 hover:bg-orange-100 dark:hover:bg-orange-900/20"
+                className="border-yellow-500/50 hover:bg-yellow-500/10 text-yellow-400"
                 disabled={notificationPermission !== 'granted'}
               >
-                <Bell className="w-4 h-4 mr-2 text-orange-600" />
+                <Bell className="w-4 h-4 mr-2" />
                 {getText('testNotification')}
               </Button>
               
               <Button
                 onClick={handleSaveSettings}
-                className="bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700"
+                className="bg-gradient-to-r from-yellow-400 to-yellow-600 text-gray-900 hover:from-yellow-500 hover:to-yellow-700"
               >
                 {getText('saveSettings')}
               </Button>

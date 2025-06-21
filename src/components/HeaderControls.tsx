@@ -4,6 +4,7 @@ import { Moon, Sun, Globe } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useTheme } from '@/hooks/useTheme';
 import { useLanguage } from '@/hooks/useLanguage';
+import { UserProfile } from '@/components/UserProfile';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -25,22 +26,22 @@ export function HeaderControls() {
   ];
 
   return (
-    <div className="flex items-center space-x-2">
+    <div className="flex items-center space-x-4">
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
-          <Button variant="outline" size="sm" className="border-orange-200 hover:bg-orange-100 dark:hover:bg-orange-900/20">
-            <Globe className="h-4 w-4 text-orange-600 mr-2" />
-            <span className="text-orange-700 dark:text-orange-300">
+          <Button variant="outline" size="sm" className="border-yellow-500/50 hover:bg-yellow-500/10 text-yellow-400">
+            <Globe className="h-4 w-4 text-yellow-400 mr-2" />
+            <span className="text-yellow-400">
               {languages.find(lang => lang.code === language)?.name}
             </span>
           </Button>
         </DropdownMenuTrigger>
-        <DropdownMenuContent align="end" className="bg-white dark:bg-gray-800 border-orange-200 dark:border-orange-800">
+        <DropdownMenuContent align="end" className="bg-gray-700 border-yellow-500/20">
           {languages.map((lang) => (
             <DropdownMenuItem
               key={lang.code}
               onClick={() => setLanguage(lang.code as any)}
-              className="hover:bg-orange-100 dark:hover:bg-orange-900/20"
+              className="hover:bg-gray-600 text-white"
             >
               {lang.name}
             </DropdownMenuItem>
@@ -51,14 +52,16 @@ export function HeaderControls() {
       <Toggle
         pressed={theme === 'dark'}
         onPressedChange={toggleTheme}
-        className="border-orange-200 hover:bg-orange-100 dark:hover:bg-orange-900/20"
+        className="border-yellow-500/50 hover:bg-yellow-500/10"
       >
         {theme === 'dark' ? (
-          <Sun className="h-4 w-4 text-orange-600" />
+          <Sun className="h-4 w-4 text-yellow-400" />
         ) : (
-          <Moon className="h-4 w-4 text-orange-600" />
+          <Moon className="h-4 w-4 text-yellow-400" />
         )}
       </Toggle>
+
+      <UserProfile />
     </div>
   );
 }
