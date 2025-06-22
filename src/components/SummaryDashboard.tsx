@@ -1,7 +1,7 @@
 import React from 'react';
 import { TrendingUp, TrendingDown, AlertTriangle, DollarSign, MousePointer, Target, Zap } from 'lucide-react';
 import { useLanguage } from '@/hooks/useLanguage';
-import { AnimatedNumber } from './AnimatedNumber';
+import AnimatedNumber from './AnimatedNumber';
 
 interface AnomalyAlert {
   id: string;
