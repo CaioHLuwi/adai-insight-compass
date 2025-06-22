@@ -38,11 +38,11 @@ const App = () => (
                 <div className="animated-bg"></div>
                 <AppSidebar />
                 <SidebarInset className="flex-1">
-                  <header className="flex h-16 shrink-0 items-center justify-between gap-2 border-b border-yellow-500/20 px-4 bg-gray-800/80 backdrop-blur-sm">
+                  <header className="flex h-16 shrink-0 items-center justify-between gap-2 border-b border-yellow-500/20 px-4 bg-black/80 backdrop-blur-sm">
                     <SidebarTrigger className="-ml-1 text-yellow-400 hover:bg-yellow-500/10" />
                     <HeaderControls />
                   </header>
-                  <main className="flex-1">
+                  <main className="flex-1 bg-black">
                     <Routes>
                       <Route path="/" element={<Index />} />
                       <Route path="/campaigns" element={<Campaigns />} />

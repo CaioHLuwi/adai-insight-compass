@@ -1,6 +1,7 @@
 import React from 'react';
 import { TrendingUp, TrendingDown, AlertTriangle, DollarSign, MousePointer, Target, Zap } from 'lucide-react';
 import { useLanguage } from '@/hooks/useLanguage';
+import { AnimatedNumber } from './AnimatedNumber';
 
 interface AnomalyAlert {
   id: string;
@@ -189,14 +190,14 @@ const SummaryDashboard: React.FC<SummaryDashboardProps> = ({
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-3xl font-bold bg-gradient-to-r from-orange-600 to-orange-700 bg-clip-text text-transparent">
+          <h1 className="text-3xl font-bold bg-gradient-to-r from-yellow-400 to-yellow-600 bg-clip-text text-transparent">
             {language === 'pt' ? 'Visão Geral do Dashboard' : 
              language === 'es' ? 'Resumen del Dashboard' :
              language === 'ru' ? 'Обзор панели' :
              language === 'de' ? 'Dashboard-Übersicht' :
              'Dashboard Overview'}
           </h1>
-          <p className="text-gray-600 dark:text-gray-300 mt-2">
+          <p className="text-gray-300 mt-2">
             {language === 'pt' ? 'Monitore o desempenho dos seus anúncios em tempo real' : 
              language === 'es' ? 'Monitorea el rendimiento de tus anuncios en tiempo real' :
              language === 'ru' ? 'Отслеживайте эффективность ваших объявлений в реальном времени' :
@@ -204,7 +205,7 @@ const SummaryDashboard: React.FC<SummaryDashboardProps> = ({
              'Monitor your ad performance in real-time'}
           </p>
         </div>
-        <div className="flex items-center space-x-2 text-sm text-gray-500 dark:text-gray-400">
+        <div className="flex items-center space-x-2 text-sm text-gray-400">
           <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
           <span>{language === 'pt' ? 'Dados ao vivo' : 
                  language === 'es' ? 'Datos en vivo' :
@@ -223,11 +224,11 @@ const SummaryDashboard: React.FC<SummaryDashboardProps> = ({
           return (
             <div
               key={field.id}
-              className="bg-white dark:bg-gray-800 rounded-xl shadow-lg border border-gray-100 dark:border-gray-700 p-6 hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1"
+              className="bg-gray-900 rounded-xl shadow-lg border border-yellow-500/20 p-6 hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1"
             >
               <div className="flex items-center justify-between mb-4">
-                <div className="p-3 rounded-lg bg-gradient-to-r from-orange-50 to-orange-100 dark:from-orange-900/20 dark:to-orange-800/20">
-                  <Icon className="w-6 h-6 text-orange-600" />
+                <div className="p-3 rounded-lg bg-gradient-to-r from-yellow-500/20 to-yellow-600/20">
+                  <Icon className="w-6 h-6 text-yellow-400" />
                 </div>
                 <div className="flex items-center space-x-1">
                   <TrendingUp className="w-4 h-4 text-green-500" />
@@ -235,8 +236,10 @@ const SummaryDashboard: React.FC<SummaryDashboardProps> = ({
                 </div>
               </div>
               <div>
-                <p className="text-sm font-medium text-gray-600 dark:text-gray-300 mb-1">{getFieldName(field)}</p>
-                <p className="text-2xl font-bold text-gray-900 dark:text-white">{value}</p>
+                <p className="text-sm font-medium text-gray-300 mb-1">{getFieldName(field)}</p>
+                <p className="text-2xl font-bold text-yellow-400">
+                  <AnimatedNumber value={value} />
+                </p>
               </div>
             </div>
           );
@@ -244,21 +247,21 @@ const SummaryDashboard: React.FC<SummaryDashboardProps> = ({
       </div>
 
       {/* Recent Anomalies Section */}
-      <div className="bg-white dark:bg-gray-800 rounded-xl shadow-lg border border-gray-100 dark:border-gray-700 p-6">
+      <div className="bg-gray-900 rounded-xl shadow-lg border border-yellow-500/20 p-6">
         <div className="flex items-center justify-between mb-6">
           <div className="flex items-center space-x-3">
-            <div className="p-2 bg-gradient-to-r from-red-50 to-red-100 dark:from-red-900/20 dark:to-red-800/20 rounded-lg">
-              <AlertTriangle className="w-6 h-6 text-red-600" />
+            <div className="p-2 bg-gradient-to-r from-red-500/20 to-red-600/20 rounded-lg">
+              <AlertTriangle className="w-6 h-6 text-red-400" />
             </div>
             <div>
-              <h2 className="text-xl font-bold text-gray-900 dark:text-white">
+              <h2 className="text-xl font-bold text-yellow-400">
                 {language === 'pt' ? 'Alertas de Anomalia Recentes' : 
                  language === 'es' ? 'Alertas de Anomalía Recientes' :
                  language === 'ru' ? 'Последние предупреждения об аномалиях' :
                  language === 'de' ? 'Aktuelle Anomalie-Warnungen' :
                  'Recent Anomaly Alerts'}
               </h2>
-              <p className="text-gray-600 dark:text-gray-300 text-sm">
+              <p className="text-gray-300 text-sm">
                 {language === 'pt' ? 'Últimas 3 anomalias detectadas' : 
                  language === 'es' ? 'Últimas 3 anomalías detectadas' :
                  language === 'ru' ? 'Последние 3 обнаруженные аномалии' :
@@ -267,7 +270,7 @@ const SummaryDashboard: React.FC<SummaryDashboardProps> = ({
               </p>
             </div>
           </div>
-          <span className="bg-gradient-to-r from-red-100 to-red-200 text-red-800 dark:from-red-900/30 dark:to-red-800/30 dark:text-red-300 text-xs font-medium px-3 py-1 rounded-full">
+          <span className="bg-gradient-to-r from-red-500/20 to-red-600/20 text-red-300 text-xs font-medium px-3 py-1 rounded-full">
             {recentAnomalies.length} {language === 'pt' ? 'Ativas' : 
                                      language === 'es' ? 'Activas' :
                                      language === 'ru' ? 'Активные' :
@@ -302,30 +305,30 @@ const SummaryDashboard: React.FC<SummaryDashboardProps> = ({
                           anomaly.severity}
                       </span>
                       {anomaly.campaign && (
-                        <span className="text-xs text-gray-500 bg-gray-100 dark:bg-gray-700 px-2 py-1 rounded">
+                        <span className="text-xs text-gray-400 bg-gray-800 px-2 py-1 rounded">
                           {anomaly.campaign}
                         </span>
                       )}
                     </div>
-                    <p className="text-gray-800 dark:text-gray-200 font-medium">{anomaly.message}</p>
+                    <p className="text-gray-200 font-medium">{anomaly.message}</p>
                   </div>
                   <div className="text-right ml-4">
-                    <p className="text-xs text-gray-500 dark:text-gray-400">{formatTime(anomaly.timestamp)}</p>
+                    <p className="text-xs text-gray-400">{formatTime(anomaly.timestamp)}</p>
                   </div>
                 </div>
               </div>
             ))
           ) : (
             <div className="text-center py-8">
-              <AlertTriangle className="w-12 h-12 text-gray-300 dark:text-gray-600 mx-auto mb-4" />
-              <p className="text-gray-500 dark:text-gray-400 text-lg font-medium">
+              <AlertTriangle className="w-12 h-12 text-gray-600 mx-auto mb-4" />
+              <p className="text-gray-400 text-lg font-medium">
                 {language === 'pt' ? 'Nenhuma anomalia detectada' : 
                  language === 'es' ? 'No se detectaron anomalías' :
                  language === 'ru' ? 'Аномалий не обнаружено' :
                  language === 'de' ? 'Keine Anomalien erkannt' :
                  'No anomalies detected'}
               </p>
-              <p className="text-gray-400 dark:text-gray-500 text-sm">
+              <p className="text-gray-500 text-sm">
                 {language === 'pt' ? 'Suas campanhas estão funcionando perfeitamente' : 
                  language === 'es' ? 'Tus campañas funcionan perfectamente' :
                  language === 'ru' ? 'Ваши кампании работают отлично' :
@@ -337,8 +340,8 @@ const SummaryDashboard: React.FC<SummaryDashboardProps> = ({
         </div>
 
         {recentAnomalies.length > 3 && (
-          <div className="mt-6 pt-4 border-t border-gray-100 dark:border-gray-700">
-            <button className="text-orange-600 hover:text-orange-800 dark:text-orange-400 dark:hover:text-orange-300 font-medium text-sm transition-colors duration-200">
+          <div className="mt-6 pt-4 border-t border-yellow-500/20">
+            <button className="text-yellow-400 hover:text-yellow-300 font-medium text-sm transition-colors duration-200">
               {language === 'pt' ? 'Ver todas as anomalias →' : 
                language === 'es' ? 'Ver todas las anomalías →' :
                language === 'ru' ? 'Посмотреть все аномалии →' :

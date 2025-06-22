@@ -241,17 +241,17 @@ const Index = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
+    <div className="min-h-screen bg-black">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <div className="flex items-center justify-between mb-6">
           <div className="flex items-center space-x-4">
             <Select value={selectedDashboard} onValueChange={setSelectedDashboard}>
-              <SelectTrigger className="w-[250px] border-orange-200 focus:ring-orange-500">
+              <SelectTrigger className="w-[250px] border-yellow-200 focus:ring-yellow-500 bg-black text-yellow-400">
                 <SelectValue placeholder={getText('selectDashboard')} />
               </SelectTrigger>
-              <SelectContent>
+              <SelectContent className="bg-black border-yellow-500/20">
                 {dashboards.map((dashboard) => (
-                  <SelectItem key={dashboard.id} value={dashboard.id}>
+                  <SelectItem key={dashboard.id} value={dashboard.id} className="text-yellow-400 hover:bg-yellow-500/10">
                     {dashboard.name}
                   </SelectItem>
                 ))}
@@ -260,41 +260,43 @@ const Index = () => {
 
             <Dialog open={isAddingDashboard} onOpenChange={setIsAddingDashboard}>
               <DialogTrigger asChild>
-                <Button variant="outline" size="sm" className="border-orange-200 hover:bg-orange-100 dark:hover:bg-orange-900/20">
-                  <Plus className="w-4 h-4 mr-2 text-orange-600" />
+                <Button variant="outline" size="sm" className="border-yellow-200 hover:bg-yellow-500/10 text-yellow-400">
+                  <Plus className="w-4 h-4 mr-2 text-yellow-400" />
                   {getText('addNewDashboard')}
                 </Button>
               </DialogTrigger>
-              <DialogContent>
+              <DialogContent className="bg-black border-yellow-500/20">
                 <DialogHeader>
-                  <DialogTitle>{getText('addNewDashboard')}</DialogTitle>
-                  <DialogDescription>
+                  <DialogTitle className="text-yellow-400">{getText('addNewDashboard')}</DialogTitle>
+                  <DialogDescription className="text-gray-300">
                     Create a new dashboard for a specific ad group or campaign.
                   </DialogDescription>
                 </DialogHeader>
                 <div className="space-y-4">
                   <div>
-                    <label className="block text-sm font-medium mb-2">{getText('dashboardName')}</label>
+                    <label className="block text-sm font-medium mb-2 text-yellow-400">{getText('dashboardName')}</label>
                     <Input
                       placeholder="Enter dashboard name"
                       value={newDashboardName}
                       onChange={(e) => setNewDashboardName(e.target.value)}
+                      className="bg-black border-yellow-500/20 text-yellow-400"
                     />
                   </div>
                   <div>
-                    <label className="block text-sm font-medium mb-2">{getText('adGroupId')}</label>
+                    <label className="block text-sm font-medium mb-2 text-yellow-400">{getText('adGroupId')}</label>
                     <Input
                       placeholder="Enter Google Ads group ID"
                       value={newAdGroupId}
                       onChange={(e) => setNewAdGroupId(e.target.value)}
+                      className="bg-black border-yellow-500/20 text-yellow-400"
                     />
                   </div>
                 </div>
                 <DialogFooter>
-                  <Button variant="outline" onClick={() => setIsAddingDashboard(false)}>
+                  <Button variant="outline" onClick={() => setIsAddingDashboard(false)} className="text-gray-300 border-gray-600">
                     Cancel
                   </Button>
-                  <Button onClick={handleAddDashboard}>Create Dashboard</Button>
+                  <Button onClick={handleAddDashboard} className="bg-gradient-to-r from-yellow-500 to-yellow-600 text-black">Create Dashboard</Button>
                 </DialogFooter>
               </DialogContent>
             </Dialog>
