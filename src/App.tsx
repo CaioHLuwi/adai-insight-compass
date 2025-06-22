@@ -1,4 +1,3 @@
-
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -20,6 +19,7 @@ import Settings from "./pages/Settings";
 import AdsAccounts from "./pages/AdsAccounts";
 import EditAccount from "./pages/EditAccount";
 import NotFound from "./pages/NotFound";
+import Reports from "./pages/Reports";
 
 const queryClient = new QueryClient();
 
@@ -32,7 +32,7 @@ const App = () => (
           <Sonner />
           <BrowserRouter>
             <SidebarProvider>
-              <div className="min-h-screen flex w-full bg-gray-900 relative">
+              <div className="min-h-screen flex w-full bg-black relative">
                 <div className="animated-bg"></div>
                 <AppSidebar />
                 <SidebarInset className="flex-1">
@@ -44,7 +44,7 @@ const App = () => (
                     <Routes>
                       <Route path="/" element={<Index />} />
                       <Route path="/campaigns" element={<Campaigns />} />
-                      <Route path="/reports" element={<div className="p-6"><h1 className="text-3xl font-bold bg-gradient-to-r from-yellow-400 to-yellow-600 bg-clip-text text-transparent">Reports - Coming Soon</h1></div>} />
+                      <Route path="/reports" element={<Reports />} />
                       <Route path="/users" element={<Users />} />
                       <Route path="/subscription" element={<Subscription />} />
                       <Route path="/ads-accounts" element={<AdsAccounts />} />

@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -6,13 +5,19 @@ import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { useLanguage } from '@/hooks/useLanguage';
 import { useToast } from '@/hooks/use-toast';
-import { User, Upload, Save } from 'lucide-react';
+import { User, Upload, Save, Lock, Eye, EyeOff } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 
 const EditAccount = () => {
   const { language } = useLanguage();
   const { toast } = useToast();
   const navigate = useNavigate();
+  const [showPasswords, setShowPasswords] = useState({
+    current: false,
+    new: false,
+    repeat: false
+  });
+  
   const [userData, setUserData] = useState({
     name: 'João Silva',
     email: 'joao.silva@example.com',
@@ -21,6 +26,19 @@ const EditAccount = () => {
     department: 'Marketing',
     avatar: null as string | null
   });
+
+  const [passwordData, setPasswordData] = useState({
+    currentPassword: '',
+    newPassword: '',
+    repeatPassword: ''
+  });
+
+  const passwordRequirements = [
+    { text: language === 'pt' ? 'Entre 8 e 50 caracteres' : 'Between 8 and 50 characters', check: (pwd: string) => pwd.length >= 8 && pwd.length <= 50 },
+    { text: language === 'pt' ? 'Pelo menos uma letra maiúscula' : 'At least one capital letter', check: (pwd: string) => /[A-Z]/.test(pwd) },
+    { text: language === 'pt' ? 'Pelo menos um número' : 'At least one number', check: (pwd: string) => /\d/.test(pwd) },
+    { text: language === 'pt' ? 'Pelo menos um caractere especial' : 'At least one special character', check: (pwd: string) => /[!@#$%^&*(),.?":{}|<>]/.test(pwd) }
+  ];
 
   const getText = (key: string) => {
     const translations: Record<string, Record<string, string>> = {
@@ -37,6 +55,34 @@ const EditAccount = () => {
         es: 'Información Personal',
         ru: 'Личная информация',
         de: 'Persönliche Informationen'
+      },
+      changePassword: {
+        en: 'Change Password',
+        pt: 'Alterar Senha',
+        es: 'Cambiar Contraseña',
+        ru: 'Изменить пароль',
+        de: 'Passwort ändern'
+      },
+      currentPassword: {
+        en: 'Current Password',
+        pt: 'Senha Atual',
+        es: 'Contraseña Actual',
+        ru: 'Текущий пароль',
+        de: 'Aktuelles Passwort'
+      },
+      newPassword: {
+        en: 'New Password',
+        pt: 'Nova Senha',
+        es: 'Nueva Contraseña',
+        ru: 'Новый пароль',
+        de: 'Neues Passwort'
+      },
+      repeatPassword: {
+        en: 'Repeat Password',
+        pt: 'Repetir Senha',
+        es: 'Repetir Contraseña',
+        ru: 'Повторить пароль',
+        de: 'Passwort wiederholen'
       },
       fullName: {
         en: 'Full Name',
@@ -113,13 +159,40 @@ const EditAccount = () => {
   };
 
   const handleSave = () => {
-    // Save to database logic here
     console.log('Saving user data:', userData);
     toast({
       title: "Account updated",
       description: "Your account information has been updated successfully!",
     });
-    navigate(-1); // Go back to previous page
+    navigate(-1);
+  };
+
+  const handlePasswordSave = () => {
+    if (passwordData.newPassword !== passwordData.repeatPassword) {
+      toast({
+        title: "Error",
+        description: "New passwords don't match!",
+        variant: "destructive"
+      });
+      return;
+    }
+
+    const isValidPassword = passwordRequirements.every(req => req.check(passwordData.newPassword));
+    if (!isValidPassword) {
+      toast({
+        title: "Error",
+        description: "Password doesn't meet requirements!",
+        variant: "destructive"
+      });
+      return;
+    }
+
+    console.log('Changing password...');
+    toast({
+      title: "Password changed",
+      description: "Your password has been changed successfully!",
+    });
+    setPasswordData({ currentPassword: '', newPassword: '', repeatPassword: '' });
   };
 
   const handleAvatarUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -248,6 +321,110 @@ const EditAccount = () => {
               >
                 <Save className="w-4 h-4 mr-2" />
                 {getText('saveChanges')}
+              </Button>
+            </div>
+          </CardContent>
+        </Card>
+
+        {/* Change Password Card */}
+        <Card className="bg-gradient-to-r from-gray-800/80 to-gray-900/80 backdrop-blur-sm border-yellow-500/20">
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2 text-white">
+              <Lock className="w-5 h-5 text-yellow-400" />
+              {getText('changePassword')}
+            </CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-6">
+            <div className="grid grid-cols-1 gap-6">
+              {/* Current Password */}
+              <div>
+                <Label className="text-white">{getText('currentPassword')}</Label>
+                <div className="relative">
+                  <Input
+                    type={showPasswords.current ? "text" : "password"}
+                    value={passwordData.currentPassword}
+                    onChange={(e) => setPasswordData({...passwordData, currentPassword: e.target.value})}
+                    className="bg-gray-700 border-yellow-500/20 text-white pr-10"
+                  />
+                  <Button
+                    type="button"
+                    variant="ghost"
+                    size="sm"
+                    className="absolute right-2 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-white"
+                    onClick={() => setShowPasswords({...showPasswords, current: !showPasswords.current})}
+                  >
+                    {showPasswords.current ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                  </Button>
+                </div>
+              </div>
+
+              {/* New Password */}
+              <div>
+                <Label className="text-white">{getText('newPassword')}</Label>
+                <div className="relative">
+                  <Input
+                    type={showPasswords.new ? "text" : "password"}
+                    value={passwordData.newPassword}
+                    onChange={(e) => setPasswordData({...passwordData, newPassword: e.target.value})}
+                    className="bg-gray-700 border-yellow-500/20 text-white pr-10"
+                  />
+                  <Button
+                    type="button"
+                    variant="ghost"
+                    size="sm"
+                    className="absolute right-2 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-white"
+                    onClick={() => setShowPasswords({...showPasswords, new: !showPasswords.new})}
+                  >
+                    {showPasswords.new ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                  </Button>
+                </div>
+                
+                {/* Password Requirements */}
+                <div className="mt-3 space-y-2">
+                  {passwordRequirements.map((req, index) => (
+                    <div key={index} className={`flex items-center text-sm ${
+                      req.check(passwordData.newPassword) ? 'text-green-400' : 'text-gray-400'
+                    }`}>
+                      <div className={`w-2 h-2 rounded-full mr-3 ${
+                        req.check(passwordData.newPassword) ? 'bg-green-400' : 'bg-gray-400'
+                      }`} />
+                      {req.text}
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              {/* Repeat Password */}
+              <div>
+                <Label className="text-white">{getText('repeatPassword')}</Label>
+                <div className="relative">
+                  <Input
+                    type={showPasswords.repeat ? "text" : "password"}
+                    value={passwordData.repeatPassword}
+                    onChange={(e) => setPasswordData({...passwordData, repeatPassword: e.target.value})}
+                    className="bg-gray-700 border-yellow-500/20 text-white pr-10"
+                  />
+                  <Button
+                    type="button"
+                    variant="ghost"
+                    size="sm"
+                    className="absolute right-2 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-white"
+                    onClick={() => setShowPasswords({...showPasswords, repeat: !showPasswords.repeat})}
+                  >
+                    {showPasswords.repeat ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                  </Button>
+                </div>
+              </div>
+            </div>
+
+            {/* Password Action Button */}
+            <div className="flex items-center justify-end pt-4 border-t border-gray-600">
+              <Button
+                onClick={handlePasswordSave}
+                className="bg-gradient-to-r from-yellow-400 to-yellow-600 text-gray-900 hover:from-yellow-500 hover:to-yellow-700"
+              >
+                <Lock className="w-4 h-4 mr-2" />
+                {getText('changePassword')}
               </Button>
             </div>
           </CardContent>

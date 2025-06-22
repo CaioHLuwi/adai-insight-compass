@@ -1,8 +1,7 @@
 
 import React from 'react';
-import { Moon, Sun, Globe } from 'lucide-react';
+import { Globe } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { useTheme } from '@/hooks/useTheme';
 import { useLanguage } from '@/hooks/useLanguage';
 import { UserProfile } from '@/components/UserProfile';
 import {
@@ -11,10 +10,8 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
-import { Toggle } from '@/components/ui/toggle';
 
 export function HeaderControls() {
-  const { theme, toggleTheme } = useTheme();
   const { language, setLanguage } = useLanguage();
 
   const languages = [
@@ -36,7 +33,7 @@ export function HeaderControls() {
             </span>
           </Button>
         </DropdownMenuTrigger>
-        <DropdownMenuContent align="end" className="bg-gray-700 border-yellow-500/20">
+        <DropdownMenuContent align="end" className="bg-gray-700 border-yellow-500/20 z-50">
           {languages.map((lang) => (
             <DropdownMenuItem
               key={lang.code}
@@ -48,18 +45,6 @@ export function HeaderControls() {
           ))}
         </DropdownMenuContent>
       </DropdownMenu>
-
-      <Toggle
-        pressed={theme === 'dark'}
-        onPressedChange={toggleTheme}
-        className="border-yellow-500/50 hover:bg-yellow-500/10"
-      >
-        {theme === 'dark' ? (
-          <Sun className="h-4 w-4 text-yellow-400" />
-        ) : (
-          <Moon className="h-4 w-4 text-yellow-400" />
-        )}
-      </Toggle>
 
       <UserProfile />
     </div>
