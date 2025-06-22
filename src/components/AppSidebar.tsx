@@ -92,11 +92,11 @@ export function AppSidebar() {
   const isActive = (url: string) => location.pathname === url;
 
   return (
-    <Sidebar className="bg-gray-900 border-yellow-500/20">
-      <SidebarHeader className="p-4 bg-gradient-to-r from-gray-800/80 to-gray-900/80 backdrop-blur-sm border-b border-yellow-500/20">
+    <Sidebar className="bg-black border-yellow-500/20">
+      <SidebarHeader className="p-4 bg-black border-b border-yellow-500/20">
         <div className="flex items-center space-x-2">
           <div className="w-8 h-8 bg-gradient-to-r from-yellow-400 to-yellow-600 rounded-lg flex items-center justify-center shadow-lg">
-            <Shield className="text-gray-900 w-5 h-5" />
+            <Shield className="text-black w-5 h-5" />
           </div>
           <span className="font-bold text-lg bg-gradient-to-r from-yellow-400 to-yellow-600 bg-clip-text text-transparent">
             ADGuard.AI
@@ -104,7 +104,7 @@ export function AppSidebar() {
         </div>
       </SidebarHeader>
       
-      <SidebarContent className="bg-gray-900">
+      <SidebarContent className="bg-black">
         <SidebarGroup>
           <SidebarGroupLabel className="text-yellow-400">
             {language === 'pt' ? 'Menu Principal' : language === 'es' ? 'Menú Principal' : language === 'ru' ? 'Главное меню' : language === 'de' ? 'Hauptmenü' : 'Main Menu'}
@@ -156,7 +156,7 @@ export function AppSidebar() {
         </SidebarGroup>
       </SidebarContent>
       
-      <SidebarFooter className="p-4 bg-gradient-to-r from-gray-800/80 to-gray-900/80 backdrop-blur-sm border-t border-yellow-500/20">
+      <SidebarFooter className="p-4 bg-black border-t border-yellow-500/20">
         <div className="text-center text-xs text-gray-400 space-y-1">
           <div className="flex items-center justify-center">
             <Copyright className="w-3 h-3 mr-1" />

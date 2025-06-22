@@ -37,12 +37,12 @@ const App = () => (
               <div className="min-h-screen flex w-full bg-black relative">
                 <div className="animated-bg"></div>
                 <AppSidebar />
-                <SidebarInset className="flex-1">
+                <SidebarInset className="flex-1 bg-black">
                   <header className="flex h-16 shrink-0 items-center justify-between gap-2 border-b border-yellow-500/20 px-4 bg-black/80 backdrop-blur-sm">
                     <SidebarTrigger className="-ml-1 text-yellow-400 hover:bg-yellow-500/10" />
                     <HeaderControls />
                   </header>
-                  <main className="flex-1 bg-black">
+                  <main className="flex-1 bg-black min-h-screen">
                     <Routes>
                       <Route path="/" element={<Index />} />
                       <Route path="/campaigns" element={<Campaigns />} />

@@ -2,7 +2,7 @@
 import React, { useEffect, useState } from 'react';
 
 interface AnimatedNumberProps {
-  value: number;
+  value: number | string;
   duration?: number;
   prefix?: string;
   suffix?: string;
@@ -19,6 +19,11 @@ const AnimatedNumber: React.FC<AnimatedNumberProps> = ({
   const [displayValue, setDisplayValue] = useState(0);
 
   useEffect(() => {
+    // If value is a string (like formatted currency), just return it as is
+    if (typeof value === 'string') {
+      return;
+    }
+
     let startTime: number;
     let animationFrame: number;
 
@@ -51,6 +56,11 @@ const AnimatedNumber: React.FC<AnimatedNumberProps> = ({
       maximumFractionDigits: decimals
     });
   };
+
+  // If value is already a string, return it directly
+  if (typeof value === 'string') {
+    return <span>{value}</span>;
+  }
 
   return (
     <span>
