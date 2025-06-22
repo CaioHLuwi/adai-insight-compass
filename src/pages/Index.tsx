@@ -1,9 +1,9 @@
 import React, { useState } from 'react';
 import SummaryDashboard from '../components/SummaryDashboard';
 import { DashboardConfig } from '../components/DashboardConfig';
-import { useLanguage } from '@/hooks/useLanguage';
 import { Button } from '@/components/ui/button';
-import { Plus } from 'lucide-react';
+import { useLanguage } from '@/hooks/useLanguage';
+import { useAchievements } from '@/hooks/useAchievements';
 import {
   Select,
   SelectContent,
@@ -11,232 +11,67 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from '@/components/ui/dialog';
-import { Input } from '@/components/ui/input';
-import { useToast } from '@/hooks/use-toast';
-
-interface DashboardField {
-  id: string;
-  name: string;
-  nameTranslations: Record<string, string>;
-  category: 'revenue' | 'costs' | 'metrics';
-  isVisible: boolean;
-  order: number;
-}
-
-interface Dashboard {
-  id: string;
-  name: string;
-  adGroupId: string;
-}
+import { Settings } from 'lucide-react';
 
 const Index = () => {
   const { language } = useLanguage();
-  const { toast } = useToast();
-  const [isAddingDashboard, setIsAddingDashboard] = useState(false);
-  const [newDashboardName, setNewDashboardName] = useState('');
-  const [newAdGroupId, setNewAdGroupId] = useState('');
+  const { updateRevenue } = useAchievements();
+  const [selectedDashboard, setSelectedDashboard] = useState('overview');
+  const [isConfigOpen, setIsConfigOpen] = useState(false);
 
-  const [dashboards, setDashboards] = useState<Dashboard[]>([
-    { id: '1', name: 'Campanha Principal', adGroupId: 'adgroup_001' },
-    { id: '2', name: 'Black Friday', adGroupId: 'adgroup_002' },
-    { id: '3', name: 'Coleção Verão', adGroupId: 'adgroup_003' },
-  ]);
+  const mockData = {
+    totalRevenue: 750000,
+    totalCampaigns: 42,
+    totalUsers: 1250,
+    totalConversions: 8500,
+    revenueChange: 12.5,
+    campaignsChange: 8.3,
+    usersChange: 15.2,
+    conversionsChange: 6.7,
+    monthlyRevenue: [65000, 78000, 82000, 75000, 95000, 88000],
+    campaignPerformance: [
+      { name: 'Campaign A', value: 45000, change: 12 },
+      { name: 'Campaign B', value: 38000, change: -5 },
+      { name: 'Campaign C', value: 52000, change: 18 },
+      { name: 'Campaign D', value: 41000, change: 7 },
+    ],
+    userGrowth: [200, 450, 680, 920, 1100, 1250],
+    conversionRates: [
+      { name: 'Google Ads', rate: 3.2, conversions: 2800 },
+      { name: 'Facebook Ads', rate: 2.8, conversions: 2100 },
+      { name: 'Instagram Ads', rate: 3.5, conversions: 1900 },
+      { name: 'LinkedIn Ads', rate: 4.1, conversions: 1200 },
+      { name: 'TikTok Ads', rate: 2.2, conversions: 500 },
+    ]
+  };
 
-  const [selectedDashboard, setSelectedDashboard] = useState<string>(dashboards[0]?.id || '');
-
-  const [dashboardFields, setDashboardFields] = useState<DashboardField[]>([
-    {
-      id: 'gross_revenue',
-      name: 'Gross Revenue',
-      nameTranslations: {
-        en: 'Gross Revenue',
-        pt: 'Faturamento Bruto',
-        es: 'Ingresos Brutos',
-        ru: 'Валовой доход',
-        de: 'Bruttoumsatz'
-      },
-      category: 'revenue',
-      isVisible: true,
-      order: 1
+  const dashboardConfigs = {
+    overview: {
+      title: language === 'pt' ? 'Visão Geral' : language === 'es' ? 'Resumen' : language === 'ru' ? 'Обзор' : language === 'de' ? 'Übersicht' : 'Overview',
+      metrics: ['revenue', 'campaigns', 'users', 'conversions'],
+      charts: ['revenue-trend', 'campaign-performance']
     },
-    {
-      id: 'spend',
-      name: 'Spend',
-      nameTranslations: {
-        en: 'Spend',
-        pt: 'Gasto',
-        es: 'Gasto',
-        ru: 'Расход',
-        de: 'Ausgaben'
-      },
-      category: 'costs',
-      isVisible: true,
-      order: 2
+    revenue: {
+      title: language === 'pt' ? 'Receita' : language === 'es' ? 'Ingresos' : language === 'ru' ? 'Доходы' : language === 'de' ? 'Einnahmen' : 'Revenue',
+      metrics: ['revenue'],
+      charts: ['revenue-trend', 'revenue-breakdown']
     },
-    {
-      id: 'roas',
-      name: 'ROAS',
-      nameTranslations: {
-        en: 'ROAS',
-        pt: 'ROAS',
-        es: 'ROAS',
-        ru: 'ROAS',
-        de: 'ROAS'
-      },
-      category: 'metrics',
-      isVisible: true,
-      order: 3
+    campaigns: {
+      title: language === 'pt' ? 'Campanhas' : language === 'es' ? 'Campañas' : language === 'ru' ? 'Кампании' : language === 'de' ? 'Kampagnen' : 'Campaigns',
+      metrics: ['campaigns', 'conversions'],
+      charts: ['campaign-performance']
     },
-    {
-      id: 'profit',
-      name: 'Profit',
-      nameTranslations: {
-        en: 'Profit',
-        pt: 'Lucro',
-        es: 'Beneficio',
-        ru: 'Прибыль',
-        de: 'Gewinn'
-      },
-      category: 'revenue',
-      isVisible: true,
-      order: 4
-    },
-    {
-      id: 'net_revenue',
-      name: 'Net Revenue',
-      nameTranslations: {
-        en: 'Net Revenue',
-        pt: 'Faturamento Líquido',
-        es: 'Ingresos Netos',
-        ru: 'Чистый доход',
-        de: 'Nettoumsatz'
-      },
-      category: 'revenue',
-      isVisible: false,
-      order: 0
-    },
-    {
-      id: 'sales_payment',
-      name: 'Sales/Payment',
-      nameTranslations: {
-        en: 'Sales/Payment',
-        pt: 'Vendas/Pagamento',
-        es: 'Ventas/Pago',
-        ru: 'Продажи/Платеж',
-        de: 'Verkäufe/Zahlung'
-      },
-      category: 'metrics',
-      isVisible: false,
-      order: 0
-    },
-    {
-      id: 'pending_sales',
-      name: 'Pending Sales',
-      nameTranslations: {
-        en: 'Pending Sales',
-        pt: 'Vendas Pendentes',
-        es: 'Ventas Pendientes',
-        ru: 'Ожидающие продажи',
-        de: 'Ausstehende Verkäufe'
-      },
-      category: 'metrics',
-      isVisible: false,
-      order: 0
-    },
-    // Add more fields as needed...
-  ]);
-
-  // Sample data for demonstration
-  const sampleAnomalies = [
-    {
-      id: '1',
-      message: language === 'pt' 
-        ? 'CPC aumentou 25% na campanha "Promoção de Fim de Ano"' 
-        : 'CPC increased by 25% in "Holiday Sale" campaign',
-      severity: 'high' as const,
-      timestamp: new Date(Date.now() - 1000 * 60 * 30).toISOString(),
-      campaign: language === 'pt' ? 'Promoção de Fim de Ano' : 'Holiday Sale'
-    },
-    {
-      id: '2',
-      message: language === 'pt' 
-        ? 'Taxa de conversão caiu abaixo de 2% em "Coleção Verão"'
-        : 'Conversion rate dropped below 2% in "Summer Collection"',
-      severity: 'medium' as const,
-      timestamp: new Date(Date.now() - 1000 * 60 * 60 * 2).toISOString(),
-      campaign: language === 'pt' ? 'Coleção Verão' : 'Summer Collection'
-    },
-    {
-      id: '3',
-      message: language === 'pt' 
-        ? 'Orçamento diário quase esgotado para "Black Friday"'
-        : 'Daily budget nearly exhausted for "Black Friday"',
-      severity: 'low' as const,
-      timestamp: new Date(Date.now() - 1000 * 60 * 60 * 4).toISOString(),
-      campaign: 'Black Friday'
-    }
-  ];
-
-  const handleAddDashboard = () => {
-    if (newDashboardName.trim() && newAdGroupId.trim()) {
-      const newDashboard: Dashboard = {
-        id: Date.now().toString(),
-        name: newDashboardName,
-        adGroupId: newAdGroupId,
-      };
-      setDashboards([...dashboards, newDashboard]);
-      setSelectedDashboard(newDashboard.id);
-      setNewDashboardName('');
-      setNewAdGroupId('');
-      setIsAddingDashboard(false);
-      toast({
-        title: "Dashboard created",
-        description: `Dashboard "${newDashboardName}" has been created successfully!`,
-      });
+    users: {
+      title: language === 'pt' ? 'Usuários' : language === 'es' ? 'Usuarios' : language === 'ru' ? 'Пользователи' : language === 'de' ? 'Benutzer' : 'Users',
+      metrics: ['users'],
+      charts: ['user-growth']
     }
   };
 
-  const getText = (key: string) => {
-    const translations: Record<string, Record<string, string>> = {
-      selectDashboard: {
-        en: 'Select Dashboard',
-        pt: 'Selecionar Dashboard',
-        es: 'Seleccionar Dashboard',
-        ru: 'Выбрать панель',
-        de: 'Dashboard auswählen'
-      },
-      addNewDashboard: {
-        en: 'Add New Dashboard',
-        pt: 'Adicionar Novo Dashboard',
-        es: 'Agregar Nuevo Dashboard',
-        ru: 'Добавить новую панель',
-        de: 'Neues Dashboard hinzufügen'
-      },
-      dashboardName: {
-        en: 'Dashboard Name',
-        pt: 'Nome do Dashboard',
-        es: 'Nombre del Dashboard',
-        ru: 'Название панели',
-        de: 'Dashboard-Name'
-      },
-      adGroupId: {
-        en: 'Ad Group ID',
-        pt: 'ID do Grupo de Anúncios',
-        es: 'ID del Grupo de Anuncios',
-        ru: 'ID группы объявлений',
-        de: 'Anzeigengruppen-ID'
-      }
-    };
-    return translations[key]?.[language] || translations[key]?.['en'] || key;
+  const selectedConfig = dashboardConfigs[selectedDashboard as keyof typeof dashboardConfigs];
+
+  const handleTestRevenue = () => {
+    updateRevenue(10000);
   };
 
   return (
@@ -245,75 +80,59 @@ const Index = () => {
         <div className="flex items-center justify-between mb-6">
           <div className="flex items-center space-x-4">
             <Select value={selectedDashboard} onValueChange={setSelectedDashboard}>
-              <SelectTrigger className="w-[250px] border-yellow-200 focus:ring-yellow-500 bg-black text-yellow-400">
-                <SelectValue placeholder={getText('selectDashboard')} />
+              <SelectTrigger className="w-48 bg-gray-800 border-yellow-500/20 text-white">
+                <SelectValue />
               </SelectTrigger>
-              <SelectContent className="bg-black border-yellow-500/20">
-                {dashboards.map((dashboard) => (
-                  <SelectItem key={dashboard.id} value={dashboard.id} className="text-yellow-400 hover:bg-yellow-500/10">
-                    {dashboard.name}
-                  </SelectItem>
-                ))}
+              <SelectContent className="bg-gray-800 border-yellow-500/20">
+                <SelectItem value="overview" className="text-white hover:bg-gray-700">
+                  {language === 'pt' ? 'Visão Geral' : language === 'es' ? 'Resumen' : language === 'ru' ? 'Обзор' : language === 'de' ? 'Übersicht' : 'Overview'}
+                </SelectItem>
+                <SelectItem value="revenue" className="text-white hover:bg-gray-700">
+                  {language === 'pt' ? 'Receita' : language === 'es' ? 'Ingresos' : language === 'ru' ? 'Доходы' : language === 'de' ? 'Einnahmen' : 'Revenue'}
+                </SelectItem>
+                <SelectItem value="campaigns" className="text-white hover:bg-gray-700">
+                  {language === 'pt' ? 'Campanhas' : language === 'es' ? 'Campañas' : language === 'ru' ? 'Кампании' : language === 'de' ? 'Kampagnen' : 'Campaigns'}
+                </SelectItem>
+                <SelectItem value="users" className="text-white hover:bg-gray-700">
+                  {language === 'pt' ? 'Usuários' : language === 'es' ? 'Usuarios' : language === 'ru' ? 'Пользователи' : language === 'de' ? 'Benutzer' : 'Users'}
+                </SelectItem>
               </SelectContent>
             </Select>
-
-            <Dialog open={isAddingDashboard} onOpenChange={setIsAddingDashboard}>
-              <DialogTrigger asChild>
-                <Button variant="outline" size="sm" className="border-yellow-200 hover:bg-yellow-500/10 text-yellow-400">
-                  <Plus className="w-4 h-4 mr-2 text-yellow-400" />
-                  {getText('addNewDashboard')}
-                </Button>
-              </DialogTrigger>
-              <DialogContent className="bg-black border-yellow-500/20">
-                <DialogHeader>
-                  <DialogTitle className="text-yellow-400">{getText('addNewDashboard')}</DialogTitle>
-                  <DialogDescription className="text-gray-300">
-                    Create a new dashboard for a specific ad group or campaign.
-                  </DialogDescription>
-                </DialogHeader>
-                <div className="space-y-4">
-                  <div>
-                    <label className="block text-sm font-medium mb-2 text-yellow-400">{getText('dashboardName')}</label>
-                    <Input
-                      placeholder="Enter dashboard name"
-                      value={newDashboardName}
-                      onChange={(e) => setNewDashboardName(e.target.value)}
-                      className="bg-black border-yellow-500/20 text-yellow-400"
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-sm font-medium mb-2 text-yellow-400">{getText('adGroupId')}</label>
-                    <Input
-                      placeholder="Enter Google Ads group ID"
-                      value={newAdGroupId}
-                      onChange={(e) => setNewAdGroupId(e.target.value)}
-                      className="bg-black border-yellow-500/20 text-yellow-400"
-                    />
-                  </div>
-                </div>
-                <DialogFooter>
-                  <Button variant="outline" onClick={() => setIsAddingDashboard(false)} className="text-gray-300 border-gray-600">
-                    Cancel
-                  </Button>
-                  <Button onClick={handleAddDashboard} className="bg-gradient-to-r from-yellow-500 to-yellow-600 text-black">Create Dashboard</Button>
-                </DialogFooter>
-              </DialogContent>
-            </Dialog>
+            <h1 className="text-2xl font-bold bg-gradient-to-r from-yellow-400 to-yellow-600 bg-clip-text text-transparent">
+              {selectedConfig.title}
+            </h1>
           </div>
-
-          <DashboardConfig
-            fields={dashboardFields}
-            onFieldsChange={setDashboardFields}
-          />
+          <div className="flex items-center space-x-2">
+            <Button
+              onClick={handleTestRevenue}
+              className="bg-green-600 hover:bg-green-700 text-white"
+            >
+              Test Revenue +10k
+            </Button>
+            <Button
+              variant="outline"
+              onClick={() => setIsConfigOpen(true)}
+              className="border-yellow-500/50 hover:bg-yellow-500/10 text-yellow-400"
+            >
+              <Settings className="w-4 h-4 mr-2 text-yellow-400" />
+              {language === 'pt' ? 'Configurar' : language === 'es' ? 'Configurar' : language === 'ru' ? 'Настроить' : language === 'de' ? 'Konfigurieren' : 'Configure'}
+            </Button>
+          </div>
         </div>
-
-        <SummaryDashboard
-          totalSpendToday={2847.32}
-          avgCPC={1.24}
-          avgCPA={18.67}
-          conversionsToday={152}
-          recentAnomalies={sampleAnomalies}
-          visibleFields={dashboardFields.filter(f => f.isVisible).sort((a, b) => a.order - b.order)}
+        
+        <SummaryDashboard 
+          data={mockData} 
+          config={selectedConfig}
+        />
+        
+        <DashboardConfig 
+          isOpen={isConfigOpen}
+          onClose={() => setIsConfigOpen(false)}
+          currentConfig={selectedConfig}
+          onSave={(newConfig) => {
+            console.log('Saving config:', newConfig);
+            setIsConfigOpen(false);
+          }}
         />
       </div>
     </div>

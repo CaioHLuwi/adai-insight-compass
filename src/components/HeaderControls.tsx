@@ -4,6 +4,7 @@ import { Globe } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useLanguage } from '@/hooks/useLanguage';
 import { UserProfile } from '@/components/UserProfile';
+import { RevenueProgress } from '@/components/RevenueProgress';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -24,6 +25,8 @@ export function HeaderControls() {
 
   return (
     <div className="flex items-center space-x-4">
+      <RevenueProgress />
+      
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
           <Button variant="outline" size="sm" className="border-yellow-500/50 hover:bg-yellow-500/10 text-yellow-400">
