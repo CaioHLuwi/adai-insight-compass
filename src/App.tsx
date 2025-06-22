@@ -1,3 +1,4 @@
+
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -12,6 +13,7 @@ import Index from "./pages/Index";
 import Campaigns from "./pages/Campaigns";
 import Users from "./pages/Users";
 import Subscription from "./pages/Subscription";
+import Expenses from "./pages/Expenses";
 import Rates from "./pages/Rates";
 import Notifications from "./pages/Notifications";
 import Chatbot from "./pages/Chatbot";
@@ -47,6 +49,7 @@ const App = () => (
                       <Route path="/reports" element={<Reports />} />
                       <Route path="/users" element={<Users />} />
                       <Route path="/subscription" element={<Subscription />} />
+                      <Route path="/expenses" element={<Expenses />} />
                       <Route path="/ads-accounts" element={<AdsAccounts />} />
                       <Route path="/chatbot" element={<Chatbot />} />
                       <Route path="/rates" element={<Rates />} />

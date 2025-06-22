@@ -1,11 +1,11 @@
 
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react';
 import { useLanguage } from '@/hooks/useLanguage';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { FileSpreadsheet, Filter, Search } from 'lucide-react';
+import { FileSpreadsheet, Filter, Search, RefreshCw } from 'lucide-react';
 
 const Reports = () => {
   const { language } = useLanguage();
@@ -68,14 +68,29 @@ const Reports = () => {
     // Export logic would go here
   };
 
-  const filteredCampaigns = campaigns.filter(campaign => {
-    const matchesSearch = campaign.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                         campaign.product.toLowerCase().includes(searchTerm.toLowerCase());
-    const matchesProduct = !productFilter || campaign.product.toLowerCase().includes(productFilter.toLowerCase());
-    const matchesText = !textContainsFilter || campaign.name.toLowerCase().includes(textContainsFilter.toLowerCase());
-    
-    return matchesSearch && matchesProduct && matchesText;
-  });
+  const handleUpdateFilters = () => {
+    console.log('Updating filters...', {
+      searchTerm,
+      dateFilter,
+      groupBy,
+      productFilter,
+      textContainsFilter
+    });
+    // This would trigger a data refresh in a real application
+  };
+
+  const filteredCampaigns = useMemo(() => {
+    return campaigns.filter(campaign => {
+      const matchesSearch = campaign.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                           campaign.product.toLowerCase().includes(searchTerm.toLowerCase());
+      const matchesProduct = !productFilter || campaign.product.toLowerCase().includes(productFilter.toLowerCase());
+      const matchesText = !textContainsFilter || campaign.name.toLowerCase().includes(textContainsFilter.toLowerCase());
+      
+      // Add more filter logic here based on dateFilter and groupBy as needed
+      
+      return matchesSearch && matchesProduct && matchesText;
+    });
+  }, [searchTerm, productFilter, textContainsFilter, dateFilter, groupBy]);
 
   return (
     <div className="p-6 space-y-6">
@@ -171,17 +186,28 @@ const Reports = () => {
             </div>
           </div>
 
-          {/* Text Contains Filter */}
-          <div className="w-full md:w-1/2">
-            <label className="block text-sm font-medium text-gray-300 mb-2">
-              {language === 'pt' ? 'Contém texto' : 'Contains text'}
-            </label>
-            <Input
-              value={textContainsFilter}
-              onChange={(e) => setTextContainsFilter(e.target.value)}
-              placeholder={language === 'pt' ? 'Buscar por texto específico...' : 'Search for specific text...'}
-              className="bg-gray-700 border-yellow-500/20 text-white"
-            />
+          {/* Text Contains Filter and Update Button */}
+          <div className="flex w-full gap-4">
+            <div className="flex-1">
+              <label className="block text-sm font-medium text-gray-300 mb-2">
+                {language === 'pt' ? 'Contém texto' : 'Contains text'}
+              </label>
+              <Input
+                value={textContainsFilter}
+                onChange={(e) => setTextContainsFilter(e.target.value)}
+                placeholder={language === 'pt' ? 'Buscar por texto específico...' : 'Search for specific text...'}
+                className="bg-gray-700 border-yellow-500/20 text-white"
+              />
+            </div>
+            <div className="flex items-end">
+              <Button 
+                onClick={handleUpdateFilters}
+                className="bg-gradient-to-r from-yellow-400 to-yellow-600 text-gray-900 hover:from-yellow-500 hover:to-yellow-700"
+              >
+                <RefreshCw className="w-4 h-4 mr-2" />
+                {language === 'pt' ? 'Atualizar' : 'Update'}
+              </Button>
+            </div>
           </div>
         </CardContent>
       </Card>

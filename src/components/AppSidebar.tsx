@@ -12,7 +12,8 @@ import {
   Globe,
   Bell,
   Shield,
-  Copyright
+  Copyright,
+  Receipt
 } from 'lucide-react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import {
@@ -60,6 +61,11 @@ export function AppSidebar() {
       title: language === 'pt' ? 'Assinatura' : language === 'es' ? 'Suscripción' : language === 'ru' ? 'Подписка' : language === 'de' ? 'Abonnement' : 'Subscription',
       url: '/subscription',
       icon: CreditCard,
+    },
+    {
+      title: language === 'pt' ? 'Despesas' : language === 'es' ? 'Gastos' : language === 'ru' ? 'Расходы' : language === 'de' ? 'Ausgaben' : 'Expenses',
+      url: '/expenses',
+      icon: Receipt,
     },
     {
       title: language === 'pt' ? 'Contas de ADS' : language === 'es' ? 'Cuentas de ADS' : language === 'ru' ? 'Рекламные аккаунты' : language === 'de' ? 'ADS-Konten' : 'ADS Accounts',

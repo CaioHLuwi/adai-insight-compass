@@ -73,21 +73,21 @@ const Campaigns = () => {
   return (
     <div className="p-6">
       <div className="flex justify-between items-center mb-6">
-        <h1 className="text-3xl font-bold bg-gradient-to-r from-orange-500 to-orange-600 bg-clip-text text-transparent">
+        <h1 className="text-3xl font-bold bg-gradient-to-r from-yellow-400 to-yellow-600 bg-clip-text text-transparent">
           {language === 'pt' ? 'Campanhas' : 'Campaigns'}
         </h1>
         
         <div className="flex gap-2">
           <Dialog open={showConfigDialog} onOpenChange={setShowConfigDialog}>
             <DialogTrigger asChild>
-              <Button variant="outline" className="border-orange-200 hover:bg-orange-50">
-                <Settings className="w-4 h-4 mr-2" />
+              <Button variant="outline" className="border-yellow-500/50 hover:bg-yellow-500/10 text-yellow-400">
+                <Settings className="w-4 h-4 mr-2 text-yellow-400" />
                 {language === 'pt' ? 'Configurar Tabela' : 'Configure Table'}
               </Button>
             </DialogTrigger>
-            <DialogContent className="max-w-2xl">
+            <DialogContent className="max-w-2xl bg-gray-800 border-yellow-500/20">
               <DialogHeader>
-                <DialogTitle>{language === 'pt' ? 'Configurar Campos da Tabela' : 'Configure Table Fields'}</DialogTitle>
+                <DialogTitle className="text-white">{language === 'pt' ? 'Configurar Campos da Tabela' : 'Configure Table Fields'}</DialogTitle>
               </DialogHeader>
               <div className="grid grid-cols-2 gap-4 max-h-96 overflow-y-auto">
                 {visibleFields.map((field) => (
@@ -96,11 +96,11 @@ const Campaigns = () => {
                       checked={field.visible}
                       onCheckedChange={() => toggleFieldVisibility(field.key)}
                     />
-                    <label className="text-sm">{field.label}</label>
+                    <label className="text-sm text-white">{field.label}</label>
                   </div>
                 ))}
               </div>
-              <Button onClick={() => setShowConfigDialog(false)} className="bg-gradient-to-r from-orange-500 to-orange-600">
+              <Button onClick={() => setShowConfigDialog(false)} className="bg-gradient-to-r from-yellow-400 to-yellow-600 text-gray-900">
                 {language === 'pt' ? 'Salvar' : 'Save'}
               </Button>
             </DialogContent>
@@ -108,29 +108,29 @@ const Campaigns = () => {
 
           <Dialog open={showCreateDialog} onOpenChange={setShowCreateDialog}>
             <DialogTrigger asChild>
-              <Button className="bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700">
+              <Button className="bg-gradient-to-r from-yellow-400 to-yellow-600 text-gray-900 hover:from-yellow-500 hover:to-yellow-700">
                 <Plus className="w-4 h-4 mr-2" />
                 {language === 'pt' ? 'Criar Campanha' : 'Create Campaign'}
               </Button>
             </DialogTrigger>
-            <DialogContent>
+            <DialogContent className="bg-gray-800 border-yellow-500/20">
               <DialogHeader>
-                <DialogTitle>{language === 'pt' ? 'Criar Nova Campanha' : 'Create New Campaign'}</DialogTitle>
+                <DialogTitle className="text-white">{language === 'pt' ? 'Criar Nova Campanha' : 'Create New Campaign'}</DialogTitle>
               </DialogHeader>
               <div className="space-y-4">
                 <div>
-                  <Label>{language === 'pt' ? 'Nome da Campanha' : 'Campaign Name'}</Label>
-                  <Input placeholder={language === 'pt' ? 'Digite o nome da campanha' : 'Enter campaign name'} />
+                  <Label className="text-white">{language === 'pt' ? 'Nome da Campanha' : 'Campaign Name'}</Label>
+                  <Input placeholder={language === 'pt' ? 'Digite o nome da campanha' : 'Enter campaign name'} className="bg-gray-700 border-yellow-500/20 text-white" />
                 </div>
                 <div>
-                  <Label>{language === 'pt' ? 'ID da Conta Google Ads' : 'Google Ads Account ID'}</Label>
-                  <Input placeholder="123-456-7890" />
+                  <Label className="text-white">{language === 'pt' ? 'ID da Conta Google Ads' : 'Google Ads Account ID'}</Label>
+                  <Input placeholder="123-456-7890" className="bg-gray-700 border-yellow-500/20 text-white" />
                 </div>
                 <div>
-                  <Label>{language === 'pt' ? 'ID da Campanha' : 'Campaign ID'}</Label>
-                  <Input placeholder="987654321" />
+                  <Label className="text-white">{language === 'pt' ? 'ID da Campanha' : 'Campaign ID'}</Label>
+                  <Input placeholder="987654321" className="bg-gray-700 border-yellow-500/20 text-white" />
                 </div>
-                <Button className="w-full bg-gradient-to-r from-orange-500 to-orange-600">
+                <Button className="w-full bg-gradient-to-r from-yellow-400 to-yellow-600 text-gray-900">
                   {language === 'pt' ? 'Conectar e Importar' : 'Connect and Import'}
                 </Button>
               </div>
@@ -139,9 +139,9 @@ const Campaigns = () => {
         </div>
       </div>
 
-      <div className="bg-white dark:bg-gray-800 rounded-xl shadow-lg border border-gray-100 dark:border-gray-700 overflow-hidden">
-        <div className="bg-gradient-to-r from-orange-50 to-orange-100 dark:from-orange-900/20 dark:to-orange-800/20 p-4">
-          <p className="text-sm text-orange-700 dark:text-orange-300">
+      <div className="bg-gradient-to-r from-gray-800/50 to-gray-900/50 border-yellow-500/20 rounded-xl shadow-lg border overflow-hidden">
+        <div className="bg-gradient-to-r from-yellow-500/10 to-yellow-600/10 p-4 border-b border-yellow-500/20">
+          <p className="text-sm text-yellow-400">
             {language === 'pt' 
               ? '💡 Para sincronizar automaticamente: Configure sua API do Google Ads em Configurações > Integrações'
               : '💡 For auto-sync: Configure your Google Ads API in Settings > Integrations'}
@@ -149,26 +149,26 @@ const Campaigns = () => {
         </div>
         
         <div className="overflow-x-auto">
-          <table className="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
-            <thead className="bg-gray-50 dark:bg-gray-700">
+          <table className="min-w-full divide-y divide-gray-600">
+            <thead className="bg-gray-700/50">
               <tr>
                 {visibleFields.filter(field => field.visible).map((field) => (
-                  <th key={field.key} className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
+                  <th key={field.key} className="px-6 py-3 text-left text-xs font-medium text-yellow-400 uppercase tracking-wider">
                     {field.label}
                   </th>
                 ))}
               </tr>
             </thead>
-            <tbody className="bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700">
+            <tbody className="bg-gray-800/30 divide-y divide-gray-600">
               {campaigns.map((campaign, index) => (
-                <tr key={index} className="hover:bg-orange-50 dark:hover:bg-orange-900/10">
+                <tr key={index} className="hover:bg-yellow-500/10">
                   {visibleFields.filter(field => field.visible).map((field) => (
-                    <td key={field.key} className="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-white">
+                    <td key={field.key} className="px-6 py-4 whitespace-nowrap text-sm text-white">
                       {field.key === 'status' ? (
                         <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${
                           campaign.status === 'Active' 
-                            ? 'bg-green-100 text-green-800 dark:bg-green-800 dark:text-green-100' 
-                            : 'bg-red-100 text-red-800 dark:bg-red-800 dark:text-red-100'
+                            ? 'bg-green-500/20 text-green-400 border border-green-500/30' 
+                            : 'bg-red-500/20 text-red-400 border border-red-500/30'
                         }`}>
                           {campaign.status}
                         </span>
