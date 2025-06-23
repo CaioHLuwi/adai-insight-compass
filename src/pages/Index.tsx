@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import SummaryDashboard from '../components/SummaryDashboard';
 import { DashboardConfig } from '../components/DashboardConfig';
@@ -121,13 +122,13 @@ const Index = () => {
         </div>
         
         <SummaryDashboard 
-          data={mockData} 
+          summaryData={mockData} 
           config={selectedConfig}
         />
         
         <DashboardConfig 
-          isOpen={isConfigOpen}
-          onClose={() => setIsConfigOpen(false)}
+          open={isConfigOpen}
+          onOpenChange={setIsConfigOpen}
           currentConfig={selectedConfig}
           onSave={(newConfig) => {
             console.log('Saving config:', newConfig);
