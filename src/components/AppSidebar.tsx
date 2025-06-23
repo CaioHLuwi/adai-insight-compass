@@ -134,7 +134,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
           <SidebarMenuItem>
             <SidebarMenuButton size="lg" asChild>
               <a href="/">
-                <img src="/otmizy_logo_darkmode.png" alt="Otmizy.ai Logo" style={{ height: '286px', width: 'auto' }} />
+                <img src="/otmizy_logo_darkmode.png" alt="Otmizy.ai Logo" style={{ height: '150px', width: 'auto' }} />
               </a>
             </SidebarMenuButton>
           </SidebarMenuItem>
