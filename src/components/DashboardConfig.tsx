@@ -4,7 +4,7 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { useLanguage } from '@/hooks/useLanguage';
-import { Settings, GripVertical, X } from 'lucide-react';
+import { Settings, GripVertical } from 'lucide-react';
 import {
   Dialog,
   DialogContent,
@@ -130,29 +130,29 @@ export function DashboardConfig({ fields, onFieldsChange }: DashboardConfigProps
   return (
     <Dialog open={isOpen} onOpenChange={setIsOpen}>
       <DialogTrigger asChild>
-        <Button variant="outline" size="sm" className="border-orange-200 hover:bg-orange-100 dark:hover:bg-orange-900/20">
-          <Settings className="w-4 h-4 mr-2 text-orange-600" />
+        <Button variant="outline" size="sm" className="border-yellow-500/50 hover:bg-yellow-500/10 text-yellow-400">
+          <Settings className="w-4 h-4 mr-2" />
           {getText('configureFields')}
         </Button>
       </DialogTrigger>
-      <DialogContent className="max-w-4xl max-h-[80vh] overflow-y-auto">
+      <DialogContent className="max-w-4xl max-h-[80vh] overflow-y-auto bg-gray-800 border-yellow-500/20">
         <DialogHeader>
-          <DialogTitle>{getText('configureFields')}</DialogTitle>
-          <DialogDescription>
+          <DialogTitle className="text-white">{getText('configureFields')}</DialogTitle>
+          <DialogDescription className="text-gray-300">
             {getText('dragToOrganize')}
           </DialogDescription>
         </DialogHeader>
         
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           {/* Visible Fields */}
-          <Card>
+          <Card className="bg-gray-700 border-yellow-500/20">
             <CardHeader>
-              <CardTitle className="text-lg">{getText('visibleFields')}</CardTitle>
+              <CardTitle className="text-lg text-white">{getText('visibleFields')}</CardTitle>
             </CardHeader>
             <CardContent>
               <div 
-                className={`min-h-[300px] space-y-2 p-2 border-2 border-dashed transition-colors ${
-                  dropZone === 'visible' ? 'border-orange-400 bg-orange-50' : 'border-gray-200'
+                className={`min-h-[300px] space-y-2 p-2 border-2 border-dashed transition-colors rounded-lg ${
+                  dropZone === 'visible' ? 'border-yellow-400 bg-yellow-400/10' : 'border-gray-500'
                 }`}
                 onDragOver={(e) => handleDragOver(e, 'visible')}
                 onDrop={(e) => handleDrop(e, 'visible')}
@@ -162,12 +162,12 @@ export function DashboardConfig({ fields, onFieldsChange }: DashboardConfigProps
                     key={field.id}
                     draggable
                     onDragStart={() => handleDragStart(field)}
-                    className="flex items-center justify-between bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg p-3 cursor-move hover:shadow-md transition-shadow"
+                    className="flex items-center justify-between bg-gray-600 border border-gray-500 rounded-lg p-3 cursor-move hover:shadow-md transition-shadow"
                   >
                     <div className="flex items-center space-x-2">
                       <GripVertical className="w-4 h-4 text-gray-400" />
-                      <span className="font-medium">{getFieldName(field)}</span>
-                      <Badge variant="outline" className="text-xs">
+                      <span className="font-medium text-white">{getFieldName(field)}</span>
+                      <Badge variant="outline" className="text-xs text-yellow-400 border-yellow-400">
                         {field.category}
                       </Badge>
                     </div>
@@ -177,6 +177,7 @@ export function DashboardConfig({ fields, onFieldsChange }: DashboardConfigProps
                         size="sm"
                         onClick={() => moveField(field.id, 'up')}
                         disabled={index === 0}
+                        className="text-white hover:bg-gray-500"
                       >
                         ↑
                       </Button>
@@ -185,6 +186,7 @@ export function DashboardConfig({ fields, onFieldsChange }: DashboardConfigProps
                         size="sm"
                         onClick={() => moveField(field.id, 'down')}
                         disabled={index === visibleFields.length - 1}
+                        className="text-white hover:bg-gray-500"
                       >
                         ↓
                       </Button>
@@ -196,14 +198,14 @@ export function DashboardConfig({ fields, onFieldsChange }: DashboardConfigProps
           </Card>
 
           {/* Hidden Fields */}
-          <Card>
+          <Card className="bg-gray-700 border-yellow-500/20">
             <CardHeader>
-              <CardTitle className="text-lg">{getText('hiddenFields')}</CardTitle>
+              <CardTitle className="text-lg text-white">{getText('hiddenFields')}</CardTitle>
             </CardHeader>
             <CardContent>
               <div 
-                className={`min-h-[300px] space-y-2 p-2 border-2 border-dashed transition-colors ${
-                  dropZone === 'hidden' ? 'border-orange-400 bg-orange-50' : 'border-gray-200'
+                className={`min-h-[300px] space-y-2 p-2 border-2 border-dashed transition-colors rounded-lg ${
+                  dropZone === 'hidden' ? 'border-yellow-400 bg-yellow-400/10' : 'border-gray-500'
                 }`}
                 onDragOver={(e) => handleDragOver(e, 'hidden')}
                 onDrop={(e) => handleDrop(e, 'hidden')}
@@ -213,12 +215,12 @@ export function DashboardConfig({ fields, onFieldsChange }: DashboardConfigProps
                     key={field.id}
                     draggable
                     onDragStart={() => handleDragStart(field)}
-                    className="flex items-center justify-between bg-gray-50 dark:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded-lg p-3 cursor-move hover:shadow-md transition-shadow opacity-60"
+                    className="flex items-center justify-between bg-gray-500 border border-gray-400 rounded-lg p-3 cursor-move hover:shadow-md transition-shadow opacity-60"
                   >
                     <div className="flex items-center space-x-2">
                       <GripVertical className="w-4 h-4 text-gray-400" />
-                      <span className="font-medium">{getFieldName(field)}</span>
-                      <Badge variant="outline" className="text-xs">
+                      <span className="font-medium text-white">{getFieldName(field)}</span>
+                      <Badge variant="outline" className="text-xs text-yellow-400 border-yellow-400">
                         {field.category}
                       </Badge>
                     </div>

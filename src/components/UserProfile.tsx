@@ -15,7 +15,7 @@ export function UserProfile() {
   const { language } = useLanguage();
   const navigate = useNavigate();
   const [user] = useState({
-    name: 'João Silva',
+    name: 'Caio Henrique',
     role: 'Admin',
     avatar: null
   });

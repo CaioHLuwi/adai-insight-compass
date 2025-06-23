@@ -19,8 +19,8 @@ const EditAccount = () => {
   });
   
   const [userData, setUserData] = useState({
-    name: 'João Silva',
-    email: 'joao.silva@example.com',
+    name: 'Caio Henrique',
+    email: 'caio@otmizy.ai',
     role: 'Admin',
     phone: '+55 11 99999-9999',
     department: 'Marketing',

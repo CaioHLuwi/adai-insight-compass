@@ -20,6 +20,7 @@ import {
   useSidebar,
 } from "@/components/ui/sidebar"
 import { BadgeCheck, Bell, CreditCard, LogOut, Sparkles } from "lucide-react"
+import { useNavigate } from "react-router-dom"
 
 export function NavUser({
   user,
@@ -31,6 +32,7 @@ export function NavUser({
   }
 }) {
   const { isMobile } = useSidebar()
+  const navigate = useNavigate()
 
   return (
     <SidebarMenu>
@@ -82,7 +84,7 @@ export function NavUser({
             </DropdownMenuGroup>
             <DropdownMenuSeparator />
             <DropdownMenuGroup>
-              <DropdownMenuItem>
+              <DropdownMenuItem onClick={() => navigate('/edit-account')}>
                 <BadgeCheck />
                 Account
               </DropdownMenuItem>
