@@ -1,249 +1,282 @@
 
-import React from 'react';
-import { 
-  Calendar, 
-  Home, 
-  BarChart3, 
-  Users, 
-  CreditCard, 
-  MessageSquare, 
-  TrendingUp,
-  Settings,
-  Globe,
+import * as React from "react"
+import {
+  BookOpen,
+  Bot,
+  Frame,
+  LifeBuoy,
+  Map,
+  PieChart,
+  Send,
+  Settings2,
+  SquareTerminal,
+  Users,
+  CreditCard,
+  DollarSign,
   Bell,
-  Shield,
-  Copyright,
-  Receipt,
+  FileText,
+  Zap,
   Trophy,
   ShoppingBag,
-  TrendingDown
-} from 'lucide-react';
-import { useNavigate, useLocation } from 'react-router-dom';
+  BarChart3,
+} from "lucide-react"
+
+import { NavMain } from "@/components/nav-main"
+import { NavProjects } from "@/components/nav-projects"
+import { NavSecondary } from "@/components/nav-secondary"
+import { NavUser } from "@/components/nav-user"
 import {
   Sidebar,
   SidebarContent,
   SidebarFooter,
-  SidebarGroup,
-  SidebarGroupContent,
-  SidebarGroupLabel,
   SidebarHeader,
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
-  SidebarSeparator,
-} from '@/components/ui/sidebar';
-import { useLanguage } from '@/hooks/useLanguage';
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu';
+} from "@/components/ui/sidebar"
+import { useLanguage } from "@/hooks/useLanguage"
 
-export function AppSidebar() {
-  const navigate = useNavigate();
-  const location = useLocation();
-  const { language, setLanguage } = useLanguage();
-
-  const languages = [
-    { code: 'en', name: 'English' },
-    { code: 'pt', name: 'Português' },
-    { code: 'es', name: 'Español' },
-    { code: 'ru', name: 'Русский' },
-    { code: 'de', name: 'Deutsch' },
-  ];
-
-  const menuItems = [
+const data = {
+  user: {
+    name: "SafeAd User",
+    email: "user@safead.ai",
+    avatar: "/placeholder.svg",
+  },
+  navMain: [
     {
-      title: 'Dashboard',
-      url: '/',
-      icon: Home,
+      title: "Dashboard",
+      url: "/",
+      icon: SquareTerminal,
+      isActive: true,
     },
     {
-      title: 'IAgente',
-      url: '/chatbot',
-      icon: MessageSquare,
+      title: "IAgente",
+      url: "/chatbot",
+      icon: Bot,
     },
     {
-      title: language === 'pt' ? 'Campanhas' : language === 'es' ? 'Campañas' : language === 'ru' ? 'Кампании' : language === 'de' ? 'Kampagnen' : 'Campaigns',
-      url: '/campaigns',
+      title: "Campaigns",
+      url: "/campaigns",
+      icon: PieChart,
+    },
+    {
+      title: "Reports",
+      url: "/reports",
       icon: BarChart3,
     },
     {
-      title: language === 'pt' ? 'Relatórios' : language === 'es' ? 'Informes' : language === 'ru' ? 'Отчеты' : language === 'de' ? 'Berichte' : 'Reports',
-      url: '/reports',
-      icon: Calendar,
-    },
-    {
-      title: language === 'pt' ? 'Usuários' : language === 'es' ? 'Usuarios' : language === 'ru' ? 'Пользователи' : language === 'de' ? 'Benutzer' : 'Users',
-      url: '/users',
+      title: "Users",
+      url: "/users",
       icon: Users,
     },
     {
-      title: language === 'pt' ? 'Assinatura' : language === 'es' ? 'Suscripción' : language === 'ru' ? 'Подписка' : language === 'de' ? 'Abonnement' : 'Subscription',
-      url: '/subscription',
+      title: "Ads Accounts",
+      url: "/ads-accounts",
       icon: CreditCard,
     },
     {
-      title: language === 'pt' ? 'Despesas' : language === 'es' ? 'Gastos' : language === 'ru' ? 'Расходы' : language === 'de' ? 'Ausgaben' : 'Expenses',
-      url: '/expenses',
-      icon: Receipt,
+      title: "Expenses",
+      url: "/expenses",
+      icon: DollarSign,
     },
     {
-      title: language === 'pt' ? 'Contas de ADS' : language === 'es' ? 'Cuentas de ADS' : language === 'ru' ? 'Рекламные аккаунты' : language === 'de' ? 'ADS-Konten' : 'ADS Accounts',
-      url: '/ads-accounts',
-      icon: Globe,
+      title: "Rates",
+      url: "/rates",
+      icon: FileText,
     },
     {
-      title: language === 'pt' ? 'Taxas' : language === 'es' ? 'Tarifas' : language === 'ru' ? 'Тарифы' : language === 'de' ? 'Gebühren' : 'Rates',
-      url: '/rates',
-      icon: TrendingUp,
-    },
-    {
-      title: language === 'pt' ? 'Notificações' : language === 'es' ? 'Notificaciones' : language === 'ru' ? 'Уведомления' : language === 'de' ? 'Benachrichtigungen' : 'Notifications',
-      url: '/notifications',
+      title: "Notifications",
+      url: "/notifications",
       icon: Bell,
     },
-  ];
-
-  const progressItems = [
+  ],
+  navProgress: [
     {
-      title: 'Shop',
-      url: '/shop',
+      title: "Shop",
+      url: "/shop",
       icon: ShoppingBag,
     },
     {
-      title: language === 'pt' ? 'Conquistas' : language === 'es' ? 'Logros' : language === 'ru' ? 'Достижения' : language === 'de' ? 'Erfolge' : 'Achievements',
-      url: '/achievements',
+      title: "Achievements",
+      url: "/achievements",
       icon: Trophy,
     },
-  ];
+  ],
+  navSecondary: [
+    {
+      title: "Settings",
+      url: "/settings",
+      icon: Settings2,
+    },
+    {
+      title: "Subscription",
+      url: "/subscription",
+      icon: LifeBuoy,
+    },
+  ],
+}
 
-  const isActive = (url: string) => location.pathname === url;
+export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
+  const { language } = useLanguage()
+
+  const getTranslatedText = (key: string) => {
+    const translations: Record<string, Record<string, string>> = {
+      dashboard: {
+        en: "Dashboard",
+        pt: "Dashboard",
+        es: "Dashboard",
+        ru: "Панель управления",
+        de: "Dashboard"
+      },
+      iagente: {
+        en: "IAgente",
+        pt: "IAgente",
+        es: "IAgente",
+        ru: "ИАгент",
+        de: "IAgent"
+      },
+      campaigns: {
+        en: "Campaigns",
+        pt: "Campanhas",
+        es: "Campañas",
+        ru: "Кампании",
+        de: "Kampagnen"
+      },
+      reports: {
+        en: "Reports",
+        pt: "Relatórios",
+        es: "Informes",
+        ru: "Отчеты",
+        de: "Berichte"
+      },
+      users: {
+        en: "Users",
+        pt: "Usuários",
+        es: "Usuarios",
+        ru: "Пользователи",
+        de: "Benutzer"
+      },
+      adsAccounts: {
+        en: "Ads Accounts",
+        pt: "Contas de Anúncios",
+        es: "Cuentas de Anuncios",
+        ru: "Рекламные аккаунты",
+        de: "Werbekonten"
+      },
+      expenses: {
+        en: "Expenses",
+        pt: "Despesas",
+        es: "Gastos",
+        ru: "Расходы",
+        de: "Ausgaben"
+      },
+      rates: {
+        en: "Rates",
+        pt: "Taxas",
+        es: "Tarifas",
+        ru: "Тарифы",
+        de: "Tarife"
+      },
+      notifications: {
+        en: "Notifications",
+        pt: "Notificações",
+        es: "Notificaciones",
+        ru: "Уведомления",
+        de: "Benachrichtigungen"
+      },
+      progress: {
+        en: "Progress",
+        pt: "Progresso",
+        es: "Progreso",
+        ru: "Прогресс",
+        de: "Fortschritt"
+      },
+      shop: {
+        en: "Shop",
+        pt: "Loja",
+        es: "Tienda",
+        ru: "Магазин",
+        de: "Shop"
+      },
+      achievements: {
+        en: "Achievements",
+        pt: "Conquistas",
+        es: "Logros",
+        ru: "Достижения",
+        de: "Erfolge"
+      },
+      settings: {
+        en: "Settings",
+        pt: "Configurações",
+        es: "Configuraciones",
+        ru: "Настройки",
+        de: "Einstellungen"
+      },
+      subscription: {
+        en: "Subscription",
+        pt: "Assinatura",
+        es: "Suscripción",
+        ru: "Подписка",
+        de: "Abonnement"
+      }
+    }
+    return translations[key]?.[language] || translations[key]?.['en'] || key
+  }
+
+  const translatedNavMain = data.navMain.map(item => ({
+    ...item,
+    title: getTranslatedText(item.title.toLowerCase().replace(/\s+/g, ''))
+  }))
+
+  const translatedNavProgress = data.navProgress.map(item => ({
+    ...item,
+    title: getTranslatedText(item.title.toLowerCase())
+  }))
+
+  const translatedNavSecondary = data.navSecondary.map(item => ({
+    ...item,
+    title: getTranslatedText(item.title.toLowerCase())
+  }))
 
   return (
-    <Sidebar className="bg-black border-yellow-500/20">
-      <SidebarHeader className="p-4 bg-black border-b border-yellow-500/20">
-        <div className="flex items-center space-x-2">
-          <div className="w-8 h-8 bg-gradient-to-r from-yellow-400 to-yellow-600 rounded-lg flex items-center justify-center shadow-lg">
-            <Shield className="text-black w-5 h-5" />
-          </div>
-          <span className="font-bold text-lg bg-gradient-to-r from-yellow-400 to-yellow-600 bg-clip-text text-transparent">
-            SafeAd.AI
-          </span>
-        </div>
+    <Sidebar variant="inset" {...props} className="border-r border-yellow-500/20">
+      <SidebarHeader>
+        <SidebarMenu>
+          <SidebarMenuItem>
+            <SidebarMenuButton size="lg" asChild>
+              <a href="/" className="flex items-center">
+                <div className="flex aspect-square size-8 items-center justify-center rounded-lg bg-gradient-to-br from-yellow-400 to-yellow-600 text-sidebar-primary-foreground">
+                  <Zap className="size-4 text-black" />
+                </div>
+                <div className="grid flex-1 text-left text-sm leading-tight">
+                  <span className="truncate font-semibold">
+                    <span className="text-yellow-400">Otmizy</span>
+                    <span className="text-white">.AI</span>
+                  </span>
+                  <span className="truncate text-xs text-gray-400">Marketing Platform</span>
+                </div>
+              </a>
+            </SidebarMenuButton>
+          </SidebarMenuItem>
+        </SidebarMenu>
       </SidebarHeader>
-      
       <SidebarContent className="bg-black">
-        <SidebarGroup>
-          <SidebarGroupLabel className="text-yellow-400">
-            {language === 'pt' ? 'Menu Principal' : language === 'es' ? 'Menú Principal' : language === 'ru' ? 'Главное меню' : language === 'de' ? 'Hauptmenü' : 'Main Menu'}
-          </SidebarGroupLabel>
-          <SidebarGroupContent>
-            <SidebarMenu>
-              {menuItems.map((item) => (
-                <SidebarMenuItem key={item.title}>
-                  <SidebarMenuButton 
-                    asChild 
-                    isActive={isActive(item.url)}
-                    onClick={() => navigate(item.url)}
-                    className={isActive(item.url) ? 'bg-gradient-to-r from-yellow-500/20 to-yellow-600/20 border-l-3 border-yellow-500 text-yellow-400' : 'hover:bg-yellow-500/10 text-gray-300 hover:text-yellow-400'}
-                  >
-                    <button className="w-full flex items-center">
-                      <item.icon className={`mr-2 h-4 w-4 ${isActive(item.url) ? 'text-yellow-400' : ''}`} />
-                      <span className={isActive(item.url) ? 'text-yellow-400 font-medium' : ''}>{item.title}</span>
-                    </button>
-                  </SidebarMenuButton>
-                </SidebarMenuItem>
-              ))}
-            </SidebarMenu>
-          </SidebarGroupContent>
-        </SidebarGroup>
-        
-        <SidebarSeparator className="bg-yellow-500/20" />
-        
-        <SidebarGroup>
-          <SidebarGroupLabel className="text-yellow-400">
-            {language === 'pt' ? 'Progresso' : language === 'es' ? 'Progreso' : language === 'ru' ? 'Прогресс' : language === 'de' ? 'Fortschritt' : 'Progress'}
-          </SidebarGroupLabel>
-          <SidebarGroupContent>
-            <SidebarMenu>
-              {progressItems.map((item) => (
-                <SidebarMenuItem key={item.title}>
-                  <SidebarMenuButton 
-                    asChild 
-                    isActive={isActive(item.url)}
-                    onClick={() => navigate(item.url)}
-                    className={isActive(item.url) ? 'bg-gradient-to-r from-yellow-500/20 to-yellow-600/20 border-l-3 border-yellow-500 text-yellow-400' : 'hover:bg-yellow-500/10 text-gray-300 hover:text-yellow-400'}
-                  >
-                    <button className="w-full flex items-center">
-                      <item.icon className={`mr-2 h-4 w-4 ${isActive(item.url) ? 'text-yellow-400' : ''}`} />
-                      <span className={isActive(item.url) ? 'text-yellow-400 font-medium' : ''}>{item.title}</span>
-                    </button>
-                  </SidebarMenuButton>
-                </SidebarMenuItem>
-              ))}
-            </SidebarMenu>
-          </SidebarGroupContent>
-        </SidebarGroup>
-        
-        <SidebarSeparator className="bg-yellow-500/20" />
-        
-        <SidebarGroup>
-          <SidebarGroupLabel className="text-yellow-400">
-            {language === 'pt' ? 'Configurações' : language === 'es' ? 'Configuraciones' : language === 'ru' ? 'Настройки' : language === 'de' ? 'Einstellungen' : 'Settings'}
-          </SidebarGroupLabel>
-          <SidebarGroupContent>
-            <SidebarMenu>
-              <SidebarMenuItem>
-                <SidebarMenuButton 
-                  asChild 
-                  isActive={isActive('/settings')}
-                  onClick={() => navigate('/settings')}
-                  className={isActive('/settings') ? 'bg-gradient-to-r from-yellow-500/20 to-yellow-600/20 border-l-3 border-yellow-500 text-yellow-400' : 'hover:bg-yellow-500/10 text-gray-300 hover:text-yellow-400'}
-                >
-                  <button className="w-full flex items-center">
-                    <Settings className={`mr-2 h-4 w-4 ${isActive('/settings') ? 'text-yellow-400' : ''}`} />
-                    <span className={isActive('/settings') ? 'text-yellow-400 font-medium' : ''}>{language === 'pt' ? 'Configurações' : language === 'es' ? 'Configuraciones' : language === 'ru' ? 'Настройки' : language === 'de' ? 'Einstellungen' : 'Settings'}</span>
-                  </button>
-                </SidebarMenuButton>
-              </SidebarMenuItem>
-            </SidebarMenu>
-          </SidebarGroupContent>
-        </SidebarGroup>
+        <NavMain items={translatedNavMain} />
+        <NavProjects 
+          projects={[
+            {
+              name: getTranslatedText('progress'),
+              url: "#",
+              icon: Frame,
+            },
+          ]}
+          progressItems={translatedNavProgress}
+        />
+        <NavSecondary items={translatedNavSecondary} className="mt-auto" />
       </SidebarContent>
-      
-      <SidebarFooter className="p-4 bg-black border-t border-yellow-500/20">
-        <div className="mb-3">
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <button className="flex items-center space-x-2 text-sm text-gray-400 hover:text-yellow-400 transition-colors">
-                <Globe className="h-4 w-4" />
-                <span>{languages.find(lang => lang.code === language)?.name}</span>
-              </button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="end" className="bg-gray-700 border-yellow-500/20 z-50">
-              {languages.map((lang) => (
-                <DropdownMenuItem
-                  key={lang.code}
-                  onClick={() => setLanguage(lang.code as any)}
-                  className="hover:bg-gray-600 text-white"
-                >
-                  {lang.name}
-                </DropdownMenuItem>
-              ))}
-            </DropdownMenuContent>
-          </DropdownMenu>
-        </div>
-        <div className="text-center text-xs text-gray-400 space-y-1">
-          <div className="flex items-center justify-center">
-            <Copyright className="w-3 h-3 mr-1" />
-            <span>2025 SafeAd.AI</span>
-          </div>
-          <div>created by Caio Henrique and Pedro Rossini</div>
-          <div className="text-yellow-400 font-medium">ZEUZ Midia company</div>
-        </div>
+      <SidebarFooter className="bg-black border-t border-yellow-500/20">
+        <NavUser user={data.user} />
       </SidebarFooter>
     </Sidebar>
-  );
+  )
 }

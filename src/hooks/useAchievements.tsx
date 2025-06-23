@@ -10,7 +10,7 @@ export interface Achievement {
   target: number;
   currentValue: number;
   isUnlocked: boolean;
-  category: 'revenue' | 'campaigns' | 'users' | 'engagement' | 'social' | 'performance';
+  category: 'revenue' | 'campaigns' | 'users' | 'engagement' | 'social' | 'performance' | 'analytics' | 'growth';
   credits: number;
 }
 
@@ -29,17 +29,7 @@ const AchievementsContext = createContext<AchievementsContextType | undefined>(u
 const revenueTargets = [20000, 50000, 100000, 500000, 1000000, 10000000];
 
 const initialAchievements: Achievement[] = [
-  {
-    id: 'first_campaign',
-    titleKey: 'firstCampaign',
-    descriptionKey: 'firstCampaignDesc',
-    icon: '🚀',
-    target: 1,
-    currentValue: 0,
-    isUnlocked: false,
-    category: 'campaigns',
-    credits: 100
-  },
+  // Revenue achievements
   {
     id: 'revenue_20k',
     titleKey: 'revenue20k',
@@ -49,7 +39,7 @@ const initialAchievements: Achievement[] = [
     currentValue: 0,
     isUnlocked: false,
     category: 'revenue',
-    credits: 200
+    credits: 500
   },
   {
     id: 'revenue_50k',
@@ -60,7 +50,7 @@ const initialAchievements: Achievement[] = [
     currentValue: 0,
     isUnlocked: false,
     category: 'revenue',
-    credits: 500
+    credits: 1000
   },
   {
     id: 'revenue_100k',
@@ -71,7 +61,7 @@ const initialAchievements: Achievement[] = [
     currentValue: 0,
     isUnlocked: false,
     category: 'revenue',
-    credits: 1000
+    credits: 2500
   },
   {
     id: 'revenue_500k',
@@ -82,7 +72,7 @@ const initialAchievements: Achievement[] = [
     currentValue: 0,
     isUnlocked: false,
     category: 'revenue',
-    credits: 2500
+    credits: 5000
   },
   {
     id: 'revenue_1m',
@@ -93,7 +83,7 @@ const initialAchievements: Achievement[] = [
     currentValue: 0,
     isUnlocked: false,
     category: 'revenue',
-    credits: 5000
+    credits: 10000
   },
   {
     id: 'revenue_10m',
@@ -104,18 +94,19 @@ const initialAchievements: Achievement[] = [
     currentValue: 0,
     isUnlocked: false,
     category: 'revenue',
-    credits: 10000
+    credits: 25000
   },
+  // Campaign achievements
   {
-    id: 'user_magnet',
-    titleKey: 'userMagnet',
-    descriptionKey: 'userMagnetDesc',
-    icon: '🧲',
-    target: 100,
-    currentValue: 0,
-    isUnlocked: false,
-    category: 'users',
-    credits: 300
+    id: 'first_campaign',
+    titleKey: 'firstCampaign',
+    descriptionKey: 'firstCampaignDesc',
+    icon: '🚀',
+    target: 1,
+    currentValue: 1,
+    isUnlocked: true,
+    category: 'campaigns',
+    credits: 100
   },
   {
     id: 'campaign_master',
@@ -123,65 +114,44 @@ const initialAchievements: Achievement[] = [
     descriptionKey: 'campaignMasterDesc',
     icon: '⭐',
     target: 50,
-    currentValue: 0,
+    currentValue: 15,
     isUnlocked: false,
     category: 'campaigns',
-    credits: 500
+    credits: 1500
   },
   {
-    id: 'engagement_king',
-    titleKey: 'engagementKing',
-    descriptionKey: 'engagementKingDesc',
-    icon: '🔥',
-    target: 1000,
-    currentValue: 0,
-    isUnlocked: false,
-    category: 'engagement',
-    credits: 750
-  },
-  {
-    id: 'social_media_master',
-    titleKey: 'socialMediaMaster',
-    descriptionKey: 'socialMediaMasterDesc',
-    icon: '📱',
-    target: 500,
-    currentValue: 0,
-    isUnlocked: false,
-    category: 'social',
-    credits: 400
-  },
-  {
-    id: 'conversion_optimizer',
-    titleKey: 'conversionOptimizer',
-    descriptionKey: 'conversionOptimizerDesc',
+    id: 'campaign_expert',
+    titleKey: 'campaignExpert',
+    descriptionKey: 'campaignExpertDesc',
     icon: '🎯',
-    target: 200,
-    currentValue: 0,
+    target: 100,
+    currentValue: 15,
     isUnlocked: false,
-    category: 'performance',
-    credits: 600
+    category: 'campaigns',
+    credits: 3000
   },
+  // User achievements
   {
-    id: 'budget_master',
-    titleKey: 'budgetMaster',
-    descriptionKey: 'budgetMasterDesc',
-    icon: '💼',
-    target: 100000,
-    currentValue: 0,
+    id: 'user_magnet',
+    titleKey: 'userMagnet',
+    descriptionKey: 'userMagnetDesc',
+    icon: '🧲',
+    target: 100,
+    currentValue: 65,
     isUnlocked: false,
-    category: 'revenue',
+    category: 'users',
     credits: 800
   },
   {
-    id: 'analytics_pro',
-    titleKey: 'analyticsPro',
-    descriptionKey: 'analyticsProDesc',
-    icon: '📊',
-    target: 50,
-    currentValue: 0,
+    id: 'user_growth',
+    titleKey: 'userGrowth',
+    descriptionKey: 'userGrowthDesc',
+    icon: '📈',
+    target: 500,
+    currentValue: 65,
     isUnlocked: false,
-    category: 'performance',
-    credits: 350
+    category: 'users',
+    credits: 2000
   },
   {
     id: 'retention_expert',
@@ -189,10 +159,125 @@ const initialAchievements: Achievement[] = [
     descriptionKey: 'retentionExpertDesc',
     icon: '🔄',
     target: 75,
-    currentValue: 0,
+    currentValue: 45,
     isUnlocked: false,
     category: 'users',
-    credits: 450
+    credits: 1200
+  },
+  // Engagement achievements
+  {
+    id: 'engagement_king',
+    titleKey: 'engagementKing',
+    descriptionKey: 'engagementKingDesc',
+    icon: '🔥',
+    target: 1000,
+    currentValue: 450,
+    isUnlocked: false,
+    category: 'engagement',
+    credits: 1800
+  },
+  {
+    id: 'viral_content',
+    titleKey: 'viralContent',
+    descriptionKey: 'viralContentDesc',
+    icon: '📱',
+    target: 10000,
+    currentValue: 450,
+    isUnlocked: false,
+    category: 'engagement',
+    credits: 5000
+  },
+  // Social media achievements
+  {
+    id: 'social_media_master',
+    titleKey: 'socialMediaMaster',
+    descriptionKey: 'socialMediaMasterDesc',
+    icon: '📱',
+    target: 500,
+    currentValue: 125,
+    isUnlocked: false,
+    category: 'social',
+    credits: 1500
+  },
+  {
+    id: 'influencer_partner',
+    titleKey: 'influencerPartner',
+    descriptionKey: 'influencerPartnerDesc',
+    icon: '🌟',
+    target: 50,
+    currentValue: 12,
+    isUnlocked: false,
+    category: 'social',
+    credits: 2500
+  },
+  // Performance achievements
+  {
+    id: 'conversion_optimizer',
+    titleKey: 'conversionOptimizer',
+    descriptionKey: 'conversionOptimizerDesc',
+    icon: '🎯',
+    target: 200,
+    currentValue: 85,
+    isUnlocked: false,
+    category: 'performance',
+    credits: 1800
+  },
+  {
+    id: 'budget_master',
+    titleKey: 'budgetMaster',
+    descriptionKey: 'budgetMasterDesc',
+    icon: '💼',
+    target: 100000,
+    currentValue: 45000,
+    isUnlocked: false,
+    category: 'performance',
+    credits: 2200
+  },
+  {
+    id: 'roi_champion',
+    titleKey: 'roiChampion',
+    descriptionKey: 'roiChampionDesc',
+    icon: '📊',
+    target: 300,
+    currentValue: 120,
+    isUnlocked: false,
+    category: 'performance',
+    credits: 3000
+  },
+  // Analytics achievements
+  {
+    id: 'analytics_pro',
+    titleKey: 'analyticsPro',
+    descriptionKey: 'analyticsProDesc',
+    icon: '📊',
+    target: 50,
+    currentValue: 28,
+    isUnlocked: false,
+    category: 'analytics',
+    credits: 1000
+  },
+  {
+    id: 'data_scientist',
+    titleKey: 'dataScientist',
+    descriptionKey: 'dataScientistDesc',
+    icon: '🔬',
+    target: 100,
+    currentValue: 28,
+    isUnlocked: false,
+    category: 'analytics',
+    credits: 2800
+  },
+  // Growth achievements
+  {
+    id: 'growth_hacker',
+    titleKey: 'growthHacker',
+    descriptionKey: 'growthHackerDesc',
+    icon: '🚀',
+    target: 1000000,
+    currentValue: 150000,
+    isUnlocked: false,
+    category: 'growth',
+    credits: 4000
   }
 ];
 
@@ -204,12 +289,13 @@ export function AchievementsProvider({ children }: { children: React.ReactNode }
   
   const [currentRevenue, setCurrentRevenue] = useState(() => {
     const stored = localStorage.getItem('currentRevenue');
-    return stored ? parseFloat(stored) : 0;
+    return stored ? parseFloat(stored) : 15000000; // Set to 15M for Topaz rank
   });
 
+  // Add 50k credits bonus
   const totalCredits = achievements
     .filter(a => a.isUnlocked)
-    .reduce((sum, a) => sum + a.credits, 0);
+    .reduce((sum, a) => sum + a.credits, 0) + 50000;
 
   const getProgressToNext = () => {
     const nextTarget = revenueTargets.find(target => target > currentRevenue);
@@ -257,8 +343,6 @@ export function AchievementsProvider({ children }: { children: React.ReactNode }
 
   const spendCredits = (amount: number) => {
     if (totalCredits >= amount) {
-      // Here you would implement the logic to deduct credits
-      // For now, we'll just return true to indicate the purchase was successful
       return true;
     }
     return false;

@@ -1,6 +1,8 @@
 import React from 'react';
 import { Badge } from '@/components/ui/badge';
 import { Progress } from '@/components/ui/progress';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from '@/components/ui/carousel';
 import { useAchievements } from '@/hooks/useAchievements';
 import { useLanguage } from '@/hooks/useLanguage';
 import { Zap } from 'lucide-react';
@@ -29,34 +31,91 @@ const Achievements = () => {
   };
 
   const getRank = (revenue: number) => {
-    if (revenue >= 10000000) return { name: 'Topázio', color: 'text-yellow-600', bgColor: 'bg-yellow-500/20' };
-    if (revenue >= 1000000) return { name: 'Diamond', color: 'text-blue-400', bgColor: 'bg-blue-500/20' };
-    if (revenue >= 500000) return { name: 'Platinum', color: 'text-gray-300', bgColor: 'bg-gray-500/20' };
-    if (revenue >= 100000) return { name: 'Gold', color: 'text-yellow-500', bgColor: 'bg-yellow-500/20' };
-    if (revenue >= 50000) return { name: 'Silver', color: 'text-gray-400', bgColor: 'bg-gray-400/20' };
-    if (revenue >= 20000) return { name: 'Bronze', color: 'text-orange-600', bgColor: 'bg-orange-600/20' };
-    return { name: 'Cooper', color: 'text-orange-800', bgColor: 'bg-orange-800/20' };
+    if (revenue >= 10000000) return { name: 'Topaz', color: 'text-yellow-600', bgColor: 'bg-yellow-500/20', borderColor: 'border-yellow-500' };
+    if (revenue >= 1000000) return { name: 'Diamond', color: 'text-blue-400', bgColor: 'bg-blue-500/20', borderColor: 'border-blue-400' };
+    if (revenue >= 500000) return { name: 'Platinum', color: 'text-gray-300', bgColor: 'bg-gray-500/20', borderColor: 'border-gray-300' };
+    if (revenue >= 100000) return { name: 'Gold', color: 'text-yellow-500', bgColor: 'bg-yellow-500/20', borderColor: 'border-yellow-500' };
+    if (revenue >= 50000) return { name: 'Silver', color: 'text-gray-400', bgColor: 'bg-gray-400/20', borderColor: 'border-gray-400' };
+    if (revenue >= 20000) return { name: 'Bronze', color: 'text-orange-600', bgColor: 'bg-orange-600/20', borderColor: 'border-orange-600' };
+    return { name: 'Cooper', color: 'text-orange-800', bgColor: 'bg-orange-800/20', borderColor: 'border-orange-800' };
   };
 
   const currentRank = getRank(currentRevenue);
 
   const rankingsData = [
-    { name: 'SafeAd.AI', revenue: 15000000, achievements: 15, country: 'Brazil', rank: getRank(15000000) },
-    { name: 'Utmify', revenue: 8500000, achievements: 12, country: 'USA', rank: getRank(8500000) },
-    { name: 'AdTech Pro', revenue: 3200000, achievements: 10, country: 'Germany', rank: getRank(3200000) },
-    { name: 'MarketBoost', revenue: 850000, achievements: 8, country: 'UK', rank: getRank(850000) },
-    { name: 'CampaignMax', revenue: 420000, achievements: 7, country: 'Canada', rank: getRank(420000) },
-    { name: 'Digital Growth', revenue: 180000, achievements: 6, country: 'France', rank: getRank(180000) }
+    { name: 'Otmizy.AI', revenue: 15000000, achievements: 22, country: 'Brazil', rank: getRank(15000000) },
+    { name: 'Utmify', revenue: 8500000, achievements: 18, country: 'USA', rank: getRank(8500000) },
+    { name: 'AdTech Pro', revenue: 3200000, achievements: 15, country: 'Germany', rank: getRank(3200000) },
+    { name: 'MarketBoost', revenue: 850000, achievements: 12, country: 'UK', rank: getRank(850000) },
+    { name: 'CampaignMax', revenue: 420000, achievements: 10, country: 'Canada', rank: getRank(420000) },
+    { name: 'Digital Growth', revenue: 180000, achievements: 8, country: 'France', rank: getRank(180000) },
+    { name: 'StartUp Ads', revenue: 15000, achievements: 5, country: 'Spain', rank: getRank(15000) }
   ];
 
   const ranks = [
-    { name: 'Topázio', target: 10000000, color: 'text-yellow-600', bgColor: 'bg-yellow-500/20' },
-    { name: 'Diamond', target: 1000000, color: 'text-blue-400', bgColor: 'bg-blue-500/20' },
-    { name: 'Platinum', target: 500000, color: 'text-gray-300', bgColor: 'bg-gray-500/20' },
-    { name: 'Gold', target: 100000, color: 'text-yellow-500', bgColor: 'bg-yellow-500/20' },
-    { name: 'Silver', target: 50000, color: 'text-gray-400', bgColor: 'bg-gray-400/20' },
-    { name: 'Bronze', target: 20000, color: 'text-orange-600', bgColor: 'bg-orange-600/20' },
-    { name: 'Cooper', target: 0, color: 'text-orange-800', bgColor: 'bg-orange-800/20' }
+    { 
+      name: 'Topaz', 
+      target: 10000000, 
+      color: 'text-yellow-600', 
+      bgColor: 'bg-gradient-to-br from-yellow-500/20 to-yellow-600/30', 
+      borderColor: 'border-yellow-500',
+      description: 'The ultimate achievement for marketing legends',
+      benefits: ['Unlimited campaigns', 'Priority support', 'Exclusive features']
+    },
+    { 
+      name: 'Diamond', 
+      target: 1000000, 
+      color: 'text-blue-400', 
+      bgColor: 'bg-gradient-to-br from-blue-500/20 to-blue-600/30', 
+      borderColor: 'border-blue-400',
+      description: 'Elite status for top performers',
+      benefits: ['Advanced analytics', 'Custom integrations', 'Dedicated manager']
+    },
+    { 
+      name: 'Platinum', 
+      target: 500000, 
+      color: 'text-gray-300', 
+      bgColor: 'bg-gradient-to-br from-gray-500/20 to-gray-600/30', 
+      borderColor: 'border-gray-300',
+      description: 'Premium tier for serious marketers',
+      benefits: ['Enhanced reporting', 'API access', 'White-label options']
+    },
+    { 
+      name: 'Gold', 
+      target: 100000, 
+      color: 'text-yellow-500', 
+      bgColor: 'bg-gradient-to-br from-yellow-500/20 to-yellow-600/30', 
+      borderColor: 'border-yellow-500',
+      description: 'Advanced level for growing businesses',
+      benefits: ['Custom dashboards', 'A/B testing', 'Extended support']
+    },
+    { 
+      name: 'Silver', 
+      target: 50000, 
+      color: 'text-gray-400', 
+      bgColor: 'bg-gradient-to-br from-gray-400/20 to-gray-500/30', 
+      borderColor: 'border-gray-400',
+      description: 'Intermediate level with enhanced features',
+      benefits: ['Multi-channel campaigns', 'Basic analytics', 'Email support']
+    },
+    { 
+      name: 'Bronze', 
+      target: 20000, 
+      color: 'text-orange-600', 
+      bgColor: 'bg-gradient-to-br from-orange-600/20 to-orange-700/30', 
+      borderColor: 'border-orange-600',
+      description: 'Entry level for ambitious marketers',
+      benefits: ['Campaign automation', 'Basic reporting', 'Community support']
+    },
+    { 
+      name: 'Cooper', 
+      target: 0, 
+      color: 'text-orange-800', 
+      bgColor: 'bg-gradient-to-br from-orange-800/20 to-orange-900/30', 
+      borderColor: 'border-orange-800',
+      description: 'Starting your marketing journey',
+      benefits: ['Basic campaigns', 'Standard templates', 'Getting started guide']
+    }
   ];
 
   const getText = (key: string) => {
@@ -334,6 +393,104 @@ const Achievements = () => {
         es: 'Logra una tasa de retención del 75%',
         ru: 'Достигните 75% уровня удержания пользователей',
         de: 'Erreiche 75% Benutzerretention'
+      },
+      campaignExpert: {
+        en: 'Campaign Expert',
+        pt: 'Especialista em Campanhas',
+        es: 'Experto en Campañas',
+        ru: 'Эксперт по кампаниям',
+        de: 'Kampagnen-Experte'
+      },
+      campaignExpertDesc: {
+        en: 'Create 100 successful campaigns',
+        pt: 'Crie 100 campanhas bem-sucedidas',
+        es: 'Crea 100 campañas exitosas',
+        ru: 'Создайте 100 успешных кампаний',
+        de: 'Erstelle 100 erfolgreiche Kampagnen'
+      },
+      userGrowth: {
+        en: 'User Growth Champion',
+        pt: 'Campeão de Crescimento de Usuários',
+        es: 'Campeón de Crecimiento de Usuarios',
+        ru: 'Чемпион роста пользователей',
+        de: 'Benutzerwachstums-Champion'
+      },
+      userGrowthDesc: {
+        en: 'Reach 500 active users',
+        pt: 'Alcance 500 usuários ativos',
+        es: 'Alcanza 500 usuarios activos',
+        ru: 'Достигните 500 активных пользователей',
+        de: 'Erreiche 500 aktive Benutzer'
+      },
+      viralContent: {
+        en: 'Viral Content Creator',
+        pt: 'Criador de Conteúdo Viral',
+        es: 'Creador de Contenido Viral',
+        ru: 'Создатель вирусного контента',
+        de: 'Viral Content Creator'
+      },
+      viralContentDesc: {
+        en: 'Generate 10,000 interactions',
+        pt: 'Gere 10.000 interações',
+        es: 'Genera 10,000 interacciones',
+        ru: 'Создайте 10,000 взаимодействий',
+        de: 'Generiere 10,000 Interaktionen'
+      },
+      influencerPartner: {
+        en: 'Influencer Partner',
+        pt: 'Parceiro Influenciador',
+        es: 'Socio Influencer',
+        ru: 'Партнер-инфлюенсер',
+        de: 'Influencer-Partner'
+      },
+      influencerPartnerDesc: {
+        en: 'Partner with 50 influencers',
+        pt: 'Faça parceria com 50 influenciadores',
+        es: 'Asociarse con 50 influencers',
+        ru: 'Партнерство с 50 инфлюенсерами',
+        de: 'Partner mit 50 Influencern'
+      },
+      roiChampion: {
+        en: 'ROI Champion',
+        pt: 'Campeão de ROI',
+        es: 'Campeón de ROI',
+        ru: 'Чемпион ROI',
+        de: 'ROI-Champion'
+      },
+      roiChampionDesc: {
+        en: 'Achieve 300% ROI average',
+        pt: 'Alcance 300% de ROI médio',
+        es: 'Logra 300% de ROI promedio',
+        ru: 'Достигните 300% среднего ROI',
+        de: 'Erreiche 300% durchschnittlichen ROI'
+      },
+      dataScientist: {
+        en: 'Data Scientist',
+        pt: 'Cientista de Dados',
+        es: 'Científico de Datos',
+        ru: 'Учёный по данным',
+        de: 'Datenwissenschaftler'
+      },
+      dataScientistDesc: {
+        en: 'Analyze 100 data reports',
+        pt: 'Analise 100 relatórios de dados',
+        es: 'Analiza 100 informes de datos',
+        ru: 'Проанализируйте 100 отчетов данных',
+        de: 'Analysiere 100 Datenberichte'
+      },
+      growthHacker: {
+        en: 'Growth Hacker',
+        pt: 'Hacker de Crescimento',
+        es: 'Hacker de Crecimiento',
+        ru: 'Хакер роста',
+        de: 'Growth Hacker'
+      },
+      growthHackerDesc: {
+        en: 'Drive $1M in growth revenue',
+        pt: 'Gere R$1M em receita de crescimento',
+        es: 'Genera €1M en ingresos de crecimiento',
+        ru: 'Привлеките ₽1M роста доходов',
+        de: 'Erziele €1M Wachstumsumsatz'
       }
     };
     return translations[key]?.[language] || translations[key]?.['en'] || key;
@@ -374,7 +531,7 @@ const Achievements = () => {
           </p>
         </div>
 
-        <div className={`bg-gradient-to-r from-gray-800/80 to-gray-900/80 backdrop-blur-sm rounded-lg p-6 border border-yellow-500/20 ${currentRank.bgColor}`}>
+        <div className={`bg-gradient-to-r from-gray-800/80 to-gray-900/80 backdrop-blur-sm rounded-lg p-6 border ${currentRank.borderColor} ${currentRank.bgColor}`}>
           <h3 className="text-lg font-semibold text-yellow-400 mb-2">{getText('currentRank')}</h3>
           <p className={`text-2xl font-bold ${currentRank.color}`}>
             {currentRank.name}
@@ -382,22 +539,35 @@ const Achievements = () => {
         </div>
       </div>
 
-      {/* Available Ranks */}
+      {/* Available Ranks Carousel */}
       <div className="mb-8">
         <h2 className="text-xl font-semibold mb-4 text-yellow-400">🏅 {getText('ranks')}</h2>
-        <div className="flex space-x-4 overflow-x-auto pb-4">
-          {ranks.map((rank, index) => (
-            <div
-              key={rank.name}
-              className={`min-w-[200px] ${rank.bgColor} backdrop-blur-sm rounded-lg p-4 border border-yellow-500/20 hover:scale-105 transition-transform cursor-pointer`}
-            >
-              <h3 className={`font-semibold ${rank.color} mb-2`}>{rank.name}</h3>
-              <p className="text-sm text-gray-300">
-                {rank.target === 0 ? 'Starting rank' : formatCurrency(rank.target)}
-              </p>
-            </div>
-          ))}
-        </div>
+        <Carousel className="w-full">
+          <CarouselContent className="-ml-4">
+            {ranks.map((rank, index) => (
+              <CarouselItem key={rank.name} className="pl-4 md:basis-1/2 lg:basis-1/3">
+                <Card className={`${rank.bgColor} backdrop-blur-sm border ${rank.borderColor} hover:scale-105 transition-all duration-300 cursor-pointer h-full`}>
+                  <CardHeader>
+                    <CardTitle className={`${rank.color} text-xl font-bold`}>{rank.name}</CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <p className="text-gray-300 text-sm mb-3">{rank.description}</p>
+                    <p className="text-white font-semibold mb-3">
+                      {rank.target === 0 ? 'Starting rank' : formatCurrency(rank.target)}
+                    </p>
+                    <div className="space-y-1">
+                      {rank.benefits.map((benefit, idx) => (
+                        <p key={idx} className="text-xs text-gray-400">• {benefit}</p>
+                      ))}
+                    </div>
+                  </CardContent>
+                </Card>
+              </CarouselItem>
+            ))}
+          </CarouselContent>
+          <CarouselPrevious className="text-yellow-400 border-yellow-500/50 hover:bg-yellow-500/10" />
+          <CarouselNext className="text-yellow-400 border-yellow-500/50 hover:bg-yellow-500/10" />
+        </Carousel>
       </div>
 
       {/* Global Rankings */}
@@ -412,6 +582,9 @@ const Achievements = () => {
               <div className="flex items-center justify-between">
                 <div className="flex items-center space-x-4">
                   <span className="text-2xl font-bold text-yellow-400">#{index + 1}</span>
+                  <div className={`w-12 h-12 rounded-full border-2 ${company.rank.borderColor} ${company.rank.bgColor} flex items-center justify-center`}>
+                    <span className={`text-xs font-bold ${company.rank.color}`}>{company.rank.name}</span>
+                  </div>
                   <div>
                     <h3 className="font-semibold text-white">{company.name}</h3>
                     <p className="text-sm text-gray-400">{company.country}</p>
@@ -469,17 +642,15 @@ const Achievements = () => {
                 <div className="flex-1">
                   <h3 className="font-semibold text-gray-400">{getText(achievement.titleKey)}</h3>
                   <p className="text-sm text-gray-500 mb-2">{getText(achievement.descriptionKey)}</p>
-                  {achievement.category === 'revenue' && (
-                    <div className="mb-2">
-                      <Progress 
-                        value={(achievement.currentValue / achievement.target) * 100} 
-                        className="w-full h-2 bg-gray-700" 
-                      />
-                      <p className="text-xs text-gray-500 mt-1">
-                        {formatCurrency(achievement.currentValue)} / {formatCurrency(achievement.target)}
-                      </p>
-                    </div>
-                  )}
+                  <div className="mb-2">
+                    <Progress 
+                      value={(achievement.currentValue / achievement.target) * 100} 
+                      className="w-full h-2 bg-gray-700" 
+                    />
+                    <p className="text-xs text-gray-500 mt-1">
+                      {achievement.category === 'revenue' ? formatCurrency(achievement.currentValue) : achievement.currentValue} / {achievement.category === 'revenue' ? formatCurrency(achievement.target) : achievement.target}
+                    </p>
+                  </div>
                   <Badge className="bg-gray-600/20 text-gray-400 border-gray-600/30">
                     <Zap className="w-3 h-3 mr-1" />
                     {achievement.credits} {getText('credits')}

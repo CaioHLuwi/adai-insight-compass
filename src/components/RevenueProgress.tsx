@@ -45,32 +45,32 @@ export function RevenueProgress() {
   };
 
   return (
-    <div className="flex items-center justify-between w-full max-w-4xl">
-      <div className="flex flex-col space-y-2 flex-1">
+    <div className="flex items-center justify-between w-full max-w-2xl">
+      <div className="flex flex-col space-y-1 flex-1 mr-4">
         <div className="flex items-center justify-between">
           <div className="flex items-center space-x-2">
-            <span className="text-yellow-400 text-sm font-medium">
+            <span className="text-yellow-400 text-xs font-medium">
               {formatCurrency(currentRevenue)} / {formatCurrency(progressToNext.target)}
             </span>
             <button
               onClick={() => navigate('/achievements')}
-              className="flex items-center space-x-1 hover:bg-yellow-500/10 px-2 py-1 rounded transition-colors"
+              className="flex items-center space-x-1 hover:bg-yellow-500/10 px-1 py-0.5 rounded transition-colors"
             >
-              <Badge className="bg-yellow-500/20 text-yellow-400 border-yellow-500/30 cursor-pointer hover:bg-yellow-500/30">
+              <Badge className="bg-yellow-500/20 text-yellow-400 border-yellow-500/30 cursor-pointer hover:bg-yellow-500/30 text-xs">
                 <span className="mr-1">🏆</span>
                 {getText('achievements')}
               </Badge>
             </button>
           </div>
-          <div className="flex items-center space-x-2">
-            <Zap className="w-4 h-4 text-yellow-400" />
-            <span className="text-yellow-400 font-medium">{totalCredits.toLocaleString()}</span>
-          </div>
         </div>
         <Progress 
           value={progressToNext.percentage} 
-          className="w-full h-3 bg-gray-700"
+          className="w-full h-2 bg-gray-700"
         />
+      </div>
+      <div className="flex items-center space-x-1 ml-2">
+        <Zap className="w-4 h-4 text-yellow-400" />
+        <span className="text-yellow-400 font-medium text-sm">{totalCredits.toLocaleString()}</span>
       </div>
     </div>
   );
