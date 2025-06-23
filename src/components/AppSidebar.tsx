@@ -1,4 +1,3 @@
-
 import * as React from "react"
 import {
   AudioWaveform,
@@ -135,16 +134,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
           <SidebarMenuItem>
             <SidebarMenuButton size="lg" asChild>
               <a href="/">
-                <div className="flex aspect-square size-8 items-center justify-center rounded-lg bg-gradient-to-r from-yellow-400 to-yellow-600 text-sidebar-primary-foreground">
-                  <Zap className="size-4" />
-                </div>
-                <div className="grid flex-1 text-left text-sm leading-tight">
-                  <span className="truncate font-semibold">
-                    <span className="text-yellow-400">Otmizy</span>
-                    <span className="text-white">.AI</span>
-                  </span>
-                  <span className="truncate text-xs">Enterprise</span>
-                </div>
+                <img src="/otmizy_logo_darkmode.png" alt="Otmizy.ai Logo" style={{ height: '32px', width: 'auto' }} />
               </a>
             </SidebarMenuButton>
           </SidebarMenuItem>
@@ -161,3 +151,5 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
     </Sidebar>
   )
 }
+
+
