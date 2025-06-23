@@ -14,6 +14,21 @@ import {
 } from '@/components/ui/select';
 import { Settings } from 'lucide-react';
 
+interface DashboardField {
+  id: string;
+  name: string;
+  nameTranslations: {
+    en: string;
+    pt: string;
+    es: string;
+    ru: string;
+    de: string;
+  };
+  category: 'revenue' | 'costs' | 'metrics';
+  isVisible: boolean;
+  order: number;
+}
+
 const Index = () => {
   const { language } = useLanguage();
   const { updateRevenue } = useAchievements();
@@ -44,7 +59,7 @@ const Index = () => {
   ];
 
   // Sample fields for dashboard configuration
-  const [dashboardFields, setDashboardFields] = useState([
+  const [dashboardFields, setDashboardFields] = useState<DashboardField[]>([
     {
       id: 'gross_revenue',
       name: 'Gross Revenue',

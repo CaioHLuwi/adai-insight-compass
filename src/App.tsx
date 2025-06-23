@@ -24,6 +24,7 @@ import EditAccount from "./pages/EditAccount";
 import NotFound from "./pages/NotFound";
 import Reports from "./pages/Reports";
 import Achievements from "./pages/Achievements";
+import Shop from "./pages/Shop";
 
 const queryClient = new QueryClient();
 
@@ -58,6 +59,7 @@ const App = () => (
                         <Route path="/rates" element={<Rates />} />
                         <Route path="/notifications" element={<Notifications />} />
                         <Route path="/achievements" element={<Achievements />} />
+                        <Route path="/shop" element={<Shop />} />
                         <Route path="/settings" element={<Settings />} />
                         <Route path="/edit-account" element={<EditAccount />} />
                         <Route path="*" element={<NotFound />} />

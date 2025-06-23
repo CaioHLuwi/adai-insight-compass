@@ -4,10 +4,13 @@ import { Badge } from '@/components/ui/badge';
 import { Progress } from '@/components/ui/progress';
 import { useAchievements } from '@/hooks/useAchievements';
 import { useLanguage } from '@/hooks/useLanguage';
+import { useNavigate } from 'react-router-dom';
+import { Lightning } from 'lucide-react';
 
 export function RevenueProgress() {
-  const { currentRevenue, progressToNext, totalEarned } = useAchievements();
+  const { currentRevenue, progressToNext, totalCredits } = useAchievements();
   const { language } = useLanguage();
+  const navigate = useNavigate();
 
   const formatCurrency = (amount: number) => {
     const currencySymbols = {
@@ -42,22 +45,31 @@ export function RevenueProgress() {
   };
 
   return (
-    <div className="flex items-center space-x-4">
-      <div className="flex flex-col space-y-1">
-        <div className="flex items-center space-x-2">
-          <span className="text-yellow-400 text-sm font-medium">
-            {formatCurrency(currentRevenue)} / {formatCurrency(progressToNext.target)}
-          </span>
-          <div className="flex items-center space-x-1">
-            <Badge className="bg-yellow-500/20 text-yellow-400 border-yellow-500/30">
-              <span className="mr-1">🏆</span>
-              {getText('achievements')}
-            </Badge>
+    <div className="flex items-center justify-between w-full max-w-4xl">
+      <div className="flex flex-col space-y-2 flex-1">
+        <div className="flex items-center justify-between">
+          <div className="flex items-center space-x-2">
+            <span className="text-yellow-400 text-sm font-medium">
+              {formatCurrency(currentRevenue)} / {formatCurrency(progressToNext.target)}
+            </span>
+            <button
+              onClick={() => navigate('/achievements')}
+              className="flex items-center space-x-1 hover:bg-yellow-500/10 px-2 py-1 rounded transition-colors"
+            >
+              <Badge className="bg-yellow-500/20 text-yellow-400 border-yellow-500/30 cursor-pointer hover:bg-yellow-500/30">
+                <span className="mr-1">🏆</span>
+                {getText('achievements')}
+              </Badge>
+            </button>
+          </div>
+          <div className="flex items-center space-x-2">
+            <Lightning className="w-4 h-4 text-yellow-400" />
+            <span className="text-yellow-400 font-medium">{totalCredits.toLocaleString()}</span>
           </div>
         </div>
         <Progress 
           value={progressToNext.percentage} 
-          className="w-48 h-2 bg-gray-700"
+          className="w-full h-3 bg-gray-700"
         />
       </div>
     </div>
