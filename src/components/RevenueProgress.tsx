@@ -5,7 +5,7 @@ import { Progress } from '@/components/ui/progress';
 import { useAchievements } from '@/hooks/useAchievements';
 import { useLanguage } from '@/hooks/useLanguage';
 import { useNavigate } from 'react-router-dom';
-import { Lightning } from 'lucide-react';
+import { Zap } from 'lucide-react';
 
 export function RevenueProgress() {
   const { currentRevenue, progressToNext, totalCredits } = useAchievements();
@@ -63,7 +63,7 @@ export function RevenueProgress() {
             </button>
           </div>
           <div className="flex items-center space-x-2">
-            <Lightning className="w-4 h-4 text-yellow-400" />
+            <Zap className="w-4 h-4 text-yellow-400" />
             <span className="text-yellow-400 font-medium">{totalCredits.toLocaleString()}</span>
           </div>
         </div>

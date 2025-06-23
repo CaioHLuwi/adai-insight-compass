@@ -1,10 +1,9 @@
-
 import React from 'react';
 import { Badge } from '@/components/ui/badge';
 import { Progress } from '@/components/ui/progress';
 import { useAchievements } from '@/hooks/useAchievements';
 import { useLanguage } from '@/hooks/useLanguage';
-import { Lightning } from 'lucide-react';
+import { Zap } from 'lucide-react';
 
 const Achievements = () => {
   const { achievements, currentRevenue, totalCredits, progressToNext } = useAchievements();
@@ -206,7 +205,7 @@ const Achievements = () => {
       revenue1mDesc: {
         en: 'Reach $1,000,000 in revenue',
         pt: 'Alcance R$1.000.000 em receita',
-        es: 'Alcanza €1,000,000 en ingresos',
+        es: 'Alcanza €1,000.000 en ingresos',
         ru: 'Достигните ₽1,000,000 дохода',
         de: 'Erreiche €1,000,000 Umsatz'
       },
@@ -355,7 +354,7 @@ const Achievements = () => {
         <div className="bg-gradient-to-r from-gray-800/80 to-gray-900/80 backdrop-blur-sm rounded-lg p-6 border border-yellow-500/20">
           <h3 className="text-lg font-semibold text-yellow-400 mb-2">{getText('totalCredits')}</h3>
           <div className="flex items-center space-x-2">
-            <Lightning className="w-6 h-6 text-yellow-400" />
+            <Zap className="w-6 h-6 text-yellow-400" />
             <p className="text-2xl font-bold text-white">{totalCredits.toLocaleString()}</p>
           </div>
         </div>
@@ -446,7 +445,7 @@ const Achievements = () => {
                   <h3 className="font-semibold text-yellow-400">{getText(achievement.titleKey)}</h3>
                   <p className="text-sm text-gray-300 mb-2">{getText(achievement.descriptionKey)}</p>
                   <Badge className="bg-yellow-500/20 text-yellow-400 border-yellow-500/30">
-                    <Lightning className="w-3 h-3 mr-1" />
+                    <Zap className="w-3 h-3 mr-1" />
                     {achievement.credits} {getText('credits')}
                   </Badge>
                 </div>
@@ -482,7 +481,7 @@ const Achievements = () => {
                     </div>
                   )}
                   <Badge className="bg-gray-600/20 text-gray-400 border-gray-600/30">
-                    <Lightning className="w-3 h-3 mr-1" />
+                    <Zap className="w-3 h-3 mr-1" />
                     {achievement.credits} {getText('credits')}
                   </Badge>
                 </div>

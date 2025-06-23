@@ -1,7 +1,6 @@
 
 import React, { useState } from 'react';
 import SummaryDashboard from '../components/SummaryDashboard';
-import { DashboardConfig } from '../components/DashboardConfig';
 import { Button } from '@/components/ui/button';
 import { useLanguage } from '@/hooks/useLanguage';
 import { useAchievements } from '@/hooks/useAchievements';
@@ -14,26 +13,10 @@ import {
 } from '@/components/ui/select';
 import { Settings } from 'lucide-react';
 
-interface DashboardField {
-  id: string;
-  name: string;
-  nameTranslations: {
-    en: string;
-    pt: string;
-    es: string;
-    ru: string;
-    de: string;
-  };
-  category: 'revenue' | 'costs' | 'metrics';
-  isVisible: boolean;
-  order: number;
-}
-
 const Index = () => {
   const { language } = useLanguage();
   const { updateRevenue } = useAchievements();
   const [selectedDashboard, setSelectedDashboard] = useState('overview');
-  const [isConfigOpen, setIsConfigOpen] = useState(false);
 
   // Sample data for the dashboard
   const totalSpendToday = 2847.32;
@@ -57,52 +40,6 @@ const Index = () => {
       campaign: 'Google Ads'
     }
   ];
-
-  // Sample fields for dashboard configuration
-  const [dashboardFields, setDashboardFields] = useState<DashboardField[]>([
-    {
-      id: 'gross_revenue',
-      name: 'Gross Revenue',
-      nameTranslations: {
-        en: 'Gross Revenue',
-        pt: 'Receita Bruta',
-        es: 'Ingresos Brutos',
-        ru: 'Валовая выручка',
-        de: 'Bruttoeinnahmen'
-      },
-      category: 'revenue' as const,
-      isVisible: true,
-      order: 1
-    },
-    {
-      id: 'spend',
-      name: 'Total Spend',
-      nameTranslations: {
-        en: 'Total Spend',
-        pt: 'Gasto Total',
-        es: 'Gasto Total',
-        ru: 'Общие расходы',
-        de: 'Gesamtausgaben'
-      },
-      category: 'costs' as const,
-      isVisible: true,
-      order: 2
-    },
-    {
-      id: 'roas',
-      name: 'ROAS',
-      nameTranslations: {
-        en: 'ROAS',
-        pt: 'ROAS',
-        es: 'ROAS',
-        ru: 'ROAS',
-        de: 'ROAS'
-      },
-      category: 'metrics' as const,
-      isVisible: true,
-      order: 3
-    }
-  ]);
 
   const dashboardConfigs = {
     overview: {
@@ -170,7 +107,6 @@ const Index = () => {
             </Button>
             <Button
               variant="outline"
-              onClick={() => setIsConfigOpen(true)}
               className="border-yellow-500/50 hover:bg-yellow-500/10 text-yellow-400"
             >
               <Settings className="w-4 h-4 mr-2 text-yellow-400" />
@@ -185,12 +121,7 @@ const Index = () => {
           avgCPA={avgCPA}
           conversionsToday={conversionsToday}
           recentAnomalies={recentAnomalies}
-          visibleFields={dashboardFields.filter(f => f.isVisible)}
-        />
-        
-        <DashboardConfig 
-          fields={dashboardFields}
-          onFieldsChange={setDashboardFields}
+          visibleFields={[]}
         />
       </div>
     </div>

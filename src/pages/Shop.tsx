@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAchievements } from '@/hooks/useAchievements';
@@ -6,7 +5,7 @@ import { useLanguage } from '@/hooks/useLanguage';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Lightning, ShoppingCart, Eye } from 'lucide-react';
+import { Zap, ShoppingCart, Eye } from 'lucide-react';
 
 interface ShopItem {
   id: string;
@@ -295,7 +294,7 @@ const Shop = () => {
                       <div className="flex-1">
                         <p className="text-white text-sm">{getItemName(item)}</p>
                         <div className="flex items-center space-x-1">
-                          <Lightning className="w-3 h-3 text-yellow-400" />
+                          <Zap className="w-3 h-3 text-yellow-400" />
                           <span className="text-yellow-400 text-xs">{item.credits}</span>
                         </div>
                       </div>
@@ -334,7 +333,7 @@ const Shop = () => {
           <div className="flex items-center justify-center space-x-3">
             <span className="text-yellow-400 font-semibold">{getText('totalCredits')}:</span>
             <div className="flex items-center space-x-2">
-              <Lightning className="w-5 h-5 text-yellow-400" />
+              <Zap className="w-5 h-5 text-yellow-400" />
               <span className="text-2xl font-bold text-white">{totalCredits.toLocaleString()}</span>
             </div>
           </div>
@@ -363,7 +362,7 @@ const Shop = () => {
                 <div className="space-y-2 mb-4">
                   <div className="flex items-center justify-between">
                     <div className="flex items-center space-x-2">
-                      <Lightning className="w-4 h-4 text-yellow-400" />
+                      <Zap className="w-4 h-4 text-yellow-400" />
                       <span className="text-yellow-400 font-semibold">{item.credits}</span>
                     </div>
                     <span className="text-gray-400 text-sm">${item.moneyPrice}</span>
