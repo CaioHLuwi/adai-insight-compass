@@ -38,7 +38,7 @@ const Rates = () => {
   ];
 
   return (
-    <div className="p-6 bg-black min-h-screen">
+    <div className="p-6 bg-background min-h-screen">
       <div className="flex justify-between items-center mb-6">
         <h1 className="text-3xl font-bold bg-gradient-to-r from-yellow-500 to-yellow-600 bg-clip-text text-transparent">
           {language === 'pt' ? 'Taxas' : 'Rates'}
@@ -51,7 +51,7 @@ const Rates = () => {
               {language === 'pt' ? 'Adicionar Taxa' : 'Add Rate'}
             </Button>
           </DialogTrigger>
-          <DialogContent className="bg-black border-yellow-500/20">
+          <DialogContent className="bg-background border-yellow-500/20">
             <DialogHeader>
               <DialogTitle className="text-yellow-400">{language === 'pt' ? 'Adicionar Nova Taxa' : 'Add New Rate'}</DialogTitle>
             </DialogHeader>
@@ -60,7 +60,7 @@ const Rates = () => {
                 <Label className="text-yellow-400">{language === 'pt' ? 'Nome da Taxa' : 'Rate Name'}</Label>
                 <Input 
                   placeholder={language === 'pt' ? 'Ex: Taxa de Processamento' : 'Ex: Processing Fee'} 
-                  className="bg-black border-yellow-500/20 text-yellow-400"
+                  className="bg-background border-yellow-500/20 text-yellow-400"
                 />
               </div>
               <div>
@@ -69,23 +69,23 @@ const Rates = () => {
                   type="number" 
                   step="0.1" 
                   placeholder="3.5" 
-                  className="bg-black border-yellow-500/20 text-yellow-400"
+                  className="bg-background border-yellow-500/20 text-yellow-400"
                 />
               </div>
               <div>
                 <Label className="text-yellow-400">{language === 'pt' ? 'Regra de Aplicação' : 'Application Rule'}</Label>
                 <Input 
                   placeholder={language === 'pt' ? 'Ex: Aplicar em todas as vendas' : 'Ex: Apply to all sales'} 
-                  className="bg-black border-yellow-500/20 text-yellow-400"
+                  className="bg-background border-yellow-500/20 text-yellow-400"
                 />
               </div>
               <div>
                 <Label className="text-yellow-400">{language === 'pt' ? 'Método de Pagamento' : 'Payment Method'}</Label>
                 <Select>
-                  <SelectTrigger className="bg-black border-yellow-500/20 text-yellow-400">
+                  <SelectTrigger className="bg-background border-yellow-500/20 text-yellow-400">
                     <SelectValue placeholder={language === 'pt' ? 'Selecione um método' : 'Select a method'} />
                   </SelectTrigger>
-                  <SelectContent className="bg-black border-yellow-500/20">
+                  <SelectContent className="bg-background border-yellow-500/20">
                     {paymentMethods.map((method) => (
                       <SelectItem key={method.value} value={method.value} className="text-yellow-400 hover:bg-yellow-500/10">
                         {method.label}

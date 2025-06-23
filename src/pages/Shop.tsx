@@ -264,7 +264,7 @@ const Shop = () => {
   };
 
   return (
-    <div className="min-h-screen bg-black relative">
+    <div className="min-h-screen bg-background relative">
       <div className="animated-bg"></div>
       
       {/* Fixed Cart Icon */}

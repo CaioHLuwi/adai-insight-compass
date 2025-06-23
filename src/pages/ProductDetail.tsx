@@ -99,7 +99,7 @@ const ProductDetail = () => {
 
   if (!product) {
     return (
-      <div className="min-h-screen bg-black flex items-center justify-center">
+      <div className="min-h-screen bg-background flex items-center justify-center">
         <div className="text-center">
           <h1 className="text-2xl font-bold text-white mb-4">Product Not Found</h1>
           <Button onClick={() => navigate('/shop')} className="bg-yellow-500 hover:bg-yellow-600 text-black">
@@ -180,7 +180,7 @@ const ProductDetail = () => {
   const canAfford = totalCredits >= totalPrice;
 
   return (
-    <div className="min-h-screen bg-black">
+    <div className="min-h-screen bg-background">
       <div className="animated-bg"></div>
       
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">

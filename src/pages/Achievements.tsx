@@ -500,7 +500,7 @@ const Achievements = () => {
   const lockedAchievements = achievements.filter(a => !a.isUnlocked);
 
   return (
-    <div className="p-6 max-w-7xl bg-black min-h-screen">
+    <div className="p-6 max-w-7xl bg-background min-h-screen">
       <div className="animated-bg"></div>
       <h1 className="text-3xl font-bold mb-6 bg-gradient-to-r from-yellow-400 to-yellow-600 bg-clip-text text-transparent">
         🏆 {getText('title')}
