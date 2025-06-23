@@ -20,31 +20,74 @@ const Index = () => {
   const [selectedDashboard, setSelectedDashboard] = useState('overview');
   const [isConfigOpen, setIsConfigOpen] = useState(false);
 
-  const mockData = {
-    totalRevenue: 750000,
-    totalCampaigns: 42,
-    totalUsers: 1250,
-    totalConversions: 8500,
-    revenueChange: 12.5,
-    campaignsChange: 8.3,
-    usersChange: 15.2,
-    conversionsChange: 6.7,
-    monthlyRevenue: [65000, 78000, 82000, 75000, 95000, 88000],
-    campaignPerformance: [
-      { name: 'Campaign A', value: 45000, change: 12 },
-      { name: 'Campaign B', value: 38000, change: -5 },
-      { name: 'Campaign C', value: 52000, change: 18 },
-      { name: 'Campaign D', value: 41000, change: 7 },
-    ],
-    userGrowth: [200, 450, 680, 920, 1100, 1250],
-    conversionRates: [
-      { name: 'Google Ads', rate: 3.2, conversions: 2800 },
-      { name: 'Facebook Ads', rate: 2.8, conversions: 2100 },
-      { name: 'Instagram Ads', rate: 3.5, conversions: 1900 },
-      { name: 'LinkedIn Ads', rate: 4.1, conversions: 1200 },
-      { name: 'TikTok Ads', rate: 2.2, conversions: 500 },
-    ]
-  };
+  // Sample data for the dashboard
+  const totalSpendToday = 2847.32;
+  const avgCPC = 1.24;
+  const avgCPA = 18.75;
+  const conversionsToday = 152;
+  
+  const recentAnomalies = [
+    {
+      id: '1',
+      message: 'CPA spike detected in Campaign A - increased by 45% in the last hour',
+      severity: 'high' as const,
+      timestamp: new Date(Date.now() - 30 * 60 * 1000).toISOString(),
+      campaign: 'Campaign A'
+    },
+    {
+      id: '2',
+      message: 'Conversion rate dropped by 15% for Google Ads',
+      severity: 'medium' as const,
+      timestamp: new Date(Date.now() - 2 * 60 * 60 * 1000).toISOString(),
+      campaign: 'Google Ads'
+    }
+  ];
+
+  // Sample fields for dashboard configuration
+  const [dashboardFields, setDashboardFields] = useState([
+    {
+      id: 'gross_revenue',
+      name: 'Gross Revenue',
+      nameTranslations: {
+        en: 'Gross Revenue',
+        pt: 'Receita Bruta',
+        es: 'Ingresos Brutos',
+        ru: 'Валовая выручка',
+        de: 'Bruttoeinnahmen'
+      },
+      category: 'revenue' as const,
+      isVisible: true,
+      order: 1
+    },
+    {
+      id: 'spend',
+      name: 'Total Spend',
+      nameTranslations: {
+        en: 'Total Spend',
+        pt: 'Gasto Total',
+        es: 'Gasto Total',
+        ru: 'Общие расходы',
+        de: 'Gesamtausgaben'
+      },
+      category: 'costs' as const,
+      isVisible: true,
+      order: 2
+    },
+    {
+      id: 'roas',
+      name: 'ROAS',
+      nameTranslations: {
+        en: 'ROAS',
+        pt: 'ROAS',
+        es: 'ROAS',
+        ru: 'ROAS',
+        de: 'ROAS'
+      },
+      category: 'metrics' as const,
+      isVisible: true,
+      order: 3
+    }
+  ]);
 
   const dashboardConfigs = {
     overview: {
@@ -122,18 +165,17 @@ const Index = () => {
         </div>
         
         <SummaryDashboard 
-          summaryData={mockData} 
-          config={selectedConfig}
+          totalSpendToday={totalSpendToday}
+          avgCPC={avgCPC}
+          avgCPA={avgCPA}
+          conversionsToday={conversionsToday}
+          recentAnomalies={recentAnomalies}
+          visibleFields={dashboardFields.filter(f => f.isVisible)}
         />
         
         <DashboardConfig 
-          open={isConfigOpen}
-          onOpenChange={setIsConfigOpen}
-          currentConfig={selectedConfig}
-          onSave={(newConfig) => {
-            console.log('Saving config:', newConfig);
-            setIsConfigOpen(false);
-          }}
+          fields={dashboardFields}
+          onFieldsChange={setDashboardFields}
         />
       </div>
     </div>
