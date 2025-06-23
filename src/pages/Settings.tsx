@@ -4,7 +4,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { useLanguage } from '@/hooks/useLanguage';
 import { useTheme } from '@/hooks/useTheme';
-import { Moon, Sun, Globe, Save } from 'lucide-react';
+import { Moon, Sun, Globe, Save, Bell } from 'lucide-react';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -12,11 +12,20 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import { Toggle } from '@/components/ui/toggle';
+import { Switch } from '@/components/ui/switch';
 
 const Settings = () => {
   const { language, setLanguage } = useLanguage();
   const { theme, toggleTheme } = useTheme();
   const [apiKey, setApiKey] = useState(localStorage.getItem('manus-api-key') || '');
+  const [notifications, setNotifications] = useState({
+    email: true,
+    push: false,
+    campaigns: true,
+    revenue: true,
+    anomalies: true,
+    reports: false
+  });
 
   const languages = [
     { code: 'en', name: 'English' },
@@ -29,6 +38,10 @@ const Settings = () => {
   const saveApiKey = () => {
     localStorage.setItem('manus-api-key', apiKey);
     alert(language === 'pt' ? 'Chave da API salva!' : 'API Key saved!');
+  };
+
+  const updateNotification = (key: string, value: boolean) => {
+    setNotifications(prev => ({ ...prev, [key]: value }));
   };
 
   const getText = (key: string) => {
@@ -81,6 +94,55 @@ const Settings = () => {
         es: 'Idioma de la Interfaz',
         ru: 'Язык интерфейса',
         de: 'Sprache der Benutzeroberfläche'
+      },
+      notifications: {
+        en: 'Notifications',
+        pt: 'Notificações',
+        es: 'Notificaciones',
+        ru: 'Уведомления',
+        de: 'Benachrichtigungen'
+      },
+      emailNotifications: {
+        en: 'Email Notifications',
+        pt: 'Notificações por Email',
+        es: 'Notificaciones por Email',
+        ru: 'Email уведомления',
+        de: 'E-Mail-Benachrichtigungen'
+      },
+      pushNotifications: {
+        en: 'Push Notifications',
+        pt: 'Notificações Push',
+        es: 'Notificaciones Push',
+        ru: 'Push уведомления',
+        de: 'Push-Benachrichtigungen'
+      },
+      campaignAlerts: {
+        en: 'Campaign Alerts',
+        pt: 'Alertas de Campanhas',
+        es: 'Alertas de Campañas',
+        ru: 'Оповещения о кампаниях',
+        de: 'Kampagnen-Benachrichtigungen'
+      },
+      revenueAlerts: {
+        en: 'Revenue Alerts',
+        pt: 'Alertas de Receita',
+        es: 'Alertas de Ingresos',
+        ru: 'Оповещения о доходах',
+        de: 'Umsatz-Benachrichtigungen'
+      },
+      anomalyDetection: {
+        en: 'Anomaly Detection',
+        pt: 'Detecção de Anomalias',
+        es: 'Detección de Anomalías',
+        ru: 'Обнаружение аномалий',
+        de: 'Anomalie-Erkennung'
+      },
+      weeklyReports: {
+        en: 'Weekly Reports',
+        pt: 'Relatórios Semanais',
+        es: 'Reportes Semanales',
+        ru: 'Еженедельные отчеты',
+        de: 'Wöchentliche Berichte'
       },
       apiSettings: {
         en: 'API Settings',
@@ -190,6 +252,58 @@ const Settings = () => {
                   ))}
                 </DropdownMenuContent>
               </DropdownMenu>
+            </div>
+          </div>
+        </div>
+
+        {/* Notification Settings */}
+        <div className="bg-gradient-to-r from-gray-800/80 to-gray-900/80 backdrop-blur-sm rounded-lg p-6 shadow border border-yellow-500/20">
+          <h2 className="text-xl font-semibold mb-4 flex items-center text-white">
+            <Bell className="mr-2 text-yellow-400" />
+            {getText('notifications')}
+          </h2>
+          <div className="space-y-4">
+            <div className="flex items-center justify-between">
+              <span className="text-gray-300">{getText('emailNotifications')}</span>
+              <Switch 
+                checked={notifications.email}
+                onCheckedChange={(checked) => updateNotification('email', checked)}
+              />
+            </div>
+            <div className="flex items-center justify-between">
+              <span className="text-gray-300">{getText('pushNotifications')}</span>
+              <Switch 
+                checked={notifications.push}
+                onCheckedChange={(checked) => updateNotification('push', checked)}
+              />
+            </div>
+            <div className="flex items-center justify-between">
+              <span className="text-gray-300">{getText('campaignAlerts')}</span>
+              <Switch 
+                checked={notifications.campaigns}
+                onCheckedChange={(checked) => updateNotification('campaigns', checked)}
+              />
+            </div>
+            <div className="flex items-center justify-between">
+              <span className="text-gray-300">{getText('revenueAlerts')}</span>
+              <Switch 
+                checked={notifications.revenue}
+                onCheckedChange={(checked) => updateNotification('revenue', checked)}
+              />
+            </div>
+            <div className="flex items-center justify-between">
+              <span className="text-gray-300">{getText('anomalyDetection')}</span>
+              <Switch 
+                checked={notifications.anomalies}
+                onCheckedChange={(checked) => updateNotification('anomalies', checked)}
+              />
+            </div>
+            <div className="flex items-center justify-between">
+              <span className="text-gray-300">{getText('weeklyReports')}</span>
+              <Switch 
+                checked={notifications.reports}
+                onCheckedChange={(checked) => updateNotification('reports', checked)}
+              />
             </div>
           </div>
         </div>

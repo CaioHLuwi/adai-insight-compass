@@ -4,6 +4,7 @@ import SummaryDashboard from '../components/SummaryDashboard';
 import { Button } from '@/components/ui/button';
 import { useLanguage } from '@/hooks/useLanguage';
 import { useAchievements } from '@/hooks/useAchievements';
+import { DashboardFieldsConfig } from '@/components/DashboardFieldsConfig';
 import {
   Select,
   SelectContent,
@@ -11,12 +12,12 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
-import { Settings } from 'lucide-react';
 
 const Index = () => {
   const { language } = useLanguage();
   const { updateRevenue } = useAchievements();
   const [selectedDashboard, setSelectedDashboard] = useState('overview');
+  const [dashboardFields, setDashboardFields] = useState([]);
 
   // Sample data for the dashboard
   const totalSpendToday = 2847.32;
@@ -105,13 +106,10 @@ const Index = () => {
             >
               Test Revenue +10k
             </Button>
-            <Button
-              variant="outline"
-              className="border-yellow-500/50 hover:bg-yellow-500/10 text-yellow-400"
-            >
-              <Settings className="w-4 h-4 mr-2 text-yellow-400" />
-              {language === 'pt' ? 'Configurar' : language === 'es' ? 'Configurar' : language === 'ru' ? 'Настроить' : language === 'de' ? 'Konfigurieren' : 'Configure'}
-            </Button>
+            <DashboardFieldsConfig 
+              fields={dashboardFields}
+              onFieldsChange={setDashboardFields}
+            />
           </div>
         </div>
         

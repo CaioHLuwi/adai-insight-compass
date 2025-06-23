@@ -19,7 +19,7 @@ import {
   SidebarMenuItem,
   useSidebar,
 } from "@/components/ui/sidebar"
-import { BadgeCheck, Bell, CreditCard, LogOut, Sparkles } from "lucide-react"
+import { BadgeCheck, Bell, CreditCard, LogOut } from "lucide-react"
 import { useNavigate } from "react-router-dom"
 
 export function NavUser({
@@ -77,13 +77,6 @@ export function NavUser({
             </DropdownMenuLabel>
             <DropdownMenuSeparator />
             <DropdownMenuGroup>
-              <DropdownMenuItem>
-                <Sparkles />
-                Upgrade to Pro
-              </DropdownMenuItem>
-            </DropdownMenuGroup>
-            <DropdownMenuSeparator />
-            <DropdownMenuGroup>
               <DropdownMenuItem onClick={() => navigate('/edit-account')}>
                 <BadgeCheck />
                 Account
@@ -92,7 +85,7 @@ export function NavUser({
                 <CreditCard />
                 Billing
               </DropdownMenuItem>
-              <DropdownMenuItem>
+              <DropdownMenuItem onClick={() => navigate('/settings')}>
                 <Bell />
                 Notifications
               </DropdownMenuItem>

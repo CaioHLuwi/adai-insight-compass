@@ -12,6 +12,16 @@ import {
   Settings2,
   SquareTerminal,
   Zap,
+  LayoutDashboard,
+  Users,
+  CreditCard,
+  DollarSign,
+  FileText,
+  Bell,
+  ShoppingBag,
+  Trophy,
+  Settings,
+  Crown
 } from "lucide-react"
 
 import { NavMain } from "@/components/nav-main"
@@ -43,118 +53,76 @@ const data = {
   ],
   navMain: [
     {
-      title: "Playground",
-      url: "#",
-      icon: SquareTerminal,
+      title: "Dashboard",
+      url: "/",
+      icon: LayoutDashboard,
       isActive: true,
-      items: [
-        {
-          title: "History",
-          url: "#",
-        },
-        {
-          title: "Starred",
-          url: "#",
-        },
-        {
-          title: "Settings",
-          url: "#",
-        },
-      ],
     },
     {
-      title: "Models",
-      url: "#",
+      title: "IAgente",
+      url: "/chatbot",
       icon: Bot,
-      items: [
-        {
-          title: "Genesis",
-          url: "#",
-        },
-        {
-          title: "Explorer",
-          url: "#",
-        },
-        {
-          title: "Quantum",
-          url: "#",
-        },
-      ],
     },
     {
-      title: "Documentation",
-      url: "#",
-      icon: BookOpen,
-      items: [
-        {
-          title: "Introduction",
-          url: "#",
-        },
-        {
-          title: "Get Started",
-          url: "#",
-        },
-        {
-          title: "Tutorials",
-          url: "#",
-        },
-        {
-          title: "Changelog",
-          url: "#",
-        },
-      ],
+      title: "Campaigns",
+      url: "/campaigns",
+      icon: PieChart,
     },
     {
-      title: "Settings",
-      url: "#",
-      icon: Settings2,
-      items: [
-        {
-          title: "General",
-          url: "#",
-        },
-        {
-          title: "Team",
-          url: "#",
-        },
-        {
-          title: "Billing",
-          url: "#",
-        },
-        {
-          title: "Limits",
-          url: "#",
-        },
-      ],
+      title: "Users",
+      url: "/users",
+      icon: Users,
+    },
+    {
+      title: "Contas ADS",
+      url: "/ads-accounts",
+      icon: CreditCard,
+    },
+    {
+      title: "Despesas",
+      url: "/expenses",
+      icon: DollarSign,
+    },
+    {
+      title: "Relatórios",
+      url: "/reports",
+      icon: FileText,
+    },
+    {
+      title: "Notificações",
+      url: "/notifications",
+      icon: Bell,
     },
   ],
   navSecondary: [
     {
-      title: "Support",
-      url: "#",
-      icon: BookOpen,
+      title: "Settings",
+      url: "/settings",
+      icon: Settings,
     },
     {
-      title: "Feedback",
-      url: "#",
-      icon: Command,
+      title: "Subscription",
+      url: "/subscription",
+      icon: Crown,
     },
   ],
   projects: [
     {
-      name: "Design Engineering",
+      name: "Em Progresso",
       url: "#",
       icon: Frame,
     },
+  ],
+  progressItems: [
     {
-      name: "Sales & Marketing",
-      url: "#",
-      icon: PieChart,
+      title: "Shop",
+      url: "/shop",
+      icon: ShoppingBag,
     },
     {
-      name: "Travel",
-      url: "#",
-      icon: Map,
+      title: "Achievements",
+      url: "/achievements",
+      icon: Trophy,
     },
   ],
 }
@@ -184,7 +152,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
       </SidebarHeader>
       <SidebarContent>
         <NavMain items={data.navMain} />
-        <NavProjects projects={data.projects} progressItems={[]} />
+        <NavProjects projects={data.projects} progressItems={data.progressItems} />
         <NavSecondary items={data.navSecondary} className="mt-auto" />
       </SidebarContent>
       <SidebarFooter>
