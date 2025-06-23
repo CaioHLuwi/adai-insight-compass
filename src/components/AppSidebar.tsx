@@ -13,7 +13,8 @@ import {
   Bell,
   Shield,
   Copyright,
-  Receipt
+  Receipt,
+  Trophy
 } from 'lucide-react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import {
@@ -138,6 +139,19 @@ export function AppSidebar() {
           </SidebarGroupLabel>
           <SidebarGroupContent>
             <SidebarMenu>
+              <SidebarMenuItem>
+                <SidebarMenuButton 
+                  asChild 
+                  isActive={isActive('/achievements')}
+                  onClick={() => navigate('/achievements')}
+                  className={isActive('/achievements') ? 'bg-gradient-to-r from-yellow-500/20 to-yellow-600/20 border-l-3 border-yellow-500 text-yellow-400' : 'hover:bg-yellow-500/10 text-gray-300 hover:text-yellow-400'}
+                >
+                  <button className="w-full flex items-center">
+                    <Trophy className={`mr-2 h-4 w-4 ${isActive('/achievements') ? 'text-yellow-400' : ''}`} />
+                    <span className={isActive('/achievements') ? 'text-yellow-400 font-medium' : ''}>{language === 'pt' ? 'Conquistas' : language === 'es' ? 'Logros' : language === 'ru' ? 'Достижения' : language === 'de' ? 'Erfolge' : 'Achievements'}</span>
+                  </button>
+                </SidebarMenuButton>
+              </SidebarMenuItem>
               <SidebarMenuItem>
                 <SidebarMenuButton 
                   asChild 
