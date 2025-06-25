@@ -1,11 +1,12 @@
 
 import React, { useState } from 'react';
-import { Eye, EyeOff } from 'lucide-react';
+import { Eye, EyeOff, Globe } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Checkbox } from '@/components/ui/checkbox';
 import { useNavigate } from 'react-router-dom';
+import { useLanguage } from '@/hooks/useLanguage';
 
 export default function Register() {
   const [email, setEmail] = useState('');
@@ -18,6 +19,7 @@ export default function Register() {
   const [passwordError, setPasswordError] = useState('');
   const [confirmPasswordError, setConfirmPasswordError] = useState('');
   const navigate = useNavigate();
+  const { language, toggleLanguage } = useLanguage();
 
   const validateEmail = (email: string) => {
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -111,8 +113,8 @@ export default function Register() {
 
   return (
     <div className="min-h-screen bg-background flex">
-      {/* Left side - 65% */}
-      <div className="flex-1 flex items-center justify-center p-8" style={{ flex: '0 0 65%' }}>
+      {/* Left side - 65% - Hidden on mobile */}
+      <div className="hidden lg:flex flex-1 items-center justify-center p-8" style={{ flex: '0 0 65%' }}>
         <div className="max-w-2xl w-full">
           <div className="relative">
             {/* Illustration placeholder */}
@@ -132,18 +134,18 @@ export default function Register() {
         </div>
       </div>
 
-      {/* Right side - 35% */}
-      <div className="flex items-center justify-center p-8 bg-card/50" style={{ flex: '0 0 35%' }}>
-        <div className="w-full max-w-md space-y-6">
+      {/* Right side - 35% on desktop, full width on mobile */}
+      <div className="flex items-center justify-center p-4 lg:p-8 bg-card/50 w-full lg:w-auto" style={{ flex: '0 0 100%' }}>
+        <div className="w-full max-w-md space-y-6 relative">
           {/* Logo */}
           <div className="text-center mb-8">
             <img 
               src="/horizontal-darkmode.png" 
               alt="Otmizy.ai Logo" 
-              className="h-16 mx-auto mb-6"
+              className="h-12 lg:h-16 mx-auto mb-6"
             />
-            <h1 className="text-2xl font-bold text-foreground mb-2">Create Account</h1>
-            <p className="text-muted-foreground">Join us to start your journey</p>
+            <h1 className="text-xl lg:text-2xl font-bold text-foreground mb-2">Create Account</h1>
+            <p className="text-sm lg:text-base text-muted-foreground">Join us to start your journey</p>
           </div>
 
           <form onSubmit={handleRegister} className="space-y-4">
@@ -248,7 +250,7 @@ export default function Register() {
 
           {/* Link to login */}
           <div className="text-center">
-            <p className="text-muted-foreground">
+            <p className="text-sm lg:text-base text-muted-foreground">
               Already have account?{' '}
               <button
                 onClick={() => navigate('/login')}
@@ -257,6 +259,19 @@ export default function Register() {
                 Enter
               </button>
             </p>
+          </div>
+
+          {/* Language selector - positioned at bottom */}
+          <div className="flex justify-center mt-8">
+            <Button
+              onClick={toggleLanguage}
+              variant="ghost"
+              size="sm"
+              className="text-muted-foreground hover:text-foreground"
+            >
+              <Globe className="w-4 h-4 mr-2" />
+              {language.toUpperCase()}
+            </Button>
           </div>
         </div>
       </div>
