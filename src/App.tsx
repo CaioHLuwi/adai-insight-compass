@@ -1,4 +1,3 @@
-
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -26,6 +25,8 @@ import Reports from "./pages/Reports";
 import Achievements from "./pages/Achievements";
 import Shop from "./pages/Shop";
 import ProductDetail from "./pages/ProductDetail";
+import Login from "./pages/Login";
+import Register from "./pages/Register";
 
 const queryClient = new QueryClient();
 
@@ -38,38 +39,47 @@ const App = () => (
             <Toaster />
             <Sonner />
             <BrowserRouter>
-              <SidebarProvider>
-                <div className="min-h-screen flex w-full bg-sidebarbackground relative">
-                  <div className="animated-bg"></div>
-                  <AppSidebar />
-                  <SidebarInset className="flex-1 bg-background">
-                    <header className="flex h-16 shrink-0 items-center justify-between gap-2 border-b border-yellow-500/20 px-4 bg-background/80 backdrop-blur-sm">
-                      <SidebarTrigger className="-ml-1 text-yellow-400 hover:bg-yellow-500/10" />
-                      <HeaderControls />
-                    </header>
-                    <main className="flex-1 bg-background min-h-screen">
-                      <Routes>
-                        <Route path="/" element={<Index />} />
-                        <Route path="/campaigns" element={<Campaigns />} />
-                        <Route path="/reports" element={<Reports />} />
-                        <Route path="/users" element={<Users />} />
-                        <Route path="/subscription" element={<Subscription />} />
-                        <Route path="/expenses" element={<Expenses />} />
-                        <Route path="/ads-accounts" element={<AdsAccounts />} />
-                        <Route path="/chatbot" element={<Chatbot />} />
-                        <Route path="/rates" element={<Rates />} />
-                        <Route path="/notifications" element={<Notifications />} />
-                        <Route path="/achievements" element={<Achievements />} />
-                        <Route path="/shop" element={<Shop />} />
-                        <Route path="/shop/item/:id" element={<ProductDetail />} />
-                        <Route path="/settings" element={<Settings />} />
-                        <Route path="/edit-account" element={<EditAccount />} />
-                        <Route path="*" element={<NotFound />} />
-                      </Routes>
-                    </main>
-                  </SidebarInset>
-                </div>
-              </SidebarProvider>
+              <Routes>
+                {/* Auth routes without sidebar */}
+                <Route path="/login" element={<Login />} />
+                <Route path="/register" element={<Register />} />
+                
+                {/* Main app routes with sidebar */}
+                <Route path="*" element={
+                  <SidebarProvider>
+                    <div className="min-h-screen flex w-full bg-sidebarbackground relative">
+                      <div className="animated-bg"></div>
+                      <AppSidebar />
+                      <SidebarInset className="flex-1 bg-background">
+                        <header className="flex h-16 shrink-0 items-center justify-between gap-2 border-b border-yellow-500/20 px-4 bg-background/80 backdrop-blur-sm">
+                          <SidebarTrigger className="-ml-1 text-yellow-400 hover:bg-yellow-500/10" />
+                          <HeaderControls />
+                        </header>
+                        <main className="flex-1 bg-background min-h-screen">
+                          <Routes>
+                            <Route path="/" element={<Index />} />
+                            <Route path="/campaigns" element={<Campaigns />} />
+                            <Route path="/reports" element={<Reports />} />
+                            <Route path="/users" element={<Users />} />
+                            <Route path="/subscription" element={<Subscription />} />
+                            <Route path="/expenses" element={<Expenses />} />
+                            <Route path="/ads-accounts" element={<AdsAccounts />} />
+                            <Route path="/chatbot" element={<Chatbot />} />
+                            <Route path="/rates" element={<Rates />} />
+                            <Route path="/notifications" element={<Notifications />} />
+                            <Route path="/achievements" element={<Achievements />} />
+                            <Route path="/shop" element={<Shop />} />
+                            <Route path="/shop/item/:id" element={<ProductDetail />} />
+                            <Route path="/settings" element={<Settings />} />
+                            <Route path="/edit-account" element={<EditAccount />} />
+                            <Route path="*" element={<NotFound />} />
+                          </Routes>
+                        </main>
+                      </SidebarInset>
+                    </div>
+                  </SidebarProvider>
+                } />
+              </Routes>
             </BrowserRouter>
           </TooltipProvider>
         </AchievementsProvider>
