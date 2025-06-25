@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { Eye, EyeOff, Globe } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -45,28 +46,30 @@ export default function Login() {
   return (
     <div className="min-h-screen bg-background flex">
       {/* Left side - 65% - Hidden on mobile */}
-      <div className="hidden lg:flex flex-1 items-center justify-center p-8" style={{ flex: '0 0 65%' }}>
-        <div className="max-w-2xl w-full">
-          <div className="relative">
-            {/* Illustration placeholder */}
-            <div className="w-full h-96 bg-gradient-to-br from-yellow-500/20 to-orange-500/20 rounded-lg flex items-center justify-center relative overflow-hidden">
-              <div className="absolute inset-0 bg-gradient-to-r from-yellow-400/10 to-orange-400/10"></div>
-              <div className="relative z-10 text-center">
-                <div className="text-6xl mb-4">💻</div>
-                <div className="text-4xl mb-4">📊</div>
-                <div className="text-2xl opacity-70">Investment Analytics</div>
+      <div className="hidden lg:block lg:w-[65%] p-8">
+        <div className="h-full flex items-center justify-center">
+          <div className="max-w-2xl w-full">
+            <div className="relative">
+              {/* Illustration placeholder */}
+              <div className="w-full h-96 bg-gradient-to-br from-yellow-500/20 to-orange-500/20 rounded-lg flex items-center justify-center relative overflow-hidden">
+                <div className="absolute inset-0 bg-gradient-to-r from-yellow-400/10 to-orange-400/10"></div>
+                <div className="relative z-10 text-center">
+                  <div className="text-6xl mb-4">💻</div>
+                  <div className="text-4xl mb-4">📊</div>
+                  <div className="text-2xl opacity-70">Investment Analytics</div>
+                </div>
+                {/* Background charts decoration */}
+                <div className="absolute top-4 left-4 w-16 h-16 border-2 border-yellow-400/30 rounded-lg"></div>
+                <div className="absolute bottom-4 right-4 w-12 h-12 border-2 border-orange-400/30 rounded-full"></div>
+                <div className="absolute top-1/2 left-8 w-8 h-8 bg-yellow-400/20 rounded"></div>
               </div>
-              {/* Background charts decoration */}
-              <div className="absolute top-4 left-4 w-16 h-16 border-2 border-yellow-400/30 rounded-lg"></div>
-              <div className="absolute bottom-4 right-4 w-12 h-12 border-2 border-orange-400/30 rounded-full"></div>
-              <div className="absolute top-1/2 left-8 w-8 h-8 bg-yellow-400/20 rounded"></div>
             </div>
           </div>
         </div>
       </div>
 
       {/* Right side - 35% on desktop, full width on mobile */}
-      <div className="flex items-center justify-center p-4 lg:p-8 bg-card/50 w-full lg:w-auto" style={{ flex: '0 0 100%' }}>
+      <div className="w-full lg:w-[35%] flex items-center justify-center p-4 lg:p-8 bg-card/50">
         <div className="w-full max-w-md space-y-6 relative">
           {/* Logo */}
           <div className="text-center mb-8">
