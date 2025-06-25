@@ -1,4 +1,3 @@
-
 import React, { useState, useRef, useEffect } from 'react';
 import { Send, Bot, User } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -19,6 +18,69 @@ const Chatbot = () => {
   const [apiKey, setApiKey] = useState(localStorage.getItem('manus-api-key') || '');
   const [agentType, setAgentType] = useState<'ads' | 'support'>('ads');
   const messagesEndRef = useRef<HTMLDivElement>(null);
+
+  const getTranslations = () => {
+    return {
+      title: {
+        en: 'Otmizy.ai',
+        pt: 'Otmizy.ai',
+        es: 'Otmizy.ai',
+        ru: 'Otmizy.ai',
+        de: 'Otmizy.ai'
+      },
+      apiConfig: {
+        en: 'Manus API Configuration',
+        pt: 'Configuração da API Manus',
+        es: 'Configuración de API Manus',
+        ru: 'Конфигурация API Manus',
+        de: 'Manus API Konfiguration'
+      },
+      apiDescription: {
+        en: 'To use the AI chatbot, you need a Manus API key. You can find your API key at:',
+        pt: 'Para usar o chatbot IA, você precisa de uma chave da API Manus. Você pode encontrar sua chave em:',
+        es: 'Para usar el chatbot de IA, necesitas una clave de API de Manus. Puedes encontrar tu clave de API en:',
+        ru: 'Чтобы использовать ИИ-чатбот, вам нужен ключ API Manus. Вы можете найти свой ключ API по адресу:',
+        de: 'Um den KI-Chatbot zu verwenden, benötigen Sie einen Manus API-Schlüssel. Sie finden Ihren API-Schlüssel unter:'
+      },
+      apiPlaceholder: {
+        en: 'Paste your API key here',
+        pt: 'Cole sua chave da API aqui',
+        es: 'Pega tu clave de API aquí',
+        ru: 'Вставьте ваш ключ API здесь',
+        de: 'Fügen Sie Ihren API-Schlüssel hier ein'
+      },
+      saveApiKey: {
+        en: 'Save API Key',
+        pt: 'Salvar Chave da API',
+        es: 'Guardar Clave de API',
+        ru: 'Сохранить ключ API',
+        de: 'API-Schlüssel speichern'
+      },
+      startConversation: {
+        en: 'Start a conversation with the AI assistant!',
+        pt: 'Comece uma conversa com o assistente IA!',
+        es: '¡Comienza una conversación con el asistente de IA!',
+        ru: 'Начните разговор с ИИ-ассистентом!',
+        de: 'Beginnen Sie ein Gespräch mit dem KI-Assistenten!'
+      },
+      typePlaceholder: {
+        en: 'Type your message...',
+        pt: 'Digite sua mensagem...',
+        es: 'Escribe tu mensaje...',
+        ru: 'Введите ваше сообщение...',
+        de: 'Geben Sie Ihre Nachricht ein...'
+      },
+      errorMessage: {
+        en: 'Sorry, there was an error processing your message. Please check your API key.',
+        pt: 'Desculpe, ocorreu um erro ao processar sua mensagem. Verifique sua chave da API.',
+        es: 'Lo siento, hubo un error al procesar tu mensaje. Por favor verifica tu clave API.',
+        ru: 'Извините, произошла ошибка при обработке вашего сообщения. Пожалуйста, проверьте ваш ключ API.',
+        de: 'Entschuldigung, es gab einen Fehler beim Verarbeiten Ihrer Nachricht. Bitte überprüfen Sie Ihren API-Schlüssel.'
+      }
+    };
+  };
+
+  const translations = getTranslations();
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
@@ -66,9 +128,7 @@ const Chatbot = () => {
       const errorMessage: ChatMessage = {
         id: (Date.now() + 1).toString(),
         role: 'assistant',
-        content: language === 'pt' 
-          ? 'Desculpe, ocorreu um erro ao processar sua mensagem. Verifique sua chave da API.'
-          : 'Sorry, there was an error processing your message. Please check your API key.',
+        content: translations.errorMessage[language] || translations.errorMessage.en,
         timestamp: new Date(),
       };
       setMessages(prev => [...prev, errorMessage]);
@@ -88,28 +148,25 @@ const Chatbot = () => {
     return (
       <div className="p-6">
         <h1 className="text-3xl font-bold mb-6">
-          {language === 'pt' ? 'Chatbot IA' : 'AI Chatbot'}
+          {translations.title[language] || translations.title.en}
         </h1>
         <div className="max-w-md mx-auto bg-white dark:bg-gray-800 rounded-lg p-6 shadow">
           <h2 className="text-xl font-semibold mb-4">
-            {language === 'pt' ? 'Configuração da API Manus' : 'Manus API Configuration'}
+            {translations.apiConfig[language] || translations.apiConfig.en}
           </h2>
           <p className="text-gray-600 dark:text-gray-300 mb-4">
-            {language === 'pt' 
-              ? 'Para usar o chatbot IA, você precisa de uma chave da API Manus. Você pode encontrar sua chave em:'
-              : 'To use the AI chatbot, you need a Manus API key. You can find your API key at:'
-            }
+            {translations.apiDescription[language] || translations.apiDescription.en}
           </p>
           <p className="text-blue-600 font-mono text-sm mb-4">https://manus.chat/dashboard/api-keys</p>
           <div className="space-y-4">
             <Input
               type="password"
-              placeholder={language === 'pt' ? 'Cole sua chave da API aqui' : 'Paste your API key here'}
+              placeholder={translations.apiPlaceholder[language] || translations.apiPlaceholder.en}
               value={apiKey}
               onChange={(e) => setApiKey(e.target.value)}
             />
             <Button onClick={saveApiKey} className="w-full">
-              {language === 'pt' ? 'Salvar Chave da API' : 'Save API Key'}
+              {translations.saveApiKey[language] || translations.saveApiKey.en}
             </Button>
           </div>
         </div>
@@ -121,7 +178,7 @@ const Chatbot = () => {
     <div className="p-6 h-full flex flex-col">
       <div className="flex items-center justify-between mb-6">
         <h1 className="text-3xl font-bold">
-          {language === 'pt' ? 'Chatbot IA' : 'AI Chatbot'}
+          {translations.title[language] || translations.title.en}
         </h1>
         <div className="flex gap-2">
           <Button
@@ -145,10 +202,7 @@ const Chatbot = () => {
         <div className="flex-1 p-4 overflow-y-auto space-y-4">
           {messages.length === 0 && (
             <div className="text-center text-gray-500 dark:text-gray-400">
-              {language === 'pt' 
-                ? 'Comece uma conversa com o assistente IA!'
-                : 'Start a conversation with the AI assistant!'
-              }
+              {translations.startConversation[language] || translations.startConversation.en}
             </div>
           )}
           
@@ -204,7 +258,7 @@ const Chatbot = () => {
               value={inputMessage}
               onChange={(e) => setInputMessage(e.target.value)}
               onKeyPress={handleKeyPress}
-              placeholder={language === 'pt' ? 'Digite sua mensagem...' : 'Type your message...'}
+              placeholder={translations.typePlaceholder[language] || translations.typePlaceholder.en}
               disabled={isLoading}
             />
             <Button onClick={handleSendMessage} disabled={isLoading || !inputMessage.trim()}>

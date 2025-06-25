@@ -1,5 +1,8 @@
 
-import { LucideIcon } from "lucide-react"
+"use client"
+
+import { type LucideIcon } from "lucide-react"
+
 import {
   SidebarGroup,
   SidebarGroupLabel,
@@ -21,6 +24,7 @@ export function NavProjects({
     title: string
     url: string
     icon: LucideIcon
+    disabled?: boolean
   }[]
 }) {
   return (
@@ -29,11 +33,21 @@ export function NavProjects({
       <SidebarMenu>
         {progressItems.map((item) => (
           <SidebarMenuItem key={item.title}>
-            <SidebarMenuButton tooltip={item.title} asChild>
-              <a href={item.url}>
-                <item.icon className="text-yellow-400" />
-                <span>{item.title}</span>
-              </a>
+            <SidebarMenuButton 
+              asChild={!item.disabled}
+              className={item.disabled ? "opacity-60 cursor-not-allowed" : ""}
+            >
+              {item.disabled ? (
+                <div className="flex items-center gap-2">
+                  <item.icon />
+                  <span>{item.title}</span>
+                </div>
+              ) : (
+                <a href={item.url}>
+                  <item.icon />
+                  <span>{item.title}</span>
+                </a>
+              )}
             </SidebarMenuButton>
           </SidebarMenuItem>
         ))}

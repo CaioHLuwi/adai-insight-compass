@@ -5,10 +5,9 @@ import { Progress } from '@/components/ui/progress';
 import { useAchievements } from '@/hooks/useAchievements';
 import { useLanguage } from '@/hooks/useLanguage';
 import { useNavigate } from 'react-router-dom';
-import { Zap } from 'lucide-react';
 
 export function RevenueProgress() {
-  const { currentRevenue, progressToNext, totalCredits } = useAchievements();
+  const { currentRevenue, progressToNext } = useAchievements();
   const { language } = useLanguage();
   const navigate = useNavigate();
 
@@ -46,7 +45,7 @@ export function RevenueProgress() {
 
   return (
     <div className="flex items-center justify-between w-full max-w-2xl">
-      <div className="flex flex-col space-y-1 flex-1 mr-4">
+      <div className="flex flex-col space-y-1 flex-1">
         <div className="flex items-center justify-between">
           <div className="flex items-center space-x-2">
             <span className="text-yellow-400 text-xs font-medium">
@@ -67,10 +66,6 @@ export function RevenueProgress() {
           value={progressToNext.percentage} 
           className="w-full h-2 bg-gray-700"
         />
-      </div>
-      <div className="flex items-center space-x-1 ml-2">
-        <Zap className="w-4 h-4 text-yellow-400" />
-        <span className="text-yellow-400 font-medium text-sm">{totalCredits.toLocaleString()}</span>
       </div>
     </div>
   );
