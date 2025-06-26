@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { Eye, EyeOff } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -25,8 +26,8 @@ export default function Login() {
   const t = (key: string) => getTranslation(language as any, key as any);
 
   const validateEmail = (email: string) => {
-    // More permissive email validation that allows hotmail.com and other domains
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    // Improved email validation that allows all standard domains
+    const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
     return emailRegex.test(email.trim());
   };
 

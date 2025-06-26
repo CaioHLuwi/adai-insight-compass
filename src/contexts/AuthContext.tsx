@@ -71,6 +71,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       email: email.trim().toLowerCase(),
       password,
       options: {
+        emailRedirectTo: `${window.location.origin}/`,
         data: {
           name: name || email.split('@')[0]
         }

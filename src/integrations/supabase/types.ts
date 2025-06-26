@@ -625,7 +625,6 @@ export type Database = {
           email: string
           id: string
           name: string
-          password_hash: string
           role: string
           status: string | null
           updated_at: string | null
@@ -635,7 +634,6 @@ export type Database = {
           email: string
           id?: string
           name: string
-          password_hash: string
           role: string
           status?: string | null
           updated_at?: string | null
@@ -645,7 +643,6 @@ export type Database = {
           email?: string
           id?: string
           name?: string
-          password_hash?: string
           role?: string
           status?: string | null
           updated_at?: string | null
