@@ -229,7 +229,27 @@ const Landing = () => {
   ];
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen bg-background relative overflow-hidden">
+      {/* Geometric Background Pattern */}
+      <div className="fixed inset-0 pointer-events-none opacity-5">
+        <div className="absolute top-20 left-10 w-32 h-32 border border-yellow-500 rotate-45"></div>
+        <div className="absolute top-40 right-20 w-24 h-24 bg-yellow-500/10 rounded-full"></div>
+        <div className="absolute top-80 left-1/4 w-16 h-16 border-2 border-orange-500 rotate-12"></div>
+        <div className="absolute bottom-80 right-10 w-40 h-40 border border-yellow-500 rotate-45"></div>
+        <div className="absolute bottom-40 left-20 w-20 h-20 bg-orange-500/10 rounded-full"></div>
+        <div className="absolute top-1/2 left-10 w-12 h-12 bg-yellow-500/10 rotate-45"></div>
+        <div className="absolute top-1/3 right-1/4 w-28 h-28 border border-orange-500 rounded-full"></div>
+        <div className="absolute bottom-1/3 left-1/3 w-8 h-8 bg-yellow-500/20 rotate-45"></div>
+        
+        {/* Additional geometric shapes */}
+        <div className="absolute top-60 left-1/2 transform -translate-x-1/2">
+          <div className="w-6 h-6 bg-yellow-500/10 rotate-45"></div>
+        </div>
+        <div className="absolute bottom-60 right-1/3">
+          <div className="w-10 h-10 border border-orange-500/30 rounded-full"></div>
+        </div>
+      </div>
+
       {/* Header */}
       <nav className="fixed top-0 w-full bg-background/80 backdrop-blur-md border-b border-yellow-500/20 z-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -267,7 +287,7 @@ const Landing = () => {
       </nav>
 
       {/* Hero Section */}
-      <section className="pt-32 pb-20 px-4 sm:px-6 lg:px-8">
+      <section className="pt-32 pb-20 px-4 sm:px-6 lg:px-8 relative z-10">
         <div className="max-w-7xl mx-auto text-center">
           <Badge className="mb-6 bg-yellow-500/10 text-yellow-400 border-yellow-500/20">
             🚀 Nova versão com IA avançada disponível
@@ -334,14 +354,14 @@ const Landing = () => {
       </section>
 
       {/* Platforms Integration Section */}
-      <section className="py-16 px-4 sm:px-6 lg:px-8 bg-gray-900/20">
+      <section className="py-16 px-4 sm:px-6 lg:px-8 bg-gray-900/20 relative z-10">
         <div className="max-w-7xl mx-auto">
           <div className="text-center mb-12">
             <h2 className="text-3xl md:text-4xl font-bold mb-4">
               Integramos com as melhores plataformas do mercado!
             </h2>
             <p className="text-xl text-muted-foreground">
-              (mais plataformas em breve, confira a lista completa)
+              Conecte suas campanhas de mais de 50 plataformas diferentes
             </p>
           </div>
           <PlatformsCarousel />
@@ -357,7 +377,7 @@ const Landing = () => {
       </section>
 
       {/* Features Section */}
-      <section id="features" className="py-20 px-4 sm:px-6 lg:px-8">
+      <section id="features" className="py-20 px-4 sm:px-6 lg:px-8 relative z-10">
         <div className="max-w-7xl mx-auto">
           <div className="text-center mb-16">
             <h2 className="text-3xl md:text-4xl font-bold mb-4">{getText('featureTitle')}</h2>
@@ -380,7 +400,7 @@ const Landing = () => {
       </section>
 
       {/* Pricing Section */}
-      <section id="pricing" className="py-20 px-4 sm:px-6 lg:px-8 bg-gray-900/20">
+      <section id="pricing" className="py-20 px-4 sm:px-6 lg:px-8 bg-gray-900/20 relative z-10">
         <div className="max-w-7xl mx-auto">
           <div className="text-center mb-16">
             <h2 className="text-3xl md:text-4xl font-bold mb-4">{getText('pricingTitle')}</h2>
@@ -425,7 +445,7 @@ const Landing = () => {
       </section>
 
       {/* Testimonials Section */}
-      <section id="testimonials" className="py-20 px-4 sm:px-6 lg:px-8">
+      <section id="testimonials" className="py-20 px-4 sm:px-6 lg:px-8 relative z-10">
         <div className="max-w-7xl mx-auto">
           <div className="text-center mb-16">
             <h2 className="text-3xl md:text-4xl font-bold mb-4">{getText('testimonialsTitle')}</h2>
@@ -452,7 +472,7 @@ const Landing = () => {
       </section>
 
       {/* CTA Section */}
-      <section className="py-20 px-4 sm:px-6 lg:px-8 bg-gradient-to-r from-yellow-500/10 to-orange-500/10">
+      <section className="py-20 px-4 sm:px-6 lg:px-8 bg-gradient-to-r from-yellow-500/10 to-orange-500/10 relative z-10">
         <div className="max-w-4xl mx-auto text-center">
           <h2 className="text-3xl md:text-4xl font-bold mb-4">{getText('cta')}</h2>
           <p className="text-xl text-muted-foreground mb-8">
@@ -470,7 +490,7 @@ const Landing = () => {
       </section>
 
       {/* Footer */}
-      <footer className="py-12 px-4 sm:px-6 lg:px-8 border-t border-yellow-500/20">
+      <footer className="py-12 px-4 sm:px-6 lg:px-8 border-t border-yellow-500/20 relative z-10">
         <div className="max-w-7xl mx-auto">
           <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
             <div>
@@ -482,8 +502,8 @@ const Landing = () => {
             <div>
               <h4 className="font-semibold mb-4">Produto</h4>
               <ul className="space-y-2 text-muted-foreground">
-                <li><a href="#features" className="hover:text-yellow-400">Recursos</a></li>
-                <li><a href="#pricing" className="hover:text-yellow-400">Preços</a></li>
+                <li><a href="/features" className="hover:text-yellow-400">Recursos</a></li>
+                <li><a href="/pricing" className="hover:text-yellow-400">Preços</a></li>
                 <li><a href="/login" className="hover:text-yellow-400">Login</a></li>
               </ul>
             </div>
