@@ -1,10 +1,10 @@
-
 import React, { useState } from 'react';
-import { Eye, EyeOff, Globe } from 'lucide-react';
+import { Eye, EyeOff, Globe, CheckCircle } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Checkbox } from '@/components/ui/checkbox';
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { useNavigate } from 'react-router-dom';
 import { useLanguage } from '@/hooks/useLanguage';
 import { useAuth } from '@/contexts/AuthContext';
@@ -23,6 +23,7 @@ export default function Register() {
   const [confirmPasswordError, setConfirmPasswordError] = useState('');
   const [registerError, setRegisterError] = useState('');
   const [loading, setLoading] = useState(false);
+  const [showSuccessModal, setShowSuccessModal] = useState(false);
   const navigate = useNavigate();
   const { language, toggleLanguage } = useLanguage();
   const { signUp } = useAuth();
@@ -135,8 +136,11 @@ export default function Register() {
       } else {
         setRegisterError(t('registerError'));
       }
+      setLoading(false);
+    } else {
+      setLoading(false);
+      setShowSuccessModal(true);
     }
-    setLoading(false);
   };
 
   return (
@@ -266,17 +270,29 @@ export default function Register() {
               />
               <label htmlFor="terms" className="text-sm text-muted-foreground leading-relaxed">
                 {t('termsText')}{' '}
-                <a href="#" className="text-yellow-500 hover:text-yellow-400 underline">
+                <button
+                  type="button"
+                  onClick={() => navigate('/terms')}
+                  className="text-yellow-500 hover:text-yellow-400 underline"
+                >
                   {t('termsOfUse')}
-                </a>
+                </button>
                 ,{' '}
-                <a href="#" className="text-yellow-500 hover:text-yellow-400 underline">
+                <button
+                  type="button"
+                  onClick={() => navigate('/privacy')}
+                  className="text-yellow-500 hover:text-yellow-400 underline"
+                >
                   {t('privacyPolicy')}
-                </a>
+                </button>
                 {' '}e{' '}
-                <a href="#" className="text-yellow-500 hover:text-yellow-400 underline">
+                <button
+                  type="button"
+                  onClick={() => navigate('/cookies')}
+                  className="text-yellow-500 hover:text-yellow-400 underline"
+                >
                   {t('cookiesPolicy')}
-                </a>
+                </button>
                 .
               </label>
             </div>
@@ -323,6 +339,34 @@ export default function Register() {
           </div>
         </div>
       </div>
+
+      {/* Success Modal */}
+      <Dialog open={showSuccessModal} onOpenChange={setShowSuccessModal}>
+        <DialogContent className="sm:max-w-md">
+          <DialogHeader>
+            <div className="flex items-center justify-center mb-4">
+              <CheckCircle className="w-16 h-16 text-green-500" />
+            </div>
+            <DialogTitle className="text-center text-xl">
+              {t('registrationSuccess')}
+            </DialogTitle>
+          </DialogHeader>
+          <div className="text-center space-y-4">
+            <p className="text-muted-foreground">
+              {t('confirmationEmailSent')}
+            </p>
+            <Button 
+              onClick={() => {
+                setShowSuccessModal(false);
+                navigate('/login');
+              }}
+              className="w-full bg-yellow-500 hover:bg-yellow-600 text-black"
+            >
+              {t('goToLogin')}
+            </Button>
+          </div>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }

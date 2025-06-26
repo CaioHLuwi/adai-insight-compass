@@ -1,4 +1,3 @@
-
 export const translations = {
   pt: {
     // Login page
@@ -27,6 +26,9 @@ export const translations = {
     termsOfUse: 'Termos de Uso',
     privacyPolicy: 'Política de Privacidade',
     cookiesPolicy: 'Política de Cookies',
+    registrationSuccess: 'Cadastro Realizado!',
+    confirmationEmailSent: 'Um e-mail de confirmação foi enviado para sua caixa de entrada. Verifique seu e-mail e clique no link para ativar sua conta.',
+    goToLogin: 'Ir para Login',
     
     // Errors
     emailRequired: 'E-mail é obrigatório',
@@ -71,6 +73,9 @@ export const translations = {
     termsOfUse: 'Terms of Use',
     privacyPolicy: 'Privacy Policy',
     cookiesPolicy: 'Cookies Policy',
+    registrationSuccess: 'Registration Successful!',
+    confirmationEmailSent: 'A confirmation email has been sent to your inbox. Please check your email and click the link to activate your account.',
+    goToLogin: 'Go to Login',
     
     // Errors
     emailRequired: 'E-mail is required',
@@ -101,7 +106,7 @@ export const translations = {
     clickHere: 'Haz clic aquí',
     resetPassword: 'Restablecer Contraseña',
     sendCode: 'Enviar Código',
-    verificationCode: 'Código de Verificación',
+    verificationCode: 'Código de Verificação',
     verifyCode: 'Verificar Código',
     newPassword: 'Nueva Contraseña',
     confirmPassword: 'Confirmar Contraseña',
@@ -115,6 +120,9 @@ export const translations = {
     termsOfUse: 'Términos de Uso',
     privacyPolicy: 'Política de Privacidad',
     cookiesPolicy: 'Política de Cookies',
+    registrationSuccess: '¡Registro Exitoso!',
+    confirmationEmailSent: 'Se ha enviado un correo de confirmación a tu bandeja de entrada. Revisa tu correo y haz clic en el enlace para activar tu cuenta.',
+    goToLogin: 'Ir al Login',
     
     // Errors
     emailRequired: 'El correo es obligatorio',
