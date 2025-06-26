@@ -13,11 +13,38 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 
+interface DashboardField {
+  id: string;
+  name: string;
+  nameTranslations: Record<string, string>;
+  category: 'revenue' | 'costs' | 'metrics';
+  isVisible: boolean;
+  order: number;
+}
+
+const defaultFields: DashboardField[] = [
+  { id: 'gross_revenue', name: 'Faturamento Bruto', nameTranslations: { pt: 'Faturamento Bruto', en: 'Gross Revenue' }, category: 'revenue', isVisible: true, order: 1 },
+  { id: 'spend', name: 'Gasto', nameTranslations: { pt: 'Gasto', en: 'Spend' }, category: 'costs', isVisible: true, order: 2 },
+  { id: 'roas', name: 'ROAS', nameTranslations: { pt: 'ROAS', en: 'ROAS' }, category: 'metrics', isVisible: true, order: 3 },
+  { id: 'profit', name: 'Lucro', nameTranslations: { pt: 'Lucro', en: 'Profit' }, category: 'revenue', isVisible: true, order: 4 },
+  { id: 'daily_budget', name: 'Orçamento Diário', nameTranslations: { pt: 'Orçamento Diário', en: 'Daily Budget' }, category: 'costs', isVisible: false, order: 5 },
+  { id: 'ctr', name: 'CTR', nameTranslations: { pt: 'CTR', en: 'CTR' }, category: 'metrics', isVisible: false, order: 6 },
+  { id: 'cpa', name: 'CPA', nameTranslations: { pt: 'CPA', en: 'CPA' }, category: 'metrics', isVisible: false, order: 7 },
+  { id: 'cpc', name: 'CPC', nameTranslations: { pt: 'CPC', en: 'CPC' }, category: 'metrics', isVisible: false, order: 8 },
+  { id: 'net_revenue', name: 'Faturamento Líquido', nameTranslations: { pt: 'Faturamento Líquido', en: 'Net Revenue' }, category: 'revenue', isVisible: false, order: 9 },
+  { id: 'rates', name: 'Taxas', nameTranslations: { pt: 'Taxas', en: 'Rates' }, category: 'costs', isVisible: false, order: 10 },
+  { id: 'pending_sales', name: 'Vendas Pendentes', nameTranslations: { pt: 'Vendas Pendentes', en: 'Pending Sales' }, category: 'revenue', isVisible: false, order: 11 },
+  { id: 'roi', name: 'ROI', nameTranslations: { pt: 'ROI', en: 'ROI' }, category: 'metrics', isVisible: false, order: 12 },
+  { id: 'profit_margin', name: 'Margem de Lucro', nameTranslations: { pt: 'Margem de Lucro', en: 'Profit Margin' }, category: 'metrics', isVisible: false, order: 13 },
+  { id: 'tax', name: 'Imposto', nameTranslations: { pt: 'Imposto', en: 'Tax' }, category: 'costs', isVisible: false, order: 14 },
+  { id: 'chargeback', name: 'Chargeback', nameTranslations: { pt: 'Chargeback', en: 'Chargeback' }, category: 'costs', isVisible: false, order: 15 }
+];
+
 const Index = () => {
   const { language } = useLanguage();
   const { updateRevenue } = useAchievements();
   const [selectedDashboard, setSelectedDashboard] = useState('overview');
-  const [dashboardFields, setDashboardFields] = useState([]);
+  const [dashboardFields, setDashboardFields] = useState<DashboardField[]>(defaultFields);
 
   // Sample data for the dashboard
   const totalSpendToday = 2847.32;
@@ -71,6 +98,8 @@ const Index = () => {
     updateRevenue(10000);
   };
 
+  const visibleFields = dashboardFields.filter(field => field.isVisible).sort((a, b) => a.order - b.order);
+
   return (
     <div className="min-h-screen bg-background">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 bg-background">
@@ -119,7 +148,7 @@ const Index = () => {
           avgCPA={avgCPA}
           conversionsToday={conversionsToday}
           recentAnomalies={recentAnomalies}
-          visibleFields={[]}
+          visibleFields={visibleFields}
         />
       </div>
     </div>
