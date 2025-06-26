@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -36,6 +35,26 @@ export function DashboardConfig({ fields, onFieldsChange }: DashboardConfigProps
 
   const visibleFields = fields.filter(f => f.isVisible).sort((a, b) => a.order - b.order);
   const hiddenFields = fields.filter(f => !f.isVisible);
+
+  const availableFields = [
+    { key: 'receita_bruta', label: 'Receita Bruta', type: 'currency' as const },
+    { key: 'receita_liquida', label: 'Receita Líquida', type: 'currency' as const },
+    { key: 'orcamento_diario', label: 'Orçamento Diário', type: 'currency' as const },
+    { key: 'gasto', label: 'Gasto', type: 'currency' as const },
+    { key: 'lucro', label: 'Lucro', type: 'currency' as const },
+    { key: 'faturamento_bruto', label: 'Faturamento Bruto', type: 'currency' as const },
+    { key: 'faturamento_liquido', label: 'Faturamento Líquido', type: 'currency' as const },
+    { key: 'ctr', label: 'CTR', type: 'percentage' as const },
+    { key: 'cpa', label: 'CPA', type: 'currency' as const },
+    { key: 'cpc', label: 'CPC', type: 'currency' as const },
+    { key: 'roas', label: 'ROAS', type: 'number' as const },
+    { key: 'roi', label: 'ROI', type: 'percentage' as const },
+    { key: 'margem_lucro', label: 'Margem de Lucro', type: 'percentage' as const },
+    { key: 'vendas_pendentes', label: 'Vendas Pendentes', type: 'number' as const },
+    { key: 'imposto', label: 'Imposto', type: 'currency' as const },
+    { key: 'chargeback', label: 'Chargeback', type: 'currency' as const },
+    { key: 'taxas', label: 'Taxas', type: 'currency' as const },
+  ];
 
   const getText = (key: string) => {
     const translations: Record<string, Record<string, string>> = {

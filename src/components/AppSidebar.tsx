@@ -1,244 +1,149 @@
-
-import * as React from "react"
+import React from "react"
 import {
-  AudioWaveform,
-  BookOpen,
+  BarChart3,
   Bot,
+  ChevronRight,
   Command,
-  Frame,
-  GalleryVerticalEnd,
-  Map,
-  PieChart,
-  Settings2,
-  SquareTerminal,
-  Zap,
-  LayoutDashboard,
-  Users,
   CreditCard,
-  DollarSign,
-  FileText,
-  Bell,
-  Trophy,
+  Crown,
+  HelpCircle,
+  LayoutDashboard,
+  Receipt,
   Settings,
-  Crown
+  Target,
+  Users,
 } from "lucide-react"
-
-import { NavMain } from "@/components/nav-main"
-import { NavProjects } from "@/components/nav-projects"
-import { NavSecondary } from "@/components/nav-secondary"
+import { LucideIcon } from "lucide-react"
+import { Sidebar } from "@/components/ui/sidebar"
+import { SidebarFooter } from "@/components/ui/sidebar-footer"
+import { SidebarHeader } from "@/components/ui/sidebar-header"
+import { SidebarContent } from "@/components/ui/sidebar-content"
+import { SidebarMenu } from "@/components/ui/sidebar-menu"
+import { SidebarMenuItem } from "@/components/ui/sidebar-menu-item"
+import { SidebarMenuButton } from "@/components/ui/sidebar-menu-button"
+import { SidebarGroup } from "@/components/ui/sidebar-group"
+import { SidebarGroupLabel } from "@/components/ui/sidebar-group-label"
+import { SidebarMenuAction } from "@/components/ui/sidebar-menu-action"
+import { SidebarMenuSub } from "@/components/ui/sidebar-menu-sub"
+import { SidebarMenuSubItem } from "@/components/ui/sidebar-menu-sub-item"
+import { SidebarMenuSubButton } from "@/components/ui/sidebar-menu-sub-button"
 import { NavUser } from "@/components/nav-user"
-import { useLanguage } from "@/hooks/useLanguage"
 import {
-  Sidebar,
-  SidebarContent,
-  SidebarFooter,
-  SidebarHeader,
-  SidebarMenu,
-  SidebarMenuButton,
-  SidebarMenuItem,
-} from "@/components/ui/sidebar"
+  Collapsible,
+  CollapsibleContent,
+  CollapsibleTrigger,
+} from "@/components/ui/collapsible"
+import { useNavigate, useLocation } from "react-router-dom"
+
+const data = {
+  user: {
+    name: "Timo Breumelhof",
+    handle: "@timobreumelhof",
+    image: "/avatars/01.png",
+  },
+}
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
-  const { language } = useLanguage();
+  const navigate = useNavigate();
+  const location = useLocation();
 
-  const getTranslations = () => {
-    const translations = {
-      dashboard: {
-        en: 'Dashboard',
-        pt: 'Dashboard',
-        es: 'Dashboard',
-        ru: 'Панель управления',
-        de: 'Dashboard'
-      },
-      otmizy: {
-        en: 'Otmizy.ai',
-        pt: 'Otmizy.ai',
-        es: 'Otmizy.ai',
-        ru: 'Otmizy.ai',
-        de: 'Otmizy.ai'
-      },
-      campaigns: {
-        en: 'Campaigns',
-        pt: 'Campanhas',
-        es: 'Campañas',
-        ru: 'Кампании',
-        de: 'Kampagnen'
-      },
-      users: {
-        en: 'Users',
-        pt: 'Usuários',
-        es: 'Usuarios',
-        ru: 'Пользователи',
-        de: 'Benutzer'
-      },
-      adsAccounts: {
-        en: 'Ads Accounts',
-        pt: 'Contas ADS',
-        es: 'Cuentas de Anuncios',
-        ru: 'Рекламные аккаунты',
-        de: 'Werbekonten'
-      },
-      expenses: {
-        en: 'Expenses',
-        pt: 'Despesas',
-        es: 'Gastos',
-        ru: 'Расходы',
-        de: 'Ausgaben'
-      },
-      reports: {
-        en: 'Reports',
-        pt: 'Relatórios',
-        es: 'Informes',
-        ru: 'Отчеты',
-        de: 'Berichte'
-      },
-      notifications: {
-        en: 'Notifications',
-        pt: 'Notificações',
-        es: 'Notificaciones',
-        ru: 'Уведомления',
-        de: 'Benachrichtigungen'
-      },
-      settings: {
-        en: 'Settings',
-        pt: 'Configurações',
-        es: 'Configuración',
-        ru: 'Настройки',
-        de: 'Einstellungen'
-      },
-      subscription: {
-        en: 'Subscription',
-        pt: 'Assinatura',
-        es: 'Suscripción',
-        ru: 'Подписка',
-        de: 'Abonnement'
-      },
-      inProgress: {
-        en: 'In Progress',
-        pt: 'Em Progresso',
-        es: 'En Progreso',
-        ru: 'В процессе',
-        de: 'In Bearbeitung'
-      },
-      achievements: {
-        en: 'Achievements',
-        pt: 'Conquistas',
-        es: 'Logros',
-        ru: 'Достижения',
-        de: 'Erfolge'
-      }
-    };
-
-    return translations;
-  };
-
-  const translations = getTranslations();
-
-  const data = {
-    user: {
-      name: "Caio Henrique",
-      email: "caio@otmizy.ai",
-      avatar: "/avatars/shadcn.jpg",
+  const navMain = [
+    {
+      title: "Dashboard",
+      url: "/dashboard",
+      icon: LayoutDashboard,
+      isActive: location.pathname === "/dashboard",
     },
-    teams: [
-      {
-        name: "Otmizy.AI",
-        logo: GalleryVerticalEnd,
-        plan: "Enterprise",
-      },
-    ],
-    navMain: [
-      {
-        title: translations.dashboard[language] || translations.dashboard.en,
-        url: "/",
-        icon: LayoutDashboard,
-        isActive: true,
-      },
-      {
-        title: translations.otmizy[language] || translations.otmizy.en,
-        url: "/chatbot",
-        icon: Bot,
-      },
-      {
-        title: translations.campaigns[language] || translations.campaigns.en,
-        url: "/campaigns",
-        icon: PieChart,
-      },
-      {
-        title: translations.users[language] || translations.users.en,
-        url: "/users",
-        icon: Users,
-      },
-      {
-        title: translations.adsAccounts[language] || translations.adsAccounts.en,
-        url: "/ads-accounts",
-        icon: CreditCard,
-      },
-      {
-        title: translations.expenses[language] || translations.expenses.en,
-        url: "/expenses",
-        icon: DollarSign,
-      },
-      {
-        title: translations.reports[language] || translations.reports.en,
-        url: "/reports",
-        icon: FileText,
-      },
-      {
-        title: translations.notifications[language] || translations.notifications.en,
-        url: "/notifications",
-        icon: Bell,
-      },
-    ],
-    navSecondary: [
-      {
-        title: translations.settings[language] || translations.settings.en,
-        url: "/settings",
-        icon: Settings,
-      },
-      {
-        title: translations.subscription[language] || translations.subscription.en,
-        url: "/subscription",
-        icon: Crown,
-      },
-    ],
-    projects: [
-      {
-        name: translations.inProgress[language] || translations.inProgress.en,
-        url: "#",
-        icon: Frame,
-      },
-    ],
-    progressItems: [
-      {
-        title: translations.achievements[language] || translations.achievements.en,
-        url: "/achievements",
-        icon: Trophy,
-      },
-    ],
-  }
+    {
+      title: "Campanhas",
+      url: "/campaigns", 
+      icon: Target,
+      isActive: location.pathname === "/campaigns",
+    },
+    {
+      title: "Relatórios",
+      url: "/reports",
+      icon: BarChart3,
+      isActive: location.pathname === "/reports",
+    },
+    {
+      title: "Contas de Anúncios",
+      url: "/ads-accounts",
+      icon: CreditCard,
+      isActive: location.pathname === "/ads-accounts",
+    },
+    {
+      title: "Chat IA",
+      url: "/ai-chat",
+      icon: Bot,
+      isActive: location.pathname === "/ai-chat",
+    },
+    {
+      title: "Taxas",
+      url: "/taxas",
+      icon: Receipt,
+      isActive: location.pathname === "/taxas",
+    },
+  ];
+
+  const navSecondary = [
+    {
+      title: "Configurações",
+      url: "/settings",
+      icon: Settings,
+      isActive: location.pathname === "/settings",
+    },
+    {
+      title: "Usuários",
+      url: "/users",
+      icon: Users,
+      isActive: location.pathname === "/users",
+    },
+    {
+      title: "Assinatura",
+      url: "/subscription",
+      icon: Crown,
+      isActive: location.pathname === "/subscription",
+    },
+    {
+      title: "Suporte",
+      url: "#",
+      icon: HelpCircle,
+      isActive: false,
+    },
+  ];
 
   return (
     <Sidebar variant="inset" {...props}>
       <SidebarHeader>
         <SidebarMenu>
           <SidebarMenuItem>
-            <SidebarMenuButton size="lg" asChild>
-              <a href="/">
-                <img src="/horizontal-darkmode.png" alt="Otmizy.ai Logo" style={{ height: '47px', width: 'auto' }} />
-              </a>
+            <SidebarMenuButton 
+              size="lg" 
+              asChild
+              onClick={() => navigate('/dashboard')}
+              className="cursor-pointer"
+            >
+              <div>
+                <div className="flex aspect-square size-8 items-center justify-center rounded-lg bg-yellow-500 text-black">
+                  <Command className="size-4" />
+                </div>
+                <div className="grid flex-1 text-left text-sm leading-tight">
+                  <span className="truncate font-semibold">Otmizy.ai</span>
+                  <span className="truncate text-xs">Enterprise</span>
+                </div>
+              </div>
             </SidebarMenuButton>
           </SidebarMenuItem>
         </SidebarMenu>
       </SidebarHeader>
       <SidebarContent>
-        <NavMain items={data.navMain} />
-        <NavProjects projects={data.projects} progressItems={data.progressItems} />
-        <NavSecondary items={data.navSecondary} className="mt-auto" />
+        <NavMain items={navMain} />
+        <NavSecondary items={navSecondary} className="mt-auto" />
       </SidebarContent>
       <SidebarFooter>
         <NavUser user={data.user} />
       </SidebarFooter>
     </Sidebar>
-  )
+  );
 }

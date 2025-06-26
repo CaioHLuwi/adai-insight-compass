@@ -23,19 +23,55 @@ export function NavMain({
     }[]
   }[]
 }) {
+  const navigate = useNavigate();
+
   return (
     <SidebarGroup>
       <SidebarGroupLabel>Platform</SidebarGroupLabel>
       <SidebarMenu>
         {items.map((item) => (
-          <SidebarMenuItem key={item.title}>
-            <SidebarMenuButton tooltip={item.title} asChild>
-              <a href={item.url} className={cn(item.isActive && "bg-yellow-500/20 text-yellow-400")}>
-                {item.icon && <item.icon className="text-yellow-400" />}
+          <Collapsible
+            key={item.title}
+            asChild
+            defaultOpen={item.isActive}
+            className="group/collapsible"
+          >
+            <SidebarMenuItem>
+              <SidebarMenuButton 
+                tooltip={item.title}
+                onClick={() => navigate(item.url)}
+                className={`cursor-pointer ${item.isActive ? 'bg-yellow-500/20 text-yellow-400 font-semibold' : ''}`}
+              >
+                {item.icon && <item.icon />}
                 <span>{item.title}</span>
-              </a>
-            </SidebarMenuButton>
-          </SidebarMenuItem>
+              </SidebarMenuButton>
+              {item.items?.length ? (
+                <>
+                  <CollapsibleTrigger asChild>
+                    <SidebarMenuAction className="data-[state=open]:rotate-90">
+                      <ChevronRight />
+                      <span className="sr-only">Toggle</span>
+                    </SidebarMenuAction>
+                  </CollapsibleTrigger>
+                  <CollapsibleContent>
+                    <SidebarMenuSub>
+                      {item.items?.map((subItem) => (
+                        <SidebarMenuSubItem key={subItem.title}>
+                          <SidebarMenuSubButton 
+                            asChild
+                            onClick={() => navigate(subItem.url)}
+                            className="cursor-pointer"
+                          >
+                            <span>{subItem.title}</span>
+                          </SidebarMenuSubButton>
+                        </SidebarMenuSubItem>
+                      ))}
+                    </SidebarMenuSub>
+                  </CollapsibleContent>
+                </>
+              ) : null}
+            </SidebarMenuItem>
+          </Collapsible>
         ))}
       </SidebarMenu>
     </SidebarGroup>
