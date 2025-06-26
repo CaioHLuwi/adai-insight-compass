@@ -1,86 +1,32 @@
+
 import React, { useState, useRef, useEffect } from 'react';
-import { Send, Bot, User } from 'lucide-react';
+import { Send, Bot, User, Sparkles, TrendingUp, Target, Zap, BarChart3, Settings, MessageCircle } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Badge } from '@/components/ui/badge';
 import { useLanguage } from '@/hooks/useLanguage';
-import { ManusService, ManusMessage } from '@/services/manusService';
 
-interface ChatMessage extends ManusMessage {
+interface ChatMessage {
   id: string;
+  role: 'user' | 'assistant';
+  content: string;
   timestamp: Date;
 }
 
 const Chatbot = () => {
   const { language } = useLanguage();
-  const [messages, setMessages] = useState<ChatMessage[]>([]);
+  const [messages, setMessages] = useState<ChatMessage[]>([
+    {
+      id: '1',
+      role: 'assistant',
+      content: 'Olá! Eu sou a Izy, sua assistente de IA da Otmizy! 🚀 Como posso ajudá-lo a otimizar suas campanhas hoje?',
+      timestamp: new Date(),
+    }
+  ]);
   const [inputMessage, setInputMessage] = useState('');
   const [isLoading, setIsLoading] = useState(false);
-  const [apiKey, setApiKey] = useState(localStorage.getItem('manus-api-key') || '');
-  const [agentType, setAgentType] = useState<'ads' | 'support'>('ads');
   const messagesEndRef = useRef<HTMLDivElement>(null);
-
-  const getTranslations = () => {
-    return {
-      title: {
-        en: 'Otmizy.ai',
-        pt: 'Otmizy.ai',
-        es: 'Otmizy.ai',
-        ru: 'Otmizy.ai',
-        de: 'Otmizy.ai'
-      },
-      apiConfig: {
-        en: 'Manus API Configuration',
-        pt: 'Configuração da API Manus',
-        es: 'Configuración de API Manus',
-        ru: 'Конфигурация API Manus',
-        de: 'Manus API Konfiguration'
-      },
-      apiDescription: {
-        en: 'To use the AI chatbot, you need a Manus API key. You can find your API key at:',
-        pt: 'Para usar o chatbot IA, você precisa de uma chave da API Manus. Você pode encontrar sua chave em:',
-        es: 'Para usar el chatbot de IA, necesitas una clave de API de Manus. Puedes encontrar tu clave de API en:',
-        ru: 'Чтобы использовать ИИ-чатбот, вам нужен ключ API Manus. Вы можете найти свой ключ API по адресу:',
-        de: 'Um den KI-Chatbot zu verwenden, benötigen Sie einen Manus API-Schlüssel. Sie finden Ihren API-Schlüssel unter:'
-      },
-      apiPlaceholder: {
-        en: 'Paste your API key here',
-        pt: 'Cole sua chave da API aqui',
-        es: 'Pega tu clave de API aquí',
-        ru: 'Вставьте ваш ключ API здесь',
-        de: 'Fügen Sie Ihren API-Schlüssel hier ein'
-      },
-      saveApiKey: {
-        en: 'Save API Key',
-        pt: 'Salvar Chave da API',
-        es: 'Guardar Clave de API',
-        ru: 'Сохранить ключ API',
-        de: 'API-Schlüssel speichern'
-      },
-      startConversation: {
-        en: 'Start a conversation with the AI assistant!',
-        pt: 'Comece uma conversa com o assistente IA!',
-        es: '¡Comienza una conversación con el asistente de IA!',
-        ru: 'Начните разговор с ИИ-ассистентом!',
-        de: 'Beginnen Sie ein Gespräch mit dem KI-Assistenten!'
-      },
-      typePlaceholder: {
-        en: 'Type your message...',
-        pt: 'Digite sua mensagem...',
-        es: 'Escribe tu mensaje...',
-        ru: 'Введите ваше сообщение...',
-        de: 'Geben Sie Ihre Nachricht ein...'
-      },
-      errorMessage: {
-        en: 'Sorry, there was an error processing your message. Please check your API key.',
-        pt: 'Desculpe, ocorreu um erro ao processar sua mensagem. Verifique sua chave da API.',
-        es: 'Lo siento, hubo un error al procesar tu mensaje. Por favor verifica tu clave API.',
-        ru: 'Извините, произошла ошибка при обработке вашего сообщения. Пожалуйста, проверьте ваш ключ API.',
-        de: 'Entschuldigung, es gab einen Fehler beim Verarbeiten Ihrer Nachricht. Bitte überprüfen Sie Ihren API-Schlüssel.'
-      }
-    };
-  };
-
-  const translations = getTranslations();
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
@@ -90,31 +36,120 @@ const Chatbot = () => {
     scrollToBottom();
   }, [messages]);
 
-  const saveApiKey = () => {
-    localStorage.setItem('manus-api-key', apiKey);
+  const quickActions = [
+    {
+      title: 'Estratégias de Marketing',
+      description: 'Desenvolva estratégias personalizadas',
+      icon: <Target className="w-6 h-6" />,
+      color: 'bg-blue-500',
+      prompt: 'Preciso de estratégias de marketing para minha campanha'
+    },
+    {
+      title: 'Otimizar Campanhas',
+      description: 'Melhore o desempenho das suas campanhas',
+      icon: <TrendingUp className="w-6 h-6" />,
+      color: 'bg-green-500',
+      prompt: 'Como posso otimizar minhas campanhas atuais?'
+    },
+    {
+      title: 'Análise de Métricas',
+      description: 'Entenda suas métricas e KPIs',
+      icon: <BarChart3 className="w-6 h-6" />,
+      color: 'bg-purple-500',
+      prompt: 'Preciso analisar as métricas das minhas campanhas'
+    },
+    {
+      title: 'Automação',
+      description: 'Configure automações inteligentes',
+      icon: <Zap className="w-6 h-6" />,
+      color: 'bg-yellow-500',
+      prompt: 'Como configurar automações para minhas campanhas?'
+    },
+    {
+      title: 'Configurações',
+      description: 'Ajuste suas configurações',
+      icon: <Settings className="w-6 h-6" />,
+      color: 'bg-gray-500',
+      prompt: 'Preciso ajuda com as configurações da plataforma'
+    },
+    {
+      title: 'Suporte Geral',
+      description: 'Tire suas dúvidas gerais',
+      icon: <MessageCircle className="w-6 h-6" />,
+      color: 'bg-indigo-500',
+      prompt: 'Tenho uma dúvida geral sobre a plataforma'
+    }
+  ];
+
+  const generateResponse = (userMessage: string): string => {
+    const responses = {
+      estrategias: [
+        "Ótima pergunta sobre estratégias! Para campanhas eficazes, recomendo: 1) Definir público-alvo específico, 2) Criar mensagens personalizadas, 3) Testar diferentes criativos, 4) Usar dados para otimização contínua. Quer que eu detalhe algum desses pontos?",
+        "Para estratégias de marketing eficazes, sugiro focar em: segmentação precisa, testes A/B constantes, análise de concorrentes e otimização baseada em dados. Qual aspecto te interessa mais?",
+        "As melhores estratégias incluem: 1) Análise profunda do público, 2) Criação de funis de conversão, 3) Automação de campanhas, 4) Monitoramento em tempo real. Posso ajudar a implementar alguma?"
+      ],
+      otimizar: [
+        "Para otimizar suas campanhas, analise: CTR, CPA, ROAS e taxa de conversão. Recomendo: ajustar palavras-chave, refinar públicos, testar novos criativos e otimizar horários de veiculação. Quer focar em alguma métrica específica?",
+        "Excelente! Para otimização, sugiro: 1) Revisar palavras-chave negativas, 2) Ajustar lances automáticos, 3) Testar novos públicos similares, 4) Analisar horários de melhor performance. Por onde começamos?",
+        "Para otimizar campanhas efetivamente: identifique gargalos, teste elementos visuais, ajuste segmentação, monitore concorrência e use automações inteligentes. Qual campanha você gostaria de focar?"
+      ],
+      metricas: [
+        "Vamos analisar suas métricas! As principais são: ROAS (retorno sobre investimento em anúncios), CPA (custo por aquisição), CTR (taxa de cliques) e LTV (valor do cliente). Qual métrica está te preocupando mais?",
+        "Para análise de métricas eficaz, foque em: 1) ROAS mínimo de 3:1, 2) CPA abaixo do LTV, 3) CTR acima da média do setor, 4) Taxa de conversão crescente. Quer que eu analise alguma métrica específica?",
+        "Métricas essenciais para acompanhar: impressões, cliques, conversões, receita, ROAS, CPC e qualidade do tráfego. Posso ajudar a interpretar os dados das suas campanhas!"
+      ],
+      automacao: [
+        "Automações inteligentes podem revolucionar suas campanhas! Sugiro: 1) Lances automáticos baseados em ROAS, 2) Pausar campanhas com baixo desempenho, 3) Ajustar orçamentos automaticamente, 4) Enviar relatórios programados. Qual automação te interessa?",
+        "Para automação eficaz, configure: regras de otimização de lance, alertas de performance, redistribuição automática de orçamento e relatórios personalizados. Por onde você gostaria de começar?",
+        "As automações mais eficazes incluem: gestão de lances, otimização de públicos, controle de orçamento e alertas inteligentes. Posso ajudar a configurar qualquer uma dessas!"
+      ],
+      configuracoes: [
+        "Nas configurações, você pode: 1) Conectar suas contas de anúncios, 2) Definir metas e alertas, 3) Configurar relatórios automáticos, 4) Ajustar preferências de notificação. Precisa de ajuda com algum item específico?",
+        "Para configurar a plataforma corretamente: conecte todas as suas contas, defina seus KPIs principais, configure alertas personalizados e estabeleça frequência de relatórios. Qual configuração você gostaria de ajustar?",
+        "Vamos configurar tudo perfeitamente! Posso ajudar com: integração de plataformas, definição de metas, configuração de dashboards e personalização de alertas. O que precisa configurar primeiro?"
+      ],
+      default: [
+        "Interessante pergunta! Baseado na minha experiência com campanhas, posso sugerir algumas estratégias personalizadas. Você poderia me contar mais detalhes sobre seu objetivo específico?",
+        "Ótima questão! Para te ajudar melhor, preciso entender: qual é seu principal desafio atual? Está relacionado a performance, orçamento, ou estratégia geral?",
+        "Posso ajudar com isso! A Otmizy oferece várias ferramentas para otimização. Que tipo de resultado você está buscando alcançar com suas campanhas?"
+      ]
+    };
+
+    const message = userMessage.toLowerCase();
+    
+    if (message.includes('estratégia') || message.includes('marketing') || message.includes('campanha')) {
+      return responses.estrategias[Math.floor(Math.random() * responses.estrategias.length)];
+    } else if (message.includes('otimiz') || message.includes('melhor') || message.includes('performance')) {
+      return responses.otimizar[Math.floor(Math.random() * responses.otimizar.length)];
+    } else if (message.includes('métrica') || message.includes('roas') || message.includes('cpa') || message.includes('kpi')) {
+      return responses.metricas[Math.floor(Math.random() * responses.metricas.length)];
+    } else if (message.includes('automaç') || message.includes('automát') || message.includes('regra')) {
+      return responses.automacao[Math.floor(Math.random() * responses.automacao.length)];
+    } else if (message.includes('configur') || message.includes('ajust') || message.includes('preferên')) {
+      return responses.configuracoes[Math.floor(Math.random() * responses.configuracoes.length)];
+    } else {
+      return responses.default[Math.floor(Math.random() * responses.default.length)];
+    }
   };
 
-  const handleSendMessage = async () => {
-    if (!inputMessage.trim() || !apiKey) return;
+  const handleSendMessage = async (messageText?: string) => {
+    const textToSend = messageText || inputMessage;
+    if (!textToSend.trim()) return;
 
     const userMessage: ChatMessage = {
       id: Date.now().toString(),
       role: 'user',
-      content: inputMessage,
+      content: textToSend,
       timestamp: new Date(),
     };
 
     setMessages(prev => [...prev, userMessage]);
-    setInputMessage('');
+    if (!messageText) setInputMessage('');
     setIsLoading(true);
 
-    try {
-      const manusService = new ManusService(apiKey);
-      const response = await manusService.sendMessage(
-        messages.map(m => ({ role: m.role, content: m.content })).concat([{ role: 'user', content: inputMessage }]),
-        agentType
-      );
-
+    // Simulate AI thinking time
+    setTimeout(() => {
+      const response = generateResponse(textToSend);
       const assistantMessage: ChatMessage = {
         id: (Date.now() + 1).toString(),
         role: 'assistant',
@@ -123,18 +158,8 @@ const Chatbot = () => {
       };
 
       setMessages(prev => [...prev, assistantMessage]);
-    } catch (error) {
-      console.error('Error sending message:', error);
-      const errorMessage: ChatMessage = {
-        id: (Date.now() + 1).toString(),
-        role: 'assistant',
-        content: translations.errorMessage[language] || translations.errorMessage.en,
-        timestamp: new Date(),
-      };
-      setMessages(prev => [...prev, errorMessage]);
-    } finally {
       setIsLoading(false);
-    }
+    }, 1000 + Math.random() * 1000);
   };
 
   const handleKeyPress = (e: React.KeyboardEvent) => {
@@ -144,126 +169,154 @@ const Chatbot = () => {
     }
   };
 
-  if (!apiKey) {
-    return (
-      <div className="p-6">
-        <h1 className="text-3xl font-bold mb-6">
-          {translations.title[language] || translations.title.en}
-        </h1>
-        <div className="max-w-md mx-auto bg-white dark:bg-gray-800 rounded-lg p-6 shadow">
-          <h2 className="text-xl font-semibold mb-4">
-            {translations.apiConfig[language] || translations.apiConfig.en}
-          </h2>
-          <p className="text-gray-600 dark:text-gray-300 mb-4">
-            {translations.apiDescription[language] || translations.apiDescription.en}
-          </p>
-          <p className="text-blue-600 font-mono text-sm mb-4">https://manus.chat/dashboard/api-keys</p>
-          <div className="space-y-4">
-            <Input
-              type="password"
-              placeholder={translations.apiPlaceholder[language] || translations.apiPlaceholder.en}
-              value={apiKey}
-              onChange={(e) => setApiKey(e.target.value)}
-            />
-            <Button onClick={saveApiKey} className="w-full">
-              {translations.saveApiKey[language] || translations.saveApiKey.en}
-            </Button>
-          </div>
-        </div>
-      </div>
-    );
-  }
-
   return (
-    <div className="p-6 h-full flex flex-col">
-      <div className="flex items-center justify-between mb-6">
-        <h1 className="text-3xl font-bold">
-          {translations.title[language] || translations.title.en}
-        </h1>
-        <div className="flex gap-2">
-          <Button
-            variant={agentType === 'ads' ? 'default' : 'outline'}
-            size="sm"
-            onClick={() => setAgentType('ads')}
-          >
-            AdsBot
-          </Button>
-          <Button
-            variant={agentType === 'support' ? 'default' : 'outline'}
-            size="sm"
-            onClick={() => setAgentType('support')}
-          >
-            SupportBot
-          </Button>
-        </div>
-      </div>
-
-      <div className="flex-1 bg-white dark:bg-gray-800 rounded-lg shadow flex flex-col">
-        <div className="flex-1 p-4 overflow-y-auto space-y-4">
-          {messages.length === 0 && (
-            <div className="text-center text-gray-500 dark:text-gray-400">
-              {translations.startConversation[language] || translations.startConversation.en}
+    <div className="min-h-screen bg-background p-6">
+      <div className="max-w-7xl mx-auto">
+        {/* Header */}
+        <div className="text-center mb-8">
+          <div className="flex items-center justify-center space-x-3 mb-4">
+            <div className="w-12 h-12 bg-gradient-to-r from-yellow-400 to-yellow-600 rounded-full flex items-center justify-center">
+              <Sparkles className="w-6 h-6 text-black" />
             </div>
-          )}
-          
-          {messages.map((message) => (
-            <div
-              key={message.id}
-              className={`flex items-start gap-3 ${
-                message.role === 'user' ? 'justify-end' : 'justify-start'
-              }`}
-            >
-              {message.role === 'assistant' && (
-                <div className="w-8 h-8 bg-blue-600 rounded-full flex items-center justify-center">
-                  <Bot className="w-4 h-4 text-white" />
-                </div>
-              )}
-              <div
-                className={`max-w-lg p-3 rounded-lg ${
-                  message.role === 'user'
-                    ? 'bg-blue-600 text-white'
-                    : 'bg-gray-100 dark:bg-gray-700 text-gray-900 dark:text-white'
-                }`}
-              >
-                {message.content}
-              </div>
-              {message.role === 'user' && (
-                <div className="w-8 h-8 bg-gray-600 rounded-full flex items-center justify-center">
-                  <User className="w-4 h-4 text-white" />
-                </div>
-              )}
-            </div>
-          ))}
-          
-          {isLoading && (
-            <div className="flex items-start gap-3">
-              <div className="w-8 h-8 bg-blue-600 rounded-full flex items-center justify-center">
-                <Bot className="w-4 h-4 text-white" />
-              </div>
-              <div className="bg-gray-100 dark:bg-gray-700 p-3 rounded-lg">
-                <div className="flex space-x-1">
-                  <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce"></div>
-                  <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: '0.1s' }}></div>
-                  <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: '0.2s' }}></div>
-                </div>
-              </div>
-            </div>
-          )}
-          <div ref={messagesEndRef} />
+            <h1 className="text-4xl font-bold bg-gradient-to-r from-yellow-400 to-yellow-600 bg-clip-text text-transparent">
+              Otmizy.ai
+            </h1>
+          </div>
+          <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
+            Sua assistente de IA para otimização de campanhas. Transforme seus dados em insights acionáveis!
+          </p>
+          <Badge className="mt-4 bg-yellow-500/10 text-yellow-400 border-yellow-500/20 animate-pulse">
+            🤖 IA Avançada • Disponível 24/7
+          </Badge>
         </div>
 
-        <div className="p-4 border-t border-gray-200 dark:border-gray-700">
-          <div className="flex gap-2">
-            <Input
-              value={inputMessage}
-              onChange={(e) => setInputMessage(e.target.value)}
-              onKeyPress={handleKeyPress}
-              placeholder={translations.typePlaceholder[language] || translations.typePlaceholder.en}
-              disabled={isLoading}
-            />
-            <Button onClick={handleSendMessage} disabled={isLoading || !inputMessage.trim()}>
-              <Send className="w-4 h-4" />
-            </Button>
+        <div className="grid lg:grid-cols-3 gap-8">
+          {/* Quick Actions */}
+          <div className="lg:col-span-1">
+            <Card className="bg-gray-800/50 border-yellow-500/20 h-fit">
+              <CardHeader>
+                <CardTitle className="text-yellow-400 flex items-center space-x-2">
+                  <Zap className="w-5 h-5" />
+                  <span>Ações Rápidas</span>
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="space-y-3">
+                  {quickActions.map((action, index) => (
+                    <Button
+                      key={index}
+                      variant="outline"
+                      className="w-full justify-start h-auto p-4 border-yellow-500/20 hover:bg-yellow-500/10 hover:border-yellow-500/40 transition-all"
+                      onClick={() => handleSendMessage(action.prompt)}
+                    >
+                      <div className="flex items-start space-x-3">
+                        <div className={`${action.color} p-2 rounded-lg flex-shrink-0`}>
+                          {action.icon}
+                        </div>
+                        <div className="text-left">
+                          <div className="font-semibold text-white">{action.title}</div>
+                          <div className="text-sm text-muted-foreground">{action.description}</div>
+                        </div>
+                      </div>
+                    </Button>
+                  ))}
+                </div>
+              </CardContent>
+            </Card>
+          </div>
+
+          {/* Chat Interface */}
+          <div className="lg:col-span-2">
+            <Card className="bg-gray-800/50 border-yellow-500/20 h-[700px] flex flex-col">
+              <CardHeader className="border-b border-yellow-500/20">
+                <CardTitle className="flex items-center space-x-2 text-yellow-400">
+                  <Bot className="w-6 h-6" />
+                  <span>Chat com Izy</span>
+                  <div className="ml-auto flex items-center space-x-2">
+                    <div className="w-2 h-2 bg-green-400 rounded-full animate-pulse"></div>
+                    <span className="text-sm text-green-400">Online</span>
+                  </div>
+                </CardTitle>
+              </CardHeader>
+
+              <CardContent className="flex-1 overflow-hidden p-0">
+                {/* Messages Area */}
+                <div className="h-full overflow-y-auto p-4 space-y-4">
+                  {messages.map((message) => (
+                    <div
+                      key={message.id}
+                      className={`flex ${message.role === 'user' ? 'justify-end' : 'justify-start'} animate-fade-in`}
+                    >
+                      <div className={`flex space-x-3 max-w-3xl ${message.role === 'user' ? 'flex-row-reverse space-x-reverse' : ''}`}>
+                        <div className={`w-10 h-10 rounded-full flex items-center justify-center flex-shrink-0 ${
+                          message.role === 'user' 
+                            ? 'bg-yellow-500 text-black' 
+                            : 'bg-gradient-to-r from-yellow-400 to-yellow-600 text-black'
+                        }`}>
+                          {message.role === 'user' ? <User className="w-5 h-5" /> : <Bot className="w-5 h-5" />}
+                        </div>
+                        <div className={`rounded-lg px-4 py-3 ${
+                          message.role === 'user' 
+                            ? 'bg-yellow-500 text-black' 
+                            : 'bg-gray-700 text-white'
+                        }`}>
+                          <p className="text-sm leading-relaxed">{message.content}</p>
+                          <span className="text-xs opacity-60 mt-2 block">
+                            {message.timestamp.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                          </span>
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+
+                  {/* Typing indicator */}
+                  {isLoading && (
+                    <div className="flex justify-start animate-fade-in">
+                      <div className="flex space-x-3 max-w-3xl">
+                        <div className="w-10 h-10 rounded-full bg-gradient-to-r from-yellow-400 to-yellow-600 text-black flex items-center justify-center flex-shrink-0">
+                          <Bot className="w-5 h-5" />
+                        </div>
+                        <div className="bg-gray-700 text-white rounded-lg px-4 py-3">
+                          <div className="flex items-center space-x-2">
+                            <div className="flex space-x-1">
+                              <div className="w-2 h-2 bg-yellow-400 rounded-full animate-bounce"></div>
+                              <div className="w-2 h-2 bg-yellow-400 rounded-full animate-bounce" style={{ animationDelay: '0.1s' }}></div>
+                              <div className="w-2 h-2 bg-yellow-400 rounded-full animate-bounce" style={{ animationDelay: '0.2s' }}></div>
+                            </div>
+                            <span className="text-sm">Izy está pensando...</span>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  )}
+                  <div ref={messagesEndRef} />
+                </div>
+
+                {/* Input Area */}
+                <div className="border-t border-yellow-500/20 p-4">
+                  <div className="flex space-x-2">
+                    <Input
+                      value={inputMessage}
+                      onChange={(e) => setInputMessage(e.target.value)}
+                      placeholder="Digite sua pergunta sobre campanhas, métricas ou otimizações..."
+                      className="flex-1 bg-gray-700 border-yellow-500/20 text-white placeholder:text-gray-400"
+                      onKeyPress={handleKeyPress}
+                      disabled={isLoading}
+                    />
+                    <Button
+                      onClick={() => handleSendMessage()}
+                      disabled={!inputMessage.trim() || isLoading}
+                      className="bg-yellow-500 hover:bg-yellow-600 text-black"
+                    >
+                      <Send className="w-4 h-4" />
+                    </Button>
+                  </div>
+                  <p className="text-xs text-gray-400 mt-2">
+                    💡 Clique nas ações rápidas ao lado ou digite sua pergunta aqui
+                  </p>
+                </div>
+              </CardContent>
+            </Card>
           </div>
         </div>
       </div>

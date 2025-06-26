@@ -595,7 +595,7 @@ const Landing = () => {
               Integramos com as melhores plataformas do mercado!
             </h2>
             <p className="text-xl text-muted-foreground">
-              Conecte suas campanhas de mais de 50 plataformas diferentes
+              Conecte suas campanhas de mais de 55+ plataformas diferentes
             </p>
           </div>
           
@@ -647,7 +647,7 @@ const Landing = () => {
             </div>
           </div>
           <div className="border-t border-yellow-500/20 mt-8 pt-8 flex justify-between items-center">
-            <p className="text-muted-foreground">&copy; 2025 UTMify | Todos os direitos reservados</p>
+            <p className="text-muted-foreground">&copy; 2025 Otmizy | Todos os direitos reservados</p>
             <div className="flex space-x-4">
               <a 
                 href="https://www.instagram.com/otmizy/" 
