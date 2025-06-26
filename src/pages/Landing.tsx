@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -15,7 +15,11 @@ import {
   Target,
   Star,
   Play,
-  ChevronDown
+  ChevronDown,
+  Trophy,
+  Award,
+  Crown,
+  Gem
 } from 'lucide-react';
 import LanguageDropdown from '@/components/LanguageDropdown';
 import PlatformsCarousel from '@/components/PlatformsCarousel';
@@ -23,6 +27,44 @@ import PlatformsCarousel from '@/components/PlatformsCarousel';
 const Landing = () => {
   const navigate = useNavigate();
   const { language } = useLanguage();
+  const [scrollY, setScrollY] = useState(0);
+  const [isVisible, setIsVisible] = useState({
+    hero: false,
+    features: false,
+    achievements: false,
+    pricing: false,
+    testimonials: false
+  });
+
+  useEffect(() => {
+    const handleScroll = () => setScrollY(window.scrollY);
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
+
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            setIsVisible(prev => ({
+              ...prev,
+              [entry.target.id]: true
+            }));
+          }
+        });
+      },
+      { threshold: 0.1 }
+    );
+
+    const sections = ['hero', 'features', 'achievements', 'pricing', 'testimonials'];
+    sections.forEach(id => {
+      const element = document.getElementById(id);
+      if (element) observer.observe(element);
+    });
+
+    return () => observer.disconnect();
+  }, []);
 
   const getText = (key: string) => {
     const translations: Record<string, Record<string, string>> = {
@@ -32,9 +74,9 @@ const Landing = () => {
         es: 'Optimiza tus campañas con IA'
       },
       subtitle: {
-        pt: 'Transforme seus dados de marketing em insights acionáveis e aumente seu ROI com nossa plataforma de inteligência artificial.',
-        en: 'Transform your marketing data into actionable insights and increase your ROI with our artificial intelligence platform.',
-        es: 'Transforma tus datos de marketing en insights accionables y aumenta tu ROI con nuestra plataforma de inteligencia artificial.'
+        pt: 'A primeira plataforma com sistema de gamificação usando conquistas. Transforme seus dados de marketing em insights acionáveis e aumente seu ROI.',
+        en: 'The first platform with gamification system using achievements. Transform your marketing data into actionable insights and increase your ROI.',
+        es: 'La primera plataforma con sistema de gamificación usando logros. Transforma tus datos de marketing en insights accionables y aumenta tu ROI.'
       },
       startFree: {
         pt: 'Começar Gratuitamente',
@@ -60,6 +102,16 @@ const Landing = () => {
         pt: 'Tudo que você precisa para otimizar suas campanhas',
         en: 'Everything you need to optimize your campaigns',
         es: 'Todo lo que necesitas para optimizar tus campañas'
+      },
+      achievementsTitle: {
+        pt: 'Sistema de Conquistas Exclusivo',
+        en: 'Exclusive Achievement System',
+        es: 'Sistema de Logros Exclusivo'
+      },
+      achievementsSubtitle: {
+        pt: 'Gamifique sua experiência e seja recompensado pelo seu progresso',
+        en: 'Gamify your experience and be rewarded for your progress',
+        es: 'Gamifica tu experiencia y sé recompensado por tu progreso'
       },
       aiOptimization: {
         pt: 'Otimização com IA',
@@ -188,6 +240,37 @@ const Landing = () => {
     }
   ];
 
+  const achievements = [
+    {
+      icon: <Trophy className="w-8 h-8 text-yellow-400" />,
+      title: "Primeira Campanha",
+      description: "Complete sua primeira campanha com sucesso",
+      progress: 100,
+      unlocked: true
+    },
+    {
+      icon: <Target className="w-8 h-8 text-blue-400" />,
+      title: "Meta de ROAS",
+      description: "Alcance ROAS superior a 3.0x",
+      progress: 85,
+      unlocked: false
+    },
+    {
+      icon: <Crown className="w-8 h-8 text-purple-400" />,
+      title: "Rei das Conversões",
+      description: "Obtenha mais de 1000 conversões em um mês",
+      progress: 60,
+      unlocked: false
+    },
+    {
+      icon: <Gem className="w-8 h-8 text-green-400" />,
+      title: "Otimizador Expert",
+      description: "Use IA para otimizar 50 campanhas",
+      progress: 30,
+      unlocked: false
+    }
+  ];
+
   const plans = [
     {
       name: getText('starter'),
@@ -232,22 +315,14 @@ const Landing = () => {
     <div className="min-h-screen bg-background relative overflow-hidden">
       {/* Geometric Background Pattern */}
       <div className="fixed inset-0 pointer-events-none opacity-5">
-        <div className="absolute top-20 left-10 w-32 h-32 border border-yellow-500 rotate-45"></div>
-        <div className="absolute top-40 right-20 w-24 h-24 bg-yellow-500/10 rounded-full"></div>
-        <div className="absolute top-80 left-1/4 w-16 h-16 border-2 border-orange-500 rotate-12"></div>
-        <div className="absolute bottom-80 right-10 w-40 h-40 border border-yellow-500 rotate-45"></div>
-        <div className="absolute bottom-40 left-20 w-20 h-20 bg-orange-500/10 rounded-full"></div>
-        <div className="absolute top-1/2 left-10 w-12 h-12 bg-yellow-500/10 rotate-45"></div>
-        <div className="absolute top-1/3 right-1/4 w-28 h-28 border border-orange-500 rounded-full"></div>
-        <div className="absolute bottom-1/3 left-1/3 w-8 h-8 bg-yellow-500/20 rotate-45"></div>
-        
-        {/* Additional geometric shapes */}
-        <div className="absolute top-60 left-1/2 transform -translate-x-1/2">
-          <div className="w-6 h-6 bg-yellow-500/10 rotate-45"></div>
-        </div>
-        <div className="absolute bottom-60 right-1/3">
-          <div className="w-10 h-10 border border-orange-500/30 rounded-full"></div>
-        </div>
+        <div className="absolute top-20 left-10 w-32 h-32 border border-yellow-500 rotate-45" style={{transform: `translateY(${scrollY * 0.1}px)`}}></div>
+        <div className="absolute top-40 right-20 w-24 h-24 bg-yellow-500/10 rounded-full" style={{transform: `translateY(${scrollY * 0.15}px)`}}></div>
+        <div className="absolute top-80 left-1/4 w-16 h-16 border-2 border-orange-500 rotate-12" style={{transform: `translateY(${scrollY * 0.2}px)`}}></div>
+        <div className="absolute bottom-80 right-10 w-40 h-40 border border-yellow-500 rotate-45" style={{transform: `translateY(${scrollY * -0.1}px)`}}></div>
+        <div className="absolute bottom-40 left-20 w-20 h-20 bg-orange-500/10 rounded-full" style={{transform: `translateY(${scrollY * -0.15}px)`}}></div>
+        <div className="absolute top-1/2 left-10 w-12 h-12 bg-yellow-500/10 rotate-45" style={{transform: `translateY(${scrollY * 0.25}px)`}}></div>
+        <div className="absolute top-1/3 right-1/4 w-28 h-28 border border-orange-500 rounded-full" style={{transform: `translateY(${scrollY * 0.12}px)`}}></div>
+        <div className="absolute bottom-1/3 left-1/3 w-8 h-8 bg-yellow-500/20 rotate-45" style={{transform: `translateY(${scrollY * -0.2}px)`}}></div>
       </div>
 
       {/* Header */}
@@ -262,6 +337,9 @@ const Landing = () => {
             <div className="hidden md:flex items-center space-x-8">
               <a href="#features" className="text-muted-foreground hover:text-yellow-400 transition-colors">
                 {getText('features')}
+              </a>
+              <a href="#achievements" className="text-muted-foreground hover:text-yellow-400 transition-colors">
+                Conquistas
               </a>
               <a href="#pricing" className="text-muted-foreground hover:text-yellow-400 transition-colors">
                 {getText('pricing')}
@@ -289,10 +367,10 @@ const Landing = () => {
       </nav>
 
       {/* Hero Section */}
-      <section className="pt-32 pb-20 px-4 sm:px-6 lg:px-8 relative z-10">
+      <section id="hero" className={`pt-32 pb-20 px-4 sm:px-6 lg:px-8 relative z-10 transition-all duration-1000 ${isVisible.hero ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`}>
         <div className="max-w-7xl mx-auto text-center">
-          <Badge className="mb-6 bg-yellow-500/10 text-yellow-400 border-yellow-500/20">
-            🚀 Nova versão com IA avançada disponível
+          <Badge className="mb-6 bg-yellow-500/10 text-yellow-400 border-yellow-500/20 animate-pulse">
+            🏆 A primeira plataforma com sistema de gamificação
           </Badge>
           <h1 className="text-4xl md:text-6xl font-bold bg-gradient-to-r from-white to-yellow-400 bg-clip-text text-transparent mb-6">
             {getText('title')}
@@ -304,12 +382,12 @@ const Landing = () => {
             <Button
               onClick={() => navigate('/register')}
               size="lg"
-              className="bg-yellow-500 hover:bg-yellow-600 text-black"
+              className="bg-yellow-500 hover:bg-yellow-600 text-black hover-scale"
             >
               {getText('startFree')}
               <ArrowRight className="ml-2 w-4 h-4" />
             </Button>
-            <Button variant="outline" size="lg" className="border-yellow-500/20 hover:bg-yellow-500/10">
+            <Button variant="outline" size="lg" className="border-yellow-500/20 hover:bg-yellow-500/10 hover-scale">
               <Play className="mr-2 w-4 h-4" />
               {getText('watchDemo')}
             </Button>
@@ -317,11 +395,11 @@ const Landing = () => {
           <p className="text-muted-foreground">{getText('trustedBy')}</p>
           
           {/* Hero Image/Dashboard Preview */}
-          <div className="mt-12 relative">
+          <div className="mt-12 relative" style={{transform: `translateY(${scrollY * 0.05}px)`}}>
             <div className="bg-gradient-to-r from-yellow-500/20 to-orange-500/20 rounded-lg p-8 mx-auto max-w-4xl">
               <div className="bg-gray-900/50 rounded-lg p-6 backdrop-blur-sm">
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                  <Card className="bg-gray-800/50 border-yellow-500/20">
+                  <Card className="bg-gray-800/50 border-yellow-500/20 hover-scale">
                     <CardContent className="p-4">
                       <div className="flex items-center justify-between mb-2">
                         <span className="text-sm text-muted-foreground">ROI</span>
@@ -330,7 +408,7 @@ const Landing = () => {
                       <div className="text-2xl font-bold text-green-400">+247%</div>
                     </CardContent>
                   </Card>
-                  <Card className="bg-gray-800/50 border-yellow-500/20">
+                  <Card className="bg-gray-800/50 border-yellow-500/20 hover-scale">
                     <CardContent className="p-4">
                       <div className="flex items-center justify-between mb-2">
                         <span className="text-sm text-muted-foreground">Campanhas</span>
@@ -339,7 +417,7 @@ const Landing = () => {
                       <div className="text-2xl font-bold text-yellow-400">1,247</div>
                     </CardContent>
                   </Card>
-                  <Card className="bg-gray-800/50 border-yellow-500/20">
+                  <Card className="bg-gray-800/50 border-yellow-500/20 hover-scale">
                     <CardContent className="p-4">
                       <div className="flex items-center justify-between mb-2">
                         <span className="text-sm text-muted-foreground">Economia</span>
@@ -355,8 +433,49 @@ const Landing = () => {
         </div>
       </section>
 
+      {/* Achievements Section */}
+      <section id="achievements" className={`py-20 px-4 sm:px-6 lg:px-8 bg-gray-900/20 relative z-10 transition-all duration-1000 delay-200 ${isVisible.achievements ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`}>
+        <div className="max-w-7xl mx-auto">
+          <div className="text-center mb-16">
+            <h2 className="text-3xl md:text-4xl font-bold mb-4">{getText('achievementsTitle')}</h2>
+            <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
+              {getText('achievementsSubtitle')}
+            </p>
+          </div>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+            {achievements.map((achievement, index) => (
+              <Card key={index} className={`bg-gray-800/50 border-yellow-500/20 hover:bg-gray-800/70 transition-all duration-300 hover-scale ${achievement.unlocked ? 'ring-2 ring-yellow-500/30' : ''}`}>
+                <CardContent className="p-6 text-center">
+                  <div className="mb-4 flex justify-center">
+                    {achievement.unlocked ? (
+                      <div className="relative">
+                        {achievement.icon}
+                        <div className="absolute -top-1 -right-1 w-3 h-3 bg-green-400 rounded-full animate-pulse"></div>
+                      </div>
+                    ) : (
+                      <div className="opacity-50">{achievement.icon}</div>
+                    )}
+                  </div>
+                  <h3 className="text-lg font-semibold mb-2">{achievement.title}</h3>
+                  <p className="text-sm text-muted-foreground mb-4">{achievement.description}</p>
+                  <div className="w-full bg-gray-700 rounded-full h-2">
+                    <div 
+                      className={`h-2 rounded-full transition-all duration-500 ${achievement.unlocked ? 'bg-green-400' : 'bg-yellow-400'}`}
+                      style={{ width: `${achievement.progress}%` }}
+                    ></div>
+                  </div>
+                  <p className="text-xs text-muted-foreground mt-2">
+                    {achievement.progress}% completo
+                  </p>
+                </CardContent>
+              </Card>
+            ))}
+          </div>
+        </div>
+      </section>
+
       {/* Features Section */}
-      <section id="features" className="py-20 px-4 sm:px-6 lg:px-8 relative z-10">
+      <section id="features" className={`py-20 px-4 sm:px-6 lg:px-8 relative z-10 transition-all duration-1000 delay-300 ${isVisible.features ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`}>
         <div className="max-w-7xl mx-auto">
           <div className="text-center mb-16">
             <h2 className="text-3xl md:text-4xl font-bold mb-4">{getText('featureTitle')}</h2>
@@ -366,7 +485,7 @@ const Landing = () => {
           </div>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
             {features.map((feature, index) => (
-              <Card key={index} className="bg-gray-800/50 border-yellow-500/20 hover:bg-gray-800/70 transition-colors">
+              <Card key={index} className="bg-gray-800/50 border-yellow-500/20 hover:bg-gray-800/70 transition-all duration-300 hover-scale">
                 <CardContent className="p-6">
                   <div className="text-yellow-400 mb-4">{feature.icon}</div>
                   <h3 className="text-xl font-semibold mb-2">{feature.title}</h3>
@@ -379,7 +498,7 @@ const Landing = () => {
       </section>
 
       {/* Pricing Section */}
-      <section id="pricing" className="py-20 px-4 sm:px-6 lg:px-8 bg-gray-900/20 relative z-10">
+      <section id="pricing" className={`py-20 px-4 sm:px-6 lg:px-8 bg-gray-900/20 relative z-10 transition-all duration-1000 delay-400 ${isVisible.pricing ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`}>
         <div className="max-w-7xl mx-auto">
           <div className="text-center mb-16">
             <h2 className="text-3xl md:text-4xl font-bold mb-4">{getText('pricingTitle')}</h2>
@@ -389,7 +508,7 @@ const Landing = () => {
           </div>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             {plans.map((plan, index) => (
-              <Card key={index} className={`relative ${plan.popular ? 'border-yellow-500 bg-yellow-500/5' : 'bg-gray-800/50 border-yellow-500/20'}`}>
+              <Card key={index} className={`relative hover-scale ${plan.popular ? 'border-yellow-500 bg-yellow-500/5' : 'bg-gray-800/50 border-yellow-500/20'}`}>
                 {plan.popular && (
                   <Badge className="absolute -top-3 left-1/2 transform -translate-x-1/2 bg-yellow-500 text-black">
                     Mais Popular
@@ -424,14 +543,14 @@ const Landing = () => {
       </section>
 
       {/* Testimonials Section */}
-      <section id="testimonials" className="py-20 px-4 sm:px-6 lg:px-8 relative z-10">
+      <section id="testimonials" className={`py-20 px-4 sm:px-6 lg:px-8 relative z-10 transition-all duration-1000 delay-500 ${isVisible.testimonials ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`}>
         <div className="max-w-7xl mx-auto">
           <div className="text-center mb-16">
             <h2 className="text-3xl md:text-4xl font-bold mb-4">{getText('testimonialsTitle')}</h2>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             {testimonials.map((testimonial, index) => (
-              <Card key={index} className="bg-gray-800/50 border-yellow-500/20">
+              <Card key={index} className="bg-gray-800/50 border-yellow-500/20 hover-scale">
                 <CardContent className="p-6">
                   <div className="flex mb-4">
                     {[...Array(testimonial.rating)].map((_, i) => (
@@ -460,7 +579,7 @@ const Landing = () => {
           <Button
             onClick={() => navigate('/register')}
             size="lg"
-            className="bg-yellow-500 hover:bg-yellow-600 text-black"
+            className="bg-yellow-500 hover:bg-yellow-600 text-black hover-scale"
           >
             {getText('startFree')}
             <ArrowRight className="ml-2 w-4 h-4" />
@@ -468,7 +587,7 @@ const Landing = () => {
         </div>
       </section>
 
-      {/* Platforms Integration Section - Updated with 3 animated lines */}
+      {/* Platforms Integration Section */}
       <section className="py-16 px-4 sm:px-6 lg:px-8 bg-gray-900/20 relative z-10">
         <div className="max-w-7xl mx-auto">
           <div className="text-center mb-12">
@@ -485,7 +604,7 @@ const Landing = () => {
           <div className="text-center mt-8">
             <Button 
               variant="outline" 
-              className="border-yellow-500/20 hover:bg-yellow-500/10"
+              className="border-yellow-500/20 hover:bg-yellow-500/10 hover-scale"
             >
               Ver todas as integrações
             </Button>
@@ -493,7 +612,7 @@ const Landing = () => {
         </div>
       </section>
 
-      {/* Footer - Updated with social icons */}
+      {/* Footer */}
       <footer className="py-12 px-4 sm:px-6 lg:px-8 border-t border-yellow-500/20 relative z-10">
         <div className="max-w-7xl mx-auto">
           <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
@@ -506,17 +625,17 @@ const Landing = () => {
             <div>
               <h4 className="font-semibold mb-4">Produto</h4>
               <ul className="space-y-2 text-muted-foreground">
-                <li><a href="/features" className="hover:text-yellow-400">Recursos</a></li>
-                <li><a href="/pricing" className="hover:text-yellow-400">Preços</a></li>
-                <li><a href="/login" className="hover:text-yellow-400">Login</a></li>
+                <li><a href="/features" className="hover:text-yellow-400 story-link">Recursos</a></li>
+                <li><a href="/pricing" className="hover:text-yellow-400 story-link">Preços</a></li>
+                <li><a href="/login" className="hover:text-yellow-400 story-link">Login</a></li>
               </ul>
             </div>
             <div>
               <h4 className="font-semibold mb-4">Empresa</h4>
               <ul className="space-y-2 text-muted-foreground">
-                <li><a href="/terms" className="hover:text-yellow-400">Termos</a></li>
-                <li><a href="/privacy" className="hover:text-yellow-400">Privacidade</a></li>
-                <li><a href="/cookies" className="hover:text-yellow-400">Cookies</a></li>
+                <li><a href="/terms" className="hover:text-yellow-400 story-link">Termos</a></li>
+                <li><a href="/privacy" className="hover:text-yellow-400 story-link">Privacidade</a></li>
+                <li><a href="/cookies" className="hover:text-yellow-400 story-link">Cookies</a></li>
               </ul>
             </div>
             <div>
@@ -534,7 +653,7 @@ const Landing = () => {
                 href="https://www.instagram.com/otmizy/" 
                 target="_blank" 
                 rel="noopener noreferrer"
-                className="w-10 h-10 bg-blue-600 rounded-full flex items-center justify-center text-white hover:bg-blue-700 transition-colors"
+                className="w-10 h-10 bg-blue-600 rounded-full flex items-center justify-center text-white hover:bg-blue-700 transition-colors hover-scale"
               >
                 <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
                   <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/>
@@ -542,7 +661,7 @@ const Landing = () => {
               </a>
               <a 
                 href="#" 
-                className="w-10 h-10 bg-blue-500 rounded-full flex items-center justify-center text-white hover:bg-blue-600 transition-colors"
+                className="w-10 h-10 bg-blue-500 rounded-full flex items-center justify-center text-white hover:bg-blue-600 transition-colors hover-scale"
               >
                 <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
                   <path d="M23.953 4.57a10 10 0 01-2.825.775 4.958 4.958 0 002.163-2.723c-.951.555-2.005.959-3.127 1.184a4.92 4.92 0 00-8.384 4.482C7.69 8.095 4.067 6.13 1.64 3.162a4.822 4.822 0 00-.666 2.475c0 1.71.87 3.213 2.188 4.096a4.904 4.904 0 01-2.228-.616v.06a4.923 4.923 0 003.946 4.827 4.996 4.996 0 01-2.212.085 4.936 4.936 0 004.604 3.417 9.867 9.867 0 01-6.102 2.105c-.39 0-.779-.023-1.17-.067a13.995 13.995 0 007.557 2.209c9.053 0 13.998-7.496 13.998-13.985 0-.21 0-.42-.015-.63A9.935 9.935 0 0024 4.59z"/>
@@ -550,7 +669,7 @@ const Landing = () => {
               </a>
               <a 
                 href="#" 
-                className="w-10 h-10 bg-red-600 rounded-full flex items-center justify-center text-white hover:bg-red-700 transition-colors"
+                className="w-10 h-10 bg-red-600 rounded-full flex items-center justify-center text-white hover:bg-red-700 transition-colors hover-scale"
               >
                 <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
                   <path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/>

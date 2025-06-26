@@ -1,8 +1,9 @@
 
-import React from 'react';
-import { TrendingUp, TrendingDown, AlertTriangle, DollarSign, MousePointer, Target, Zap, Info } from 'lucide-react';
+import React, { useState } from 'react';
+import { TrendingUp, TrendingDown, AlertTriangle, DollarSign, MousePointer, Target, Zap, Info, GripVertical } from 'lucide-react';
 import { useLanguage } from '@/hooks/useLanguage';
 import AnimatedNumber from './AnimatedNumber';
+import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, BarChart, Bar } from 'recharts';
 
 interface AnomalyAlert {
   id: string;
@@ -28,6 +29,7 @@ interface SummaryDashboardProps {
   conversionsToday: number;
   recentAnomalies: AnomalyAlert[];
   visibleFields?: DashboardField[];
+  onFieldsReorder?: (fields: DashboardField[]) => void;
 }
 
 const SummaryDashboard: React.FC<SummaryDashboardProps> = ({
@@ -36,9 +38,29 @@ const SummaryDashboard: React.FC<SummaryDashboardProps> = ({
   avgCPA,
   conversionsToday,
   recentAnomalies,
-  visibleFields = []
+  visibleFields = [],
+  onFieldsReorder
 }) => {
   const { language } = useLanguage();
+  const [draggedIndex, setDraggedIndex] = useState<number | null>(null);
+
+  // Sample chart data
+  const revenueData = [
+    { date: '2024-01-01', revenue: 2400, spend: 1200 },
+    { date: '2024-01-02', revenue: 1398, spend: 980 },
+    { date: '2024-01-03', revenue: 9800, spend: 3200 },
+    { date: '2024-01-04', revenue: 3908, spend: 1800 },
+    { date: '2024-01-05', revenue: 4800, spend: 2200 },
+    { date: '2024-01-06', revenue: 3800, spend: 1900 },
+    { date: '2024-01-07', revenue: 4300, spend: 2100 }
+  ];
+
+  const campaignData = [
+    { name: 'Facebook Ads', performance: 85, spend: 1200 },
+    { name: 'Google Ads', performance: 92, spend: 1800 },
+    { name: 'Instagram', performance: 78, spend: 800 },
+    { name: 'YouTube', performance: 67, spend: 600 }
+  ];
 
   const formatCurrency = (amount: number) => {
     return new Intl.NumberFormat(language === 'pt' ? 'pt-BR' : language === 'es' ? 'es-ES' : language === 'ru' ? 'ru-RU' : language === 'de' ? 'de-DE' : 'en-US', {
@@ -112,11 +134,40 @@ const SummaryDashboard: React.FC<SummaryDashboardProps> = ({
     return typeof value === 'number' ? value.toLocaleString() : value;
   };
 
+  const handleDragStart = (e: React.DragEvent, index: number) => {
+    setDraggedIndex(index);
+    e.dataTransfer.effectAllowed = 'move';
+  };
+
+  const handleDragOver = (e: React.DragEvent) => {
+    e.preventDefault();
+    e.dataTransfer.dropEffect = 'move';
+  };
+
+  const handleDrop = (e: React.DragEvent, dropIndex: number) => {
+    e.preventDefault();
+    if (draggedIndex === null || draggedIndex === dropIndex) return;
+
+    const newFields = [...visibleFields];
+    const draggedField = newFields[draggedIndex];
+    newFields.splice(draggedIndex, 1);
+    newFields.splice(dropIndex, 0, draggedField);
+
+    // Update order property
+    const reorderedFields = newFields.map((field, index) => ({
+      ...field,
+      order: index + 1
+    }));
+
+    onFieldsReorder?.(reorderedFields);
+    setDraggedIndex(null);
+  };
+
   return (
     <div className="space-y-8">
-      {/* Main Metrics Grid - styled like the photo */}
+      {/* Main Metrics Grid - with drag and drop */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-        {visibleFields.map((field) => {
+        {visibleFields.map((field, index) => {
           const value = getFieldValue(field.id);
           const displayValue = renderFieldValue(field, value);
           const textColor = getFieldColor(field, value);
@@ -124,8 +175,15 @@ const SummaryDashboard: React.FC<SummaryDashboardProps> = ({
           return (
             <div
               key={field.id}
-              className="bg-gray-800/60 backdrop-blur-sm rounded-xl p-6 border border-gray-700/50 hover:border-yellow-500/30 transition-all duration-300"
+              className="bg-gray-800/60 backdrop-blur-sm rounded-xl p-6 border border-gray-700/50 hover:border-yellow-500/30 transition-all duration-300 relative cursor-move"
+              draggable
+              onDragStart={(e) => handleDragStart(e, index)}
+              onDragOver={handleDragOver}
+              onDrop={(e) => handleDrop(e, index)}
             >
+              <div className="absolute top-2 right-2">
+                <GripVertical className="w-4 h-4 text-gray-500 hover:text-yellow-400" />
+              </div>
               <div className="flex items-center justify-between mb-2">
                 <h3 className="text-sm font-medium text-gray-300 uppercase tracking-wide">
                   {getFieldName(field)}
@@ -143,6 +201,58 @@ const SummaryDashboard: React.FC<SummaryDashboardProps> = ({
             </div>
           );
         })}
+      </div>
+
+      {/* Charts Section */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        {/* Revenue Trend Chart */}
+        <div className="bg-gray-800/60 backdrop-blur-sm rounded-xl p-6 border border-gray-700/50">
+          <h3 className="text-lg font-semibold text-white mb-4 flex items-center">
+            <TrendingUp className="w-5 h-5 mr-2 text-green-400" />
+            Tendência de Receita vs Gastos
+          </h3>
+          <ResponsiveContainer width="100%" height={300}>
+            <LineChart data={revenueData}>
+              <CartesianGrid strokeDasharray="3 3" stroke="#374151" />
+              <XAxis dataKey="date" stroke="#9CA3AF" />
+              <YAxis stroke="#9CA3AF" />
+              <Tooltip 
+                contentStyle={{ 
+                  backgroundColor: '#1F2937', 
+                  border: '1px solid #374151',
+                  borderRadius: '8px',
+                  color: '#F3F4F6'
+                }} 
+              />
+              <Line type="monotone" dataKey="revenue" stroke="#10B981" strokeWidth={2} />
+              <Line type="monotone" dataKey="spend" stroke="#EF4444" strokeWidth={2} />
+            </LineChart>
+          </ResponsiveContainer>
+        </div>
+
+        {/* Campaign Performance Chart */}
+        <div className="bg-gray-800/60 backdrop-blur-sm rounded-xl p-6 border border-gray-700/50">
+          <h3 className="text-lg font-semibold text-white mb-4 flex items-center">
+            <Target className="w-5 h-5 mr-2 text-blue-400" />
+            Performance por Campanha
+          </h3>
+          <ResponsiveContainer width="100%" height={300}>
+            <BarChart data={campaignData}>
+              <CartesianGrid strokeDasharray="3 3" stroke="#374151" />
+              <XAxis dataKey="name" stroke="#9CA3AF" />
+              <YAxis stroke="#9CA3AF" />
+              <Tooltip 
+                contentStyle={{ 
+                  backgroundColor: '#1F2937', 
+                  border: '1px solid #374151',
+                  borderRadius: '8px',
+                  color: '#F3F4F6'
+                }} 
+              />
+              <Bar dataKey="performance" fill="#3B82F6" />
+            </BarChart>
+          </ResponsiveContainer>
+        </div>
       </div>
 
       {/* Conversion Funnel Section - similar to the photo */}
