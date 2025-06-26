@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Eye, EyeOff } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -148,9 +147,11 @@ export default function Register() {
       }
       setLoading(false);
     } else {
-      console.log('Registration successful');
+      console.log('Registration successful - Please check your email to confirm your account');
       setLoading(false);
-      setShowSuccessModal(true);
+      setRegisterError('');
+      // Show success message about email confirmation
+      alert('Cadastro realizado com sucesso! Verifique seu email para confirmar sua conta antes de fazer login.');
     }
   };
 

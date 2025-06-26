@@ -77,8 +77,8 @@ export default function Login() {
       console.error('Login error:', error);
       if (error.message.includes('Invalid login credentials') || error.message.includes('invalid_credentials')) {
         setLoginError(t('invalidCredentials'));
-      } else if (error.message.includes('Email not confirmed')) {
-        setLoginError('Please check your email and confirm your account before signing in.');
+      } else if (error.message.includes('Email not confirmed') || error.message.includes('email_not_confirmed')) {
+        setLoginError('Por favor, confirme seu email antes de fazer login. Verifique sua caixa de entrada e spam.');
       } else {
         setLoginError(error.message || t('loginError'));
       }

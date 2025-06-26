@@ -1,3 +1,4 @@
+
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -47,7 +48,7 @@ function ProtectedRoute({ children }: { children: React.ReactNode }) {
   }
   
   if (!user) {
-    return <Navigate to="/login" replace />;
+    return <Navigate to="/" replace />;
   }
   
   return <>{children}</>;
@@ -64,8 +65,8 @@ const App = () => (
                 <Toaster />
                 <Sonner />
                 <Routes>
-                  {/* Landing page - public */}
-                  <Route path="/landing" element={<Landing />} />
+                  {/* Landing page as default */}
+                  <Route path="/" element={<Landing />} />
                   
                   {/* Auth routes without sidebar */}
                   <Route path="/login" element={<Login />} />
@@ -81,7 +82,7 @@ const App = () => (
                   <Route path="/cookies" element={<Cookies />} />
                   
                   {/* Main app routes with sidebar - all protected */}
-                  <Route path="*" element={
+                  <Route path="/dashboard" element={
                     <ProtectedRoute>
                       <SidebarProvider>
                         <div className="min-h-screen flex w-full bg-sidebarbackground relative">
@@ -93,28 +94,242 @@ const App = () => (
                               <HeaderControls />
                             </header>
                             <main className="flex-1 bg-background min-h-screen">
-                              <Routes>
-                                <Route path="/" element={<Index />} />
-                                <Route path="/campaigns" element={<Campaigns />} />
-                                <Route path="/reports" element={<Reports />} />
-                                <Route path="/users" element={<Users />} />
-                                <Route path="/subscription" element={<Subscription />} />
-                                <Route path="/expenses" element={<Expenses />} />
-                                <Route path="/ads-accounts" element={<AdsAccounts />} />
-                                <Route path="/chatbot" element={<Chatbot />} />
-                                <Route path="/rates" element={<Rates />} />
-                                <Route path="/notifications" element={<Notifications />} />
-                                <Route path="/achievements" element={<Achievements />} />
-                                <Route path="/settings" element={<Settings />} />
-                                <Route path="/edit-account" element={<EditAccount />} />
-                                <Route path="*" element={<NotFound />} />
-                              </Routes>
+                              <Index />
                             </main>
                           </SidebarInset>
                         </div>
                       </SidebarProvider>
                     </ProtectedRoute>
                   } />
+                  <Route path="/campaigns" element={
+                    <ProtectedRoute>
+                      <SidebarProvider>
+                        <div className="min-h-screen flex w-full bg-sidebarbackground relative">
+                          <div className="animated-bg"></div>
+                          <AppSidebar />
+                          <SidebarInset className="flex-1 bg-background">
+                            <header className="flex h-16 shrink-0 items-center justify-between gap-2 border-b border-yellow-500/20 px-4 bg-background/80 backdrop-blur-sm">
+                              <SidebarTrigger className="-ml-1 text-yellow-400 hover:bg-yellow-500/10" />
+                              <HeaderControls />
+                            </header>
+                            <main className="flex-1 bg-background min-h-screen">
+                              <Campaigns />
+                            </main>
+                          </SidebarInset>
+                        </div>
+                      </SidebarProvider>
+                    </ProtectedRoute>
+                  } />
+                  <Route path="/reports" element={
+                    <ProtectedRoute>
+                      <SidebarProvider>
+                        <div className="min-h-screen flex w-full bg-sidebarbackground relative">
+                          <div className="animated-bg"></div>
+                          <AppSidebar />
+                          <SidebarInset className="flex-1 bg-background">
+                            <header className="flex h-16 shrink-0 items-center justify-between gap-2 border-b border-yellow-500/20 px-4 bg-background/80 backdrop-blur-sm">
+                              <SidebarTrigger className="-ml-1 text-yellow-400 hover:bg-yellow-500/10" />
+                              <HeaderControls />
+                            </header>
+                            <main className="flex-1 bg-background min-h-screen">
+                              <Reports />
+                            </main>
+                          </SidebarInset>
+                        </div>
+                      </SidebarProvider>
+                    </ProtectedRoute>
+                  } />
+                  <Route path="/users" element={
+                    <ProtectedRoute>
+                      <SidebarProvider>
+                        <div className="min-h-screen flex w-full bg-sidebarbackground relative">
+                          <div className="animated-bg"></div>
+                          <AppSidebar />
+                          <SidebarInset className="flex-1 bg-background">
+                            <header className="flex h-16 shrink-0 items-center justify-between gap-2 border-b border-yellow-500/20 px-4 bg-background/80 backdrop-blur-sm">
+                              <SidebarTrigger className="-ml-1 text-yellow-400 hover:bg-yellow-500/10" />
+                              <HeaderControls />
+                            </header>
+                            <main className="flex-1 bg-background min-h-screen">
+                              <Users />
+                            </main>
+                          </SidebarInset>
+                        </div>
+                      </SidebarProvider>
+                    </ProtectedRoute>
+                  } />
+                  <Route path="/subscription" element={
+                    <ProtectedRoute>
+                      <SidebarProvider>
+                        <div className="min-h-screen flex w-full bg-sidebarbackground relative">
+                          <div className="animated-bg"></div>
+                          <AppSidebar />
+                          <SidebarInset className="flex-1 bg-background">
+                            <header className="flex h-16 shrink-0 items-center justify-between gap-2 border-b border-yellow-500/20 px-4 bg-background/80 backdrop-blur-sm">
+                              <SidebarTrigger className="-ml-1 text-yellow-400 hover:bg-yellow-500/10" />
+                              <HeaderControls />
+                            </header>
+                            <main className="flex-1 bg-background min-h-screen">
+                              <Subscription />
+                            </main>
+                          </SidebarInset>
+                        </div>
+                      </SidebarProvider>
+                    </ProtectedRoute>
+                  } />
+                  <Route path="/expenses" element={
+                    <ProtectedRoute>
+                      <SidebarProvider>
+                        <div className="min-h-screen flex w-full bg-sidebarbackground relative">
+                          <div className="animated-bg"></div>
+                          <AppSidebar />
+                          <SidebarInset className="flex-1 bg-background">
+                            <header className="flex h-16 shrink-0 items-center justify-between gap-2 border-b border-yellow-500/20 px-4 bg-background/80 backdrop-blur-sm">
+                              <SidebarTrigger className="-ml-1 text-yellow-400 hover:bg-yellow-500/10" />
+                              <HeaderControls />
+                            </header>
+                            <main className="flex-1 bg-background min-h-screen">
+                              <Expenses />
+                            </main>
+                          </SidebarInset>
+                        </div>
+                      </SidebarProvider>
+                    </ProtectedRoute>
+                  } />
+                  <Route path="/ads-accounts" element={
+                    <ProtectedRoute>
+                      <SidebarProvider>
+                        <div className="min-h-screen flex w-full bg-sidebarbackground relative">
+                          <div className="animated-bg"></div>
+                          <AppSidebar />
+                          <SidebarInset className="flex-1 bg-background">
+                            <header className="flex h-16 shrink-0 items-center justify-between gap-2 border-b border-yellow-500/20 px-4 bg-background/80 backdrop-blur-sm">
+                              <SidebarTrigger className="-ml-1 text-yellow-400 hover:bg-yellow-500/10" />
+                              <HeaderControls />
+                            </header>
+                            <main className="flex-1 bg-background min-h-screen">
+                              <AdsAccounts />
+                            </main>
+                          </SidebarInset>
+                        </div>
+                      </SidebarProvider>
+                    </ProtectedRoute>
+                  } />
+                  <Route path="/chatbot" element={
+                    <ProtectedRoute>
+                      <SidebarProvider>
+                        <div className="min-h-screen flex w-full bg-sidebarbackground relative">
+                          <div className="animated-bg"></div>
+                          <AppSidebar />
+                          <SidebarInset className="flex-1 bg-background">
+                            <header className="flex h-16 shrink-0 items-center justify-between gap-2 border-b border-yellow-500/20 px-4 bg-background/80 backdrop-blur-sm">
+                              <SidebarTrigger className="-ml-1 text-yellow-400 hover:bg-yellow-500/10" />
+                              <HeaderControls />
+                            </header>
+                            <main className="flex-1 bg-background min-h-screen">
+                              <Chatbot />
+                            </main>
+                          </SidebarInset>
+                        </div>
+                      </SidebarProvider>
+                    </ProtectedRoute>
+                  } />
+                  <Route path="/rates" element={
+                    <ProtectedRoute>
+                      <SidebarProvider>
+                        <div className="min-h-screen flex w-full bg-sidebarbackground relative">
+                          <div className="animated-bg"></div>
+                          <AppSidebar />
+                          <SidebarInset className="flex-1 bg-background">
+                            <header className="flex h-16 shrink-0 items-center justify-between gap-2 border-b border-yellow-500/20 px-4 bg-background/80 backdrop-blur-sm">
+                              <SidebarTrigger className="-ml-1 text-yellow-400 hover:bg-yellow-500/10" />
+                              <HeaderControls />
+                            </header>
+                            <main className="flex-1 bg-background min-h-screen">
+                              <Rates />
+                            </main>
+                          </SidebarInset>
+                        </div>
+                      </SidebarProvider>
+                    </ProtectedRoute>
+                  } />
+                  <Route path="/notifications" element={
+                    <ProtectedRoute>
+                      <SidebarProvider>
+                        <div className="min-h-screen flex w-full bg-sidebarbackground relative">
+                          <div className="animated-bg"></div>
+                          <AppSidebar />
+                          <SidebarInset className="flex-1 bg-background">
+                            <header className="flex h-16 shrink-0 items-center justify-between gap-2 border-b border-yellow-500/20 px-4 bg-background/80 backdrop-blur-sm">
+                              <SidebarTrigger className="-ml-1 text-yellow-400 hover:bg-yellow-500/10" />
+                              <HeaderControls />
+                            </header>
+                            <main className="flex-1 bg-background min-h-screen">
+                              <Notifications />
+                            </main>
+                          </SidebarInset>
+                        </div>
+                      </SidebarProvider>
+                    </ProtectedRoute>
+                  } />
+                  <Route path="/achievements" element={
+                    <ProtectedRoute>
+                      <SidebarProvider>
+                        <div className="min-h-screen flex w-full bg-sidebarbackground relative">
+                          <div className="animated-bg"></div>
+                          <AppSidebar />
+                          <SidebarInset className="flex-1 bg-background">
+                            <header className="flex h-16 shrink-0 items-center justify-between gap-2 border-b border-yellow-500/20 px-4 bg-background/80 backdrop-blur-sm">
+                              <SidebarTrigger className="-ml-1 text-yellow-400 hover:bg-yellow-500/10" />
+                              <HeaderControls />
+                            </header>
+                            <main className="flex-1 bg-background min-h-screen">
+                              <Achievements />
+                            </main>
+                          </SidebarInset>
+                        </div>
+                      </SidebarProvider>
+                    </ProtectedRoute>
+                  } />
+                  <Route path="/settings" element={
+                    <ProtectedRoute>
+                      <SidebarProvider>
+                        <div className="min-h-screen flex w-full bg-sidebarbackground relative">
+                          <div className="animated-bg"></div>
+                          <AppSidebar />
+                          <SidebarInset className="flex-1 bg-background">
+                            <header className="flex h-16 shrink-0 items-center justify-between gap-2 border-b border-yellow-500/20 px-4 bg-background/80 backdrop-blur-sm">
+                              <SidebarTrigger className="-ml-1 text-yellow-400 hover:bg-yellow-500/10" />
+                              <HeaderControls />
+                            </header>
+                            <main className="flex-1 bg-background min-h-screen">
+                              <Settings />
+                            </main>
+                          </SidebarInset>
+                        </div>
+                      </SidebarProvider>
+                    </ProtectedRoute>
+                  } />
+                  <Route path="/edit-account" element={
+                    <ProtectedRoute>
+                      <SidebarProvider>
+                        <div className="min-h-screen flex w-full bg-sidebarbackground relative">
+                          <div className="animated-bg"></div>
+                          <AppSidebar />
+                          <SidebarInset className="flex-1 bg-background">
+                            <header className="flex h-16 shrink-0 items-center justify-between gap-2 border-b border-yellow-500/20 px-4 bg-background/80 backdrop-blur-sm">
+                              <SidebarTrigger className="-ml-1 text-yellow-400 hover:bg-yellow-500/10" />
+                              <HeaderControls />
+                            </header>
+                            <main className="flex-1 bg-background min-h-screen">
+                              <EditAccount />
+                            </main>
+                          </SidebarInset>
+                        </div>
+                      </SidebarProvider>
+                    </ProtectedRoute>
+                  } />
+                  <Route path="*" element={<NotFound />} />
                 </Routes>
               </TooltipProvider>
             </AchievementsProvider>

@@ -49,7 +49,7 @@ const Landing = () => {
       trustedBy: {
         pt: 'Confiado por mais de 1.000 empresas',
         en: 'Trusted by over 1,000 companies',
-        es: 'Confiado por más de 1,000 empresas'
+        es: 'Confiado por más de 1.000 empresas'
       },
       features: {
         pt: 'Recursos',
@@ -353,29 +353,6 @@ const Landing = () => {
         </div>
       </section>
 
-      {/* Platforms Integration Section */}
-      <section className="py-16 px-4 sm:px-6 lg:px-8 bg-gray-900/20 relative z-10">
-        <div className="max-w-7xl mx-auto">
-          <div className="text-center mb-12">
-            <h2 className="text-3xl md:text-4xl font-bold mb-4">
-              Integramos com as melhores plataformas do mercado!
-            </h2>
-            <p className="text-xl text-muted-foreground">
-              Conecte suas campanhas de mais de 50 plataformas diferentes
-            </p>
-          </div>
-          <PlatformsCarousel />
-          <div className="text-center mt-8">
-            <Button 
-              variant="outline" 
-              className="border-yellow-500/20 hover:bg-yellow-500/10"
-            >
-              Ver todas as integrações
-            </Button>
-          </div>
-        </div>
-      </section>
-
       {/* Features Section */}
       <section id="features" className="py-20 px-4 sm:px-6 lg:px-8 relative z-10">
         <div className="max-w-7xl mx-auto">
@@ -486,6 +463,89 @@ const Landing = () => {
             {getText('startFree')}
             <ArrowRight className="ml-2 w-4 h-4" />
           </Button>
+        </div>
+      </section>
+
+      {/* Platforms Integration Section - Moved to bottom with 3 lines */}
+      <section className="py-16 px-4 sm:px-6 lg:px-8 bg-gray-900/20 relative z-10">
+        <div className="max-w-7xl mx-auto">
+          <div className="text-center mb-12">
+            <h2 className="text-3xl md:text-4xl font-bold mb-4">
+              Integramos com as melhores plataformas do mercado!
+            </h2>
+            <p className="text-xl text-muted-foreground">
+              Conecte suas campanhas de mais de 50 plataformas diferentes
+            </p>
+          </div>
+          
+          {/* 3 lines of platform logos */}
+          <div className="space-y-8">
+            {/* First line */}
+            <div className="flex justify-center items-center space-x-8 opacity-60 hover:opacity-100 transition-opacity">
+              <div className="bg-white/10 rounded-lg p-4 w-24 h-16 flex items-center justify-center">
+                <span className="text-sm font-semibold text-white">Meta</span>
+              </div>
+              <div className="bg-white/10 rounded-lg p-4 w-24 h-16 flex items-center justify-center">
+                <span className="text-sm font-semibold text-white">Google</span>
+              </div>
+              <div className="bg-white/10 rounded-lg p-4 w-24 h-16 flex items-center justify-center">
+                <span className="text-sm font-semibold text-white">TikTok</span>
+              </div>
+              <div className="bg-white/10 rounded-lg p-4 w-24 h-16 flex items-center justify-center">
+                <span className="text-sm font-semibold text-white">YouTube</span>
+              </div>
+              <div className="bg-white/10 rounded-lg p-4 w-24 h-16 flex items-center justify-center">
+                <span className="text-sm font-semibold text-white">LinkedIn</span>
+              </div>
+            </div>
+            
+            {/* Second line */}
+            <div className="flex justify-center items-center space-x-8 opacity-60 hover:opacity-100 transition-opacity">
+              <div className="bg-white/10 rounded-lg p-4 w-24 h-16 flex items-center justify-center">
+                <span className="text-sm font-semibold text-white">Twitter</span>
+              </div>
+              <div className="bg-white/10 rounded-lg p-4 w-24 h-16 flex items-center justify-center">
+                <span className="text-sm font-semibold text-white">Snapchat</span>
+              </div>
+              <div className="bg-white/10 rounded-lg p-4 w-24 h-16 flex items-center justify-center">
+                <span className="text-sm font-semibold text-white">Pinterest</span>
+              </div>
+              <div className="bg-white/10 rounded-lg p-4 w-24 h-16 flex items-center justify-center">
+                <span className="text-sm font-semibold text-white">Reddit</span>
+              </div>
+              <div className="bg-white/10 rounded-lg p-4 w-24 h-16 flex items-center justify-center">
+                <span className="text-sm font-semibold text-white">Amazon</span>
+              </div>
+            </div>
+            
+            {/* Third line */}
+            <div className="flex justify-center items-center space-x-8 opacity-60 hover:opacity-100 transition-opacity">
+              <div className="bg-white/10 rounded-lg p-4 w-24 h-16 flex items-center justify-center">
+                <span className="text-sm font-semibold text-white">Shopify</span>
+              </div>
+              <div className="bg-white/10 rounded-lg p-4 w-24 h-16 flex items-center justify-center">
+                <span className="text-sm font-semibold text-white">Mailchimp</span>
+              </div>
+              <div className="bg-white/10 rounded-lg p-4 w-24 h-16 flex items-center justify-center">
+                <span className="text-sm font-semibold text-white">HubSpot</span>
+              </div>
+              <div className="bg-white/10 rounded-lg p-4 w-24 h-16 flex items-center justify-center">
+                <span className="text-sm font-semibold text-white">Salesforce</span>
+              </div>
+              <div className="bg-white/10 rounded-lg p-4 w-24 h-16 flex items-center justify-center">
+                <span className="text-sm font-semibold text-white">Stripe</span>
+              </div>
+            </div>
+          </div>
+          
+          <div className="text-center mt-8">
+            <Button 
+              variant="outline" 
+              className="border-yellow-500/20 hover:bg-yellow-500/10"
+            >
+              Ver todas as integrações
+            </Button>
+          </div>
         </div>
       </section>
 

@@ -32,7 +32,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         
         // Redirect authenticated users to dashboard
         if (session?.user && (window.location.pathname === '/login' || window.location.pathname === '/register')) {
-          navigate('/');
+          navigate('/dashboard');
         }
       }
     );
@@ -71,7 +71,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       email: email.trim().toLowerCase(),
       password,
       options: {
-        emailRedirectTo: `${window.location.origin}/`,
+        emailRedirectTo: `${window.location.origin}/dashboard`,
         data: {
           name: name || email.split('@')[0]
         }
@@ -92,7 +92,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     if (!error) {
       setUser(null);
       setSession(null);
-      navigate('/login');
+      navigate('/');
     }
   };
 
