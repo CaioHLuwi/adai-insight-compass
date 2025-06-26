@@ -1,5 +1,6 @@
+
 import React, { useState } from 'react';
-import { Eye, EyeOff, Globe } from 'lucide-react';
+import { Eye, EyeOff } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -9,6 +10,7 @@ import { useLanguage } from '@/hooks/useLanguage';
 import { useAuth } from '@/contexts/AuthContext';
 import { getTranslation } from '@/utils/translations';
 import { RegistrationSuccessModal } from '@/components/RegistrationSuccessModal';
+import LanguageDropdown from '@/components/LanguageDropdown';
 
 export default function Register() {
   const [email, setEmail] = useState('');
@@ -155,18 +157,63 @@ export default function Register() {
         <div className="h-full flex items-center justify-center w-full">
           <div className="max-w-2xl w-full">
             <div className="relative">
-              {/* Illustration placeholder */}
-              <div className="w-full h-96 bg-gradient-to-br from-yellow-500/20 to-orange-500/20 rounded-lg flex items-center justify-center relative overflow-hidden">
-                <div className="absolute inset-0 bg-gradient-to-r from-yellow-400/10 to-orange-400/10"></div>
-                <div className="relative z-10 text-center">
-                  <div className="text-6xl mb-4">🚀</div>
-                  <div className="text-4xl mb-4">📈</div>
-                  <div className="text-2xl opacity-70">Join Our Platform</div>
+              {/* Growth and analytics illustration */}
+              <div className="w-full h-96 bg-gradient-to-br from-green-500/20 to-blue-500/20 rounded-lg flex items-center justify-center relative overflow-hidden">
+                <div className="absolute inset-0 bg-gradient-to-r from-green-400/10 to-blue-400/10"></div>
+                
+                {/* Analytics dashboard mockup */}
+                <div className="relative z-10 w-full max-w-lg">
+                  <div className="bg-gray-900/80 backdrop-blur-sm rounded-lg p-6 shadow-2xl border border-green-500/20">
+                    {/* Header with user avatar */}
+                    <div className="flex items-center justify-between mb-6">
+                      <div className="flex items-center space-x-3">
+                        <div className="w-10 h-10 bg-green-500/30 rounded-full"></div>
+                        <div>
+                          <div className="h-3 bg-green-500/20 rounded w-20 mb-1"></div>
+                          <div className="h-2 bg-green-500/10 rounded w-16"></div>
+                        </div>
+                      </div>
+                      <div className="text-green-400 font-bold">Welcome!</div>
+                    </div>
+                    
+                    {/* Progress indicators */}
+                    <div className="space-y-4 mb-6">
+                      <div>
+                        <div className="flex justify-between text-sm mb-1">
+                          <span className="text-green-300">Campaign Performance</span>
+                          <span className="text-green-400">85%</span>
+                        </div>
+                        <div className="h-2 bg-gray-700 rounded">
+                          <div className="h-2 bg-green-500 rounded w-5/6"></div>
+                        </div>
+                      </div>
+                      <div>
+                        <div className="flex justify-between text-sm mb-1">
+                          <span className="text-blue-300">ROI Growth</span>
+                          <span className="text-blue-400">92%</span>
+                        </div>
+                        <div className="h-2 bg-gray-700 rounded">
+                          <div className="h-2 bg-blue-500 rounded w-11/12"></div>
+                        </div>
+                      </div>
+                    </div>
+                    
+                    {/* Feature list */}
+                    <div className="space-y-2">
+                      {['AI Optimization', 'Real-time Analytics', 'Multi-platform'].map((feature, i) => (
+                        <div key={i} className="flex items-center space-x-2">
+                          <div className="w-2 h-2 bg-green-400 rounded-full"></div>
+                          <span className="text-sm text-gray-300">{feature}</span>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
                 </div>
-                {/* Background charts decoration */}
-                <div className="absolute top-4 left-4 w-16 h-16 border-2 border-yellow-400/30 rounded-lg"></div>
-                <div className="absolute bottom-4 right-4 w-12 h-12 border-2 border-orange-400/30 rounded-full"></div>
-                <div className="absolute top-1/2 left-8 w-8 h-8 bg-yellow-400/20 rounded"></div>
+
+                {/* Floating icons */}
+                <div className="absolute top-8 right-8 text-4xl animate-bounce">📊</div>
+                <div className="absolute bottom-8 left-8 text-3xl animate-pulse">🚀</div>
+                <div className="absolute top-1/2 right-12 text-2xl animate-spin">⚡</div>
               </div>
             </div>
           </div>
@@ -333,15 +380,7 @@ export default function Register() {
 
           {/* Language selector - positioned at bottom */}
           <div className="flex justify-center mt-8">
-            <Button
-              onClick={toggleLanguage}
-              variant="ghost"
-              size="sm"
-              className="text-muted-foreground hover:text-foreground"
-            >
-              <Globe className="w-4 h-4 mr-2" />
-              {language.toUpperCase()}
-            </Button>
+            <LanguageDropdown />
           </div>
         </div>
       </div>

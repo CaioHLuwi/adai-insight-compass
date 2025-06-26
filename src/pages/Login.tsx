@@ -1,6 +1,6 @@
 
 import React, { useState } from 'react';
-import { Eye, EyeOff, Globe } from 'lucide-react';
+import { Eye, EyeOff } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -9,6 +9,7 @@ import { useNavigate } from 'react-router-dom';
 import { useLanguage } from '@/hooks/useLanguage';
 import { useAuth } from '@/contexts/AuthContext';
 import { getTranslation } from '@/utils/translations';
+import LanguageDropdown from '@/components/LanguageDropdown';
 
 export default function Login() {
   const [email, setEmail] = useState('');
@@ -19,7 +20,7 @@ export default function Login() {
   const [showForgotPassword, setShowForgotPassword] = useState(false);
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
-  const { language, toggleLanguage } = useLanguage();
+  const { language } = useLanguage();
   const { signIn } = useAuth();
 
   const t = (key: string) => getTranslation(language as any, key as any);
@@ -79,18 +80,53 @@ export default function Login() {
         <div className="h-full flex items-center justify-center w-full">
           <div className="max-w-2xl w-full">
             <div className="relative">
-              {/* Illustration placeholder */}
+              {/* Modern illustration with dashboard preview */}
               <div className="w-full h-96 bg-gradient-to-br from-yellow-500/20 to-orange-500/20 rounded-lg flex items-center justify-center relative overflow-hidden">
                 <div className="absolute inset-0 bg-gradient-to-r from-yellow-400/10 to-orange-400/10"></div>
-                <div className="relative z-10 text-center">
-                  <div className="text-6xl mb-4">💻</div>
-                  <div className="text-4xl mb-4">📊</div>
-                  <div className="text-2xl opacity-70">Investment Analytics</div>
+                
+                {/* Dashboard mockup */}
+                <div className="relative z-10 w-full max-w-lg">
+                  <div className="bg-gray-900/80 backdrop-blur-sm rounded-lg p-6 shadow-2xl border border-yellow-500/20">
+                    {/* Header */}
+                    <div className="flex items-center justify-between mb-6">
+                      <div className="h-8 bg-yellow-500/20 rounded w-32"></div>
+                      <div className="flex space-x-2">
+                        <div className="w-8 h-8 bg-yellow-500/30 rounded-full"></div>
+                        <div className="w-8 h-8 bg-orange-500/30 rounded-full"></div>
+                      </div>
+                    </div>
+                    
+                    {/* Stats cards */}
+                    <div className="grid grid-cols-2 gap-4 mb-6">
+                      <div className="bg-green-500/10 border border-green-500/20 rounded-lg p-3">
+                        <div className="text-green-400 text-2xl font-bold">+127%</div>
+                        <div className="text-green-300 text-sm">ROI</div>
+                      </div>
+                      <div className="bg-blue-500/10 border border-blue-500/20 rounded-lg p-3">
+                        <div className="text-blue-400 text-2xl font-bold">R$ 45k</div>
+                        <div className="text-blue-300 text-sm">Revenue</div>
+                      </div>
+                    </div>
+                    
+                    {/* Chart representation */}
+                    <div className="bg-gray-800/50 rounded p-4">
+                      <div className="flex items-end space-x-1 h-16">
+                        {[...Array(12)].map((_, i) => (
+                          <div
+                            key={i}
+                            className="bg-yellow-500/40 flex-1 rounded-t"
+                            style={{ height: `${Math.random() * 100}%` }}
+                          ></div>
+                        ))}
+                      </div>
+                    </div>
+                  </div>
                 </div>
-                {/* Background charts decoration */}
-                <div className="absolute top-4 left-4 w-16 h-16 border-2 border-yellow-400/30 rounded-lg"></div>
-                <div className="absolute bottom-4 right-4 w-12 h-12 border-2 border-orange-400/30 rounded-full"></div>
-                <div className="absolute top-1/2 left-8 w-8 h-8 bg-yellow-400/20 rounded"></div>
+
+                {/* Floating elements */}
+                <div className="absolute top-6 left-6 w-12 h-12 border-2 border-yellow-400/30 rounded-lg animate-pulse"></div>
+                <div className="absolute bottom-6 right-6 w-16 h-16 border-2 border-orange-400/30 rounded-full animate-pulse"></div>
+                <div className="absolute top-1/2 left-12 w-8 h-8 bg-yellow-400/20 rounded animate-bounce"></div>
               </div>
             </div>
           </div>
@@ -188,15 +224,7 @@ export default function Login() {
 
           {/* Language selector - positioned at bottom */}
           <div className="flex justify-center mt-8">
-            <Button
-              onClick={toggleLanguage}
-              variant="ghost"
-              size="sm"
-              className="text-muted-foreground hover:text-foreground"
-            >
-              <Globe className="w-4 h-4 mr-2" />
-              {language.toUpperCase()}
-            </Button>
+            <LanguageDropdown />
           </div>
         </div>
       </div>

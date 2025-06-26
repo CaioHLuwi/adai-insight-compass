@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
@@ -14,15 +13,16 @@ import {
   Users, 
   BarChart3, 
   Target,
-  Globe,
   Star,
   Play,
   ChevronDown
 } from 'lucide-react';
+import LanguageDropdown from '@/components/LanguageDropdown';
+import PlatformsCarousel from '@/components/PlatformsCarousel';
 
 const Landing = () => {
   const navigate = useNavigate();
-  const { language, toggleLanguage } = useLanguage();
+  const { language } = useLanguage();
 
   const getText = (key: string) => {
     const translations: Record<string, Record<string, string>> = {
@@ -79,7 +79,7 @@ const Landing = () => {
       advancedAnalyticsDesc: {
         pt: 'Relatórios detalhados e insights profundos sobre o desempenho das suas campanhas.',
         en: 'Detailed reports and deep insights about your campaign performance.',
-        es: 'Informes detallados e insights profundos sobre el rendimiento de tus campañas.'
+        es: 'Informes detallados y insights profundos sobre el rendimiento de tus campañas.'
       },
       multiPlatform: {
         pt: 'Multi-Plataforma',
@@ -247,15 +247,7 @@ const Landing = () => {
               <a href="#testimonials" className="text-muted-foreground hover:text-yellow-400 transition-colors">
                 {getText('testimonials')}
               </a>
-              <Button
-                onClick={toggleLanguage}
-                variant="ghost"
-                size="sm"
-                className="text-muted-foreground hover:text-foreground"
-              >
-                <Globe className="w-4 h-4 mr-2" />
-                {language.toUpperCase()}
-              </Button>
+              <LanguageDropdown />
               <Button
                 onClick={() => navigate('/login')}
                 variant="ghost"
@@ -337,6 +329,29 @@ const Landing = () => {
                 </div>
               </div>
             </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Platforms Integration Section */}
+      <section className="py-16 px-4 sm:px-6 lg:px-8 bg-gray-900/20">
+        <div className="max-w-7xl mx-auto">
+          <div className="text-center mb-12">
+            <h2 className="text-3xl md:text-4xl font-bold mb-4">
+              Integramos com as melhores plataformas do mercado!
+            </h2>
+            <p className="text-xl text-muted-foreground">
+              (mais plataformas em breve, confira a lista completa)
+            </p>
+          </div>
+          <PlatformsCarousel />
+          <div className="text-center mt-8">
+            <Button 
+              variant="outline" 
+              className="border-yellow-500/20 hover:bg-yellow-500/10"
+            >
+              Ver todas as integrações
+            </Button>
           </div>
         </div>
       </section>
