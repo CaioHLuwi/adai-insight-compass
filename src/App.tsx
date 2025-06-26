@@ -1,4 +1,3 @@
-
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -38,7 +37,7 @@ import { useAuth } from "@/contexts/AuthContext";
 
 const queryClient = new QueryClient();
 
-function QueryClient(props: { children: React.ReactNode }) {
+function QueryClientWrapper(props: { children: React.ReactNode }) {
   return (
     <QueryClientProvider client={queryClient}>
       <TooltipProvider>
@@ -82,7 +81,7 @@ function AppLayout({ children }: { children: React.ReactNode }) {
 
 function App() {
   return (
-    <QueryClient>
+    <QueryClientWrapper>
       <Router>
         <div className="min-h-screen bg-background">
           <Routes>
@@ -93,7 +92,13 @@ function App() {
               <AuthProvider>
                 <ProtectedRoute>
                   <AppLayout>
-                    <SummaryDashboard />
+                    <SummaryDashboard 
+                      totalSpendToday={1500}
+                      avgCPC={2.5}
+                      avgCPA={25}
+                      conversionsToday={45}
+                      recentAnomalies={[]}
+                    />
                   </AppLayout>
                 </ProtectedRoute>
               </AuthProvider>
@@ -226,7 +231,7 @@ function App() {
           <WhatsAppWidget />
         </div>
       </Router>
-    </QueryClient>
+    </QueryClientWrapper>
   );
 }
 
