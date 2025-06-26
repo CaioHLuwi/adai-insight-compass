@@ -7,15 +7,22 @@ import { Label } from '@/components/ui/label';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { useNavigate } from 'react-router-dom';
 import { useLanguage } from '@/hooks/useLanguage';
+import { useAuth } from '@/contexts/AuthContext';
+import { getTranslation } from '@/utils/translations';
 
 export default function Login() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [emailError, setEmailError] = useState('');
+  const [loginError, setLoginError] = useState('');
   const [showForgotPassword, setShowForgotPassword] = useState(false);
+  const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
   const { language, toggleLanguage } = useLanguage();
+  const { signIn } = useAuth();
+
+  const t = (key: string) => getTranslation(language as any, key as any);
 
   const validateEmail = (email: string) => {
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -27,27 +34,49 @@ export default function Login() {
     setEmail(value);
     
     if (value && !validateEmail(value)) {
-      setEmailError('Please enter a valid email address');
+      setEmailError(t('emailInvalid'));
     } else {
       setEmailError('');
     }
   };
 
-  const handleLogin = (e: React.FormEvent) => {
+  const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!validateEmail(email)) {
-      setEmailError('Please enter a valid email address');
+    setLoginError('');
+    
+    if (!email) {
+      setEmailError(t('emailRequired'));
       return;
     }
-    // TODO: Implement login logic
-    console.log('Login attempt:', { email, password });
+    
+    if (!validateEmail(email)) {
+      setEmailError(t('emailInvalid'));
+      return;
+    }
+
+    if (!password) {
+      setLoginError(t('passwordRequired'));
+      return;
+    }
+
+    setLoading(true);
+    const { error } = await signIn(email, password);
+    
+    if (error) {
+      if (error.message.includes('Invalid login credentials')) {
+        setLoginError(t('invalidCredentials'));
+      } else {
+        setLoginError(t('loginError'));
+      }
+    }
+    setLoading(false);
   };
 
   return (
     <div className="min-h-screen bg-background flex">
       {/* Left side - 65% - Hidden on mobile */}
-      <div className="hidden lg:block lg:w-[65%] p-8">
-        <div className="h-full flex items-center justify-center">
+      <div className="hidden lg:flex lg:w-[65%] p-8">
+        <div className="h-full flex items-center justify-center w-full">
           <div className="max-w-2xl w-full">
             <div className="relative">
               {/* Illustration placeholder */}
@@ -78,21 +107,21 @@ export default function Login() {
               alt="Otmizy.ai Logo" 
               className="h-12 lg:h-16 mx-auto mb-6"
             />
-            <h1 className="text-xl lg:text-2xl font-bold text-foreground mb-2">Welcome back</h1>
-            <p className="text-sm lg:text-base text-muted-foreground">Enter your e-mail and password to continue</p>
+            <h1 className="text-xl lg:text-2xl font-bold text-foreground mb-2">{t('welcomeBack')}</h1>
+            <p className="text-sm lg:text-base text-muted-foreground">{t('loginSubtitle')}</p>
           </div>
 
           <form onSubmit={handleLogin} className="space-y-4">
             {/* Email field */}
             <div className="space-y-2">
-              <Label htmlFor="email">E-mail</Label>
+              <Label htmlFor="email">{t('email')}</Label>
               <Input
                 id="email"
                 type="email"
                 value={email}
                 onChange={handleEmailChange}
                 className={emailError ? 'border-red-500' : ''}
-                placeholder="Enter your email"
+                placeholder={t('email')}
               />
               {emailError && (
                 <p className="text-sm text-red-500">{emailError}</p>
@@ -101,14 +130,14 @@ export default function Login() {
 
             {/* Password field */}
             <div className="space-y-2">
-              <Label htmlFor="password">Password</Label>
+              <Label htmlFor="password">{t('password')}</Label>
               <div className="relative">
                 <Input
                   id="password"
                   type={showPassword ? 'text' : 'password'}
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
-                  placeholder="Enter your password"
+                  placeholder={t('password')}
                 />
                 <button
                   type="button"
@@ -120,33 +149,39 @@ export default function Login() {
               </div>
             </div>
 
+            {/* Login error */}
+            {loginError && (
+              <p className="text-sm text-red-500">{loginError}</p>
+            )}
+
             {/* Login button */}
             <Button 
               type="submit" 
               className="w-full bg-yellow-500 hover:bg-yellow-600 text-black font-medium"
+              disabled={loading}
             >
-              Enter
+              {loading ? 'Carregando...' : t('enter')}
             </Button>
           </form>
 
           {/* Links */}
           <div className="text-center space-y-2">
             <p className="text-sm lg:text-base text-muted-foreground">
-              Don't have account?{' '}
+              {t('dontHaveAccount')}{' '}
               <button
                 onClick={() => navigate('/register')}
                 className="text-yellow-500 hover:text-yellow-400 underline"
               >
-                Register
+                {t('register')}
               </button>
             </p>
             <p className="text-sm lg:text-base text-muted-foreground">
-              Forget password?{' '}
+              {t('forgetPassword')}{' '}
               <button
                 onClick={() => setShowForgotPassword(true)}
                 className="text-yellow-500 hover:text-yellow-400 underline"
               >
-                Click here
+                {t('clickHere')}
               </button>
             </p>
           </div>
@@ -170,36 +205,44 @@ export default function Login() {
       <ForgotPasswordDialog 
         open={showForgotPassword} 
         onOpenChange={setShowForgotPassword}
+        language={language}
       />
     </div>
   );
 }
 
-function ForgotPasswordDialog({ open, onOpenChange }: { open: boolean; onOpenChange: (open: boolean) => void }) {
+function ForgotPasswordDialog({ 
+  open, 
+  onOpenChange, 
+  language 
+}: { 
+  open: boolean; 
+  onOpenChange: (open: boolean) => void;
+  language: string;
+}) {
   const [step, setStep] = useState<'email' | 'code' | 'password'>('email');
   const [email, setEmail] = useState('');
   const [code, setCode] = useState('');
   const [newPassword, setNewPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
 
+  const t = (key: string) => getTranslation(language as any, key as any);
+
   const handleSendCode = () => {
-    // TODO: Implement send code logic
     console.log('Sending code to:', email);
     setStep('code');
   };
 
   const handleVerifyCode = () => {
-    // TODO: Implement code verification
     console.log('Verifying code:', code);
     setStep('password');
   };
 
   const handleResetPassword = () => {
     if (newPassword !== confirmPassword) {
-      alert('Passwords do not match');
+      alert(t('passwordsDoNotMatch'));
       return;
     }
-    // TODO: Implement password reset
     console.log('Resetting password');
     onOpenChange(false);
     setStep('email');
@@ -209,27 +252,27 @@ function ForgotPasswordDialog({ open, onOpenChange }: { open: boolean; onOpenCha
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="sm:max-w-md">
         <DialogHeader>
-          <DialogTitle>Reset Password</DialogTitle>
+          <DialogTitle>{t('resetPassword')}</DialogTitle>
         </DialogHeader>
         
         <div className="space-y-4">
           {step === 'email' && (
             <>
               <div className="space-y-2">
-                <Label htmlFor="reset-email">E-mail</Label>
+                <Label htmlFor="reset-email">{t('email')}</Label>
                 <Input
                   id="reset-email"
                   type="email"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
-                  placeholder="Enter your email"
+                  placeholder={t('email')}
                 />
               </div>
               <Button 
                 onClick={handleSendCode}
                 className="w-full bg-yellow-500 hover:bg-yellow-600 text-black"
               >
-                Send Code
+                {t('sendCode')}
               </Button>
             </>
           )}
@@ -237,20 +280,20 @@ function ForgotPasswordDialog({ open, onOpenChange }: { open: boolean; onOpenCha
           {step === 'code' && (
             <>
               <div className="space-y-2">
-                <Label htmlFor="reset-code">Verification Code</Label>
+                <Label htmlFor="reset-code">{t('verificationCode')}</Label>
                 <Input
                   id="reset-code"
                   type="text"
                   value={code}
                   onChange={(e) => setCode(e.target.value)}
-                  placeholder="Enter the code sent to your email"
+                  placeholder={t('verificationCode')}
                 />
               </div>
               <Button 
                 onClick={handleVerifyCode}
                 className="w-full bg-yellow-500 hover:bg-yellow-600 text-black"
               >
-                Verify Code
+                {t('verifyCode')}
               </Button>
             </>
           )}
@@ -258,30 +301,30 @@ function ForgotPasswordDialog({ open, onOpenChange }: { open: boolean; onOpenCha
           {step === 'password' && (
             <>
               <div className="space-y-2">
-                <Label htmlFor="new-password">New Password</Label>
+                <Label htmlFor="new-password">{t('newPassword')}</Label>
                 <Input
                   id="new-password"
                   type="password"
                   value={newPassword}
                   onChange={(e) => setNewPassword(e.target.value)}
-                  placeholder="Enter new password"
+                  placeholder={t('newPassword')}
                 />
               </div>
               <div className="space-y-2">
-                <Label htmlFor="confirm-password">Confirm Password</Label>
+                <Label htmlFor="confirm-password">{t('confirmPassword')}</Label>
                 <Input
                   id="confirm-password"
                   type="password"
                   value={confirmPassword}
                   onChange={(e) => setConfirmPassword(e.target.value)}
-                  placeholder="Confirm new password"
+                  placeholder={t('confirmPassword')}
                 />
               </div>
               <Button 
                 onClick={handleResetPassword}
                 className="w-full bg-yellow-500 hover:bg-yellow-600 text-black"
               >
-                Confirm New Password
+                {t('confirmNewPassword')}
               </Button>
             </>
           )}

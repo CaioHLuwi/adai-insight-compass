@@ -7,19 +7,27 @@ import { Label } from '@/components/ui/label';
 import { Checkbox } from '@/components/ui/checkbox';
 import { useNavigate } from 'react-router-dom';
 import { useLanguage } from '@/hooks/useLanguage';
+import { useAuth } from '@/contexts/AuthContext';
+import { getTranslation } from '@/utils/translations';
 
 export default function Register() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
+  const [name, setName] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [agreedToTerms, setAgreedToTerms] = useState(false);
   const [emailError, setEmailError] = useState('');
   const [passwordError, setPasswordError] = useState('');
   const [confirmPasswordError, setConfirmPasswordError] = useState('');
+  const [registerError, setRegisterError] = useState('');
+  const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
   const { language, toggleLanguage } = useLanguage();
+  const { signUp } = useAuth();
+
+  const t = (key: string) => getTranslation(language as any, key as any);
 
   const validateEmail = (email: string) => {
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -44,7 +52,7 @@ export default function Register() {
     setEmail(value);
     
     if (value && !validateEmail(value)) {
-      setEmailError('Please enter a valid email address');
+      setEmailError(t('emailInvalid'));
     } else {
       setEmailError('');
     }
@@ -57,17 +65,17 @@ export default function Register() {
     const validation = validatePassword(value);
     if (value && !validation.isValid) {
       const errors = [];
-      if (!validation.hasMinLength) errors.push('at least 8 characters');
-      if (!validation.hasCapitalLetter) errors.push('1 capital letter');
-      if (!validation.hasSymbol) errors.push('1 symbol');
-      setPasswordError(`Password must contain: ${errors.join(', ')}`);
+      if (!validation.hasMinLength) errors.push(t('atLeast8Characters'));
+      if (!validation.hasCapitalLetter) errors.push(t('oneCapitalLetter'));
+      if (!validation.hasSymbol) errors.push(t('oneSymbol'));
+      setPasswordError(`${t('passwordRequirements')}${errors.join(', ')}`);
     } else {
       setPasswordError('');
     }
 
     // Revalidate confirm password if it exists
     if (confirmPassword && value !== confirmPassword) {
-      setConfirmPasswordError('Passwords do not match');
+      setConfirmPasswordError(t('passwordsDoNotMatch'));
     } else {
       setConfirmPasswordError('');
     }
@@ -78,17 +86,28 @@ export default function Register() {
     setConfirmPassword(value);
     
     if (value && value !== password) {
-      setConfirmPasswordError('Passwords do not match');
+      setConfirmPasswordError(t('passwordsDoNotMatch'));
     } else {
       setConfirmPasswordError('');
     }
   };
 
-  const handleRegister = (e: React.FormEvent) => {
+  const handleRegister = async (e: React.FormEvent) => {
     e.preventDefault();
+    setRegisterError('');
     
+    if (!email) {
+      setEmailError(t('emailRequired'));
+      return;
+    }
+
     if (!validateEmail(email)) {
-      setEmailError('Please enter a valid email address');
+      setEmailError(t('emailInvalid'));
+      return;
+    }
+
+    if (!password) {
+      setPasswordError(t('passwordRequired'));
       return;
     }
 
@@ -98,24 +117,33 @@ export default function Register() {
     }
 
     if (password !== confirmPassword) {
-      setConfirmPasswordError('Passwords do not match');
+      setConfirmPasswordError(t('passwordsDoNotMatch'));
       return;
     }
 
     if (!agreedToTerms) {
-      alert('Please agree to the terms and conditions');
+      setRegisterError(t('pleaseAgreeToTerms'));
       return;
     }
 
-    // TODO: Implement registration logic
-    console.log('Registration attempt:', { email, password });
+    setLoading(true);
+    const { error } = await signUp(email, password, name);
+    
+    if (error) {
+      if (error.message.includes('User already registered')) {
+        setRegisterError(t('userAlreadyExists'));
+      } else {
+        setRegisterError(t('registerError'));
+      }
+    }
+    setLoading(false);
   };
 
   return (
     <div className="min-h-screen bg-background flex">
       {/* Left side - 65% - Hidden on mobile */}
-      <div className="hidden lg:block lg:w-[65%] p-8">
-        <div className="h-full flex items-center justify-center">
+      <div className="hidden lg:flex lg:w-[65%] p-8">
+        <div className="h-full flex items-center justify-center w-full">
           <div className="max-w-2xl w-full">
             <div className="relative">
               {/* Illustration placeholder */}
@@ -146,21 +174,33 @@ export default function Register() {
               alt="Otmizy.ai Logo" 
               className="h-12 lg:h-16 mx-auto mb-6"
             />
-            <h1 className="text-xl lg:text-2xl font-bold text-foreground mb-2">Create Account</h1>
-            <p className="text-sm lg:text-base text-muted-foreground">Join us to start your journey</p>
+            <h1 className="text-xl lg:text-2xl font-bold text-foreground mb-2">{t('createAccount')}</h1>
+            <p className="text-sm lg:text-base text-muted-foreground">{t('registerSubtitle')}</p>
           </div>
 
           <form onSubmit={handleRegister} className="space-y-4">
+            {/* Name field */}
+            <div className="space-y-2">
+              <Label htmlFor="name">Nome</Label>
+              <Input
+                id="name"
+                type="text"
+                value={name}
+                onChange={(e) => setName(e.target.value)}
+                placeholder="Seu nome"
+              />
+            </div>
+
             {/* Email field */}
             <div className="space-y-2">
-              <Label htmlFor="email">E-mail</Label>
+              <Label htmlFor="email">{t('email')}</Label>
               <Input
                 id="email"
                 type="email"
                 value={email}
                 onChange={handleEmailChange}
                 className={emailError ? 'border-red-500' : ''}
-                placeholder="Enter your email"
+                placeholder={t('email')}
               />
               {emailError && (
                 <p className="text-sm text-red-500">{emailError}</p>
@@ -169,7 +209,7 @@ export default function Register() {
 
             {/* Password field */}
             <div className="space-y-2">
-              <Label htmlFor="password">Password</Label>
+              <Label htmlFor="password">{t('password')}</Label>
               <div className="relative">
                 <Input
                   id="password"
@@ -177,7 +217,7 @@ export default function Register() {
                   value={password}
                   onChange={handlePasswordChange}
                   className={passwordError ? 'border-red-500' : ''}
-                  placeholder="Enter your password"
+                  placeholder={t('password')}
                 />
                 <button
                   type="button"
@@ -194,7 +234,7 @@ export default function Register() {
 
             {/* Confirm Password field */}
             <div className="space-y-2">
-              <Label htmlFor="confirmPassword">Confirm Password</Label>
+              <Label htmlFor="confirmPassword">{t('confirmPassword')}</Label>
               <div className="relative">
                 <Input
                   id="confirmPassword"
@@ -202,7 +242,7 @@ export default function Register() {
                   value={confirmPassword}
                   onChange={handleConfirmPasswordChange}
                   className={confirmPasswordError ? 'border-red-500' : ''}
-                  placeholder="Confirm your password"
+                  placeholder={t('confirmPassword')}
                 />
                 <button
                   type="button"
@@ -225,40 +265,46 @@ export default function Register() {
                 onCheckedChange={(checked) => setAgreedToTerms(checked as boolean)}
               />
               <label htmlFor="terms" className="text-sm text-muted-foreground leading-relaxed">
-                Li e concordo com os{' '}
+                {t('termsText')}{' '}
                 <a href="#" className="text-yellow-500 hover:text-yellow-400 underline">
-                  Termos de Uso
+                  {t('termsOfUse')}
                 </a>
                 ,{' '}
                 <a href="#" className="text-yellow-500 hover:text-yellow-400 underline">
-                  Política de Privacidade
+                  {t('privacyPolicy')}
                 </a>
                 {' '}e{' '}
                 <a href="#" className="text-yellow-500 hover:text-yellow-400 underline">
-                  Política de Cookies
+                  {t('cookiesPolicy')}
                 </a>
                 .
               </label>
             </div>
 
+            {/* Register error */}
+            {registerError && (
+              <p className="text-sm text-red-500">{registerError}</p>
+            )}
+
             {/* Register button */}
             <Button 
               type="submit" 
               className="w-full bg-yellow-500 hover:bg-yellow-600 text-black font-medium"
+              disabled={loading}
             >
-              Register
+              {loading ? 'Cadastrando...' : t('register')}
             </Button>
           </form>
 
           {/* Link to login */}
           <div className="text-center">
             <p className="text-sm lg:text-base text-muted-foreground">
-              Already have account?{' '}
+              {t('alreadyHaveAccount')}{' '}
               <button
                 onClick={() => navigate('/login')}
                 className="text-yellow-500 hover:text-yellow-400 underline"
               >
-                Enter
+                {t('enter')}
               </button>
             </p>
           </div>

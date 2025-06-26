@@ -1,7 +1,7 @@
 
 import React, { createContext, useContext, useState } from 'react';
 
-type Language = 'en' | 'pt' | 'es' | 'ru' | 'de';
+type Language = 'pt' | 'en' | 'es' | 'ru' | 'de';
 
 type LanguageProviderProps = {
   children: React.ReactNode;
@@ -15,7 +15,7 @@ type LanguageProviderState = {
 };
 
 const initialState: LanguageProviderState = {
-  language: 'en',
+  language: 'pt',
   setLanguage: () => null,
   toggleLanguage: () => null,
 };
@@ -24,7 +24,7 @@ const LanguageProviderContext = createContext<LanguageProviderState>(initialStat
 
 export function LanguageProvider({
   children,
-  defaultLanguage = 'en',
+  defaultLanguage = 'pt', // Changed default to Portuguese
   ...props
 }: LanguageProviderProps) {
   const [language, setLanguage] = useState<Language>(
@@ -38,7 +38,7 @@ export function LanguageProvider({
       setLanguage(language);
     },
     toggleLanguage: () => {
-      const languages: Language[] = ['en', 'pt', 'es', 'ru', 'de'];
+      const languages: Language[] = ['pt', 'en', 'es', 'ru', 'de']; // Portuguese first
       const currentIndex = languages.indexOf(language);
       const nextIndex = (currentIndex + 1) % languages.length;
       const newLanguage = languages[nextIndex];
