@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -33,24 +32,29 @@ const defaultFields: DashboardField[] = [
   { id: 'spend', name: 'Gasto', nameTranslations: { pt: 'Gasto', en: 'Spend' }, category: 'costs', isVisible: true, order: 2 },
   { id: 'roas', name: 'ROAS', nameTranslations: { pt: 'ROAS', en: 'ROAS' }, category: 'metrics', isVisible: true, order: 3 },
   { id: 'profit', name: 'Lucro', nameTranslations: { pt: 'Lucro', en: 'Profit' }, category: 'revenue', isVisible: true, order: 4 },
-  { id: 'net_revenue', name: 'Faturamento Líquido', nameTranslations: { pt: 'Faturamento Líquido', en: 'Net Revenue' }, category: 'revenue', isVisible: false, order: 5 },
-  { id: 'sales_payment', name: 'Vendas / Pagamento', nameTranslations: { pt: 'Vendas / Pagamento', en: 'Sales / Payment' }, category: 'metrics', isVisible: false, order: 6 },
-  { id: 'pending_sales', name: 'Vendas Pendentes', nameTranslations: { pt: 'Vendas Pendentes', en: 'Pending Sales' }, category: 'metrics', isVisible: false, order: 7 },
-  { id: 'roi', name: 'ROI', nameTranslations: { pt: 'ROI', en: 'ROI' }, category: 'metrics', isVisible: false, order: 8 },
-  { id: 'profit_margin', name: 'Margem de Lucro', nameTranslations: { pt: 'Margem de Lucro', en: 'Profit Margin' }, category: 'metrics', isVisible: false, order: 9 },
-  { id: 'refunded_sales', name: 'Vendas Reembolsadas', nameTranslations: { pt: 'Vendas Reembolsadas', en: 'Refunded Sales' }, category: 'metrics', isVisible: false, order: 10 },
-  { id: 'chargeback_sales', name: 'Vendas Chargeback', nameTranslations: { pt: 'Vendas Chargeback', en: 'Chargeback Sales' }, category: 'metrics', isVisible: false, order: 11 },
-  { id: 'returned_sales', name: 'Vendas Devolvidas', nameTranslations: { pt: 'Vendas Devolvidas', en: 'Returned Sales' }, category: 'metrics', isVisible: false, order: 12 },
-  { id: 'refund_rate', name: 'Taxa de Reembolso', nameTranslations: { pt: 'Taxa de Reembolso', en: 'Refund Rate' }, category: 'metrics', isVisible: false, order: 13 },
-  { id: 'chargeback_rate', name: 'Taxa de Chargeback', nameTranslations: { pt: 'Taxa de Chargeback', en: 'Chargeback Rate' }, category: 'metrics', isVisible: false, order: 14 },
-  { id: 'arpu', name: 'ARPU', nameTranslations: { pt: 'ARPU', en: 'ARPU' }, category: 'metrics', isVisible: false, order: 15 },
-  { id: 'tax', name: 'Imposto', nameTranslations: { pt: 'Imposto', en: 'Tax' }, category: 'costs', isVisible: false, order: 16 },
-  { id: 'product_costs', name: 'Custos de Produto', nameTranslations: { pt: 'Custos de Produto', en: 'Product Costs' }, category: 'costs', isVisible: false, order: 17 },
-  { id: 'sales_per_product', name: 'Vendas / Produto', nameTranslations: { pt: 'Vendas / Produto', en: 'Sales / Product' }, category: 'metrics', isVisible: false, order: 18 },
-  { id: 'revenue_per_product', name: 'Faturamento / Produto', nameTranslations: { pt: 'Faturamento / Produto', en: 'Revenue / Product' }, category: 'revenue', isVisible: false, order: 19 },
-  { id: 'approval_rate', name: 'Taxa de Aprovação', nameTranslations: { pt: 'Taxa de Aprovação', en: 'Approval Rate' }, category: 'metrics', isVisible: false, order: 20 },
-  { id: 'sales_per_day', name: 'Vendas / Dia', nameTranslations: { pt: 'Vendas / Dia', en: 'Sales / Day' }, category: 'metrics', isVisible: false, order: 21 },
-  { id: 'cpa', name: 'CPA', nameTranslations: { pt: 'CPA', en: 'CPA' }, category: 'metrics', isVisible: false, order: 22 }
+  { id: 'daily_budget', name: 'Orçamento Diário', nameTranslations: { pt: 'Orçamento Diário', en: 'Daily Budget' }, category: 'costs', isVisible: false, order: 5 },
+  { id: 'ctr', name: 'CTR', nameTranslations: { pt: 'CTR', en: 'CTR' }, category: 'metrics', isVisible: false, order: 6 },
+  { id: 'cpa', name: 'CPA', nameTranslations: { pt: 'CPA', en: 'CPA' }, category: 'metrics', isVisible: false, order: 7 },
+  { id: 'cpc', name: 'CPC', nameTranslations: { pt: 'CPC', en: 'CPC' }, category: 'metrics', isVisible: false, order: 8 },
+  { id: 'net_revenue', name: 'Faturamento Líquido', nameTranslations: { pt: 'Faturamento Líquido', en: 'Net Revenue' }, category: 'revenue', isVisible: false, order: 9 },
+  { id: 'rates', name: 'Taxas', nameTranslations: { pt: 'Taxas', en: 'Rates' }, category: 'costs', isVisible: false, order: 10 },
+  { id: 'pending_sales', name: 'Vendas Pendentes', nameTranslations: { pt: 'Vendas Pendentes', en: 'Pending Sales' }, category: 'revenue', isVisible: false, order: 11 },
+  { id: 'roi', name: 'ROI', nameTranslations: { pt: 'ROI', en: 'ROI' }, category: 'metrics', isVisible: false, order: 12 },
+  { id: 'profit_margin', name: 'Margem de Lucro', nameTranslations: { pt: 'Margem de Lucro', en: 'Profit Margin' }, category: 'metrics', isVisible: false, order: 13 },
+  { id: 'tax', name: 'Imposto', nameTranslations: { pt: 'Imposto', en: 'Tax' }, category: 'costs', isVisible: false, order: 14 },
+  { id: 'chargeback', name: 'Chargeback', nameTranslations: { pt: 'Chargeback', en: 'Chargeback' }, category: 'costs', isVisible: false, order: 15 },
+  { id: 'sales_payment', name: 'Vendas / Pagamento', nameTranslations: { pt: 'Vendas / Pagamento', en: 'Sales / Payment' }, category: 'metrics', isVisible: false, order: 16 },
+  { id: 'refunded_sales', name: 'Vendas Reembolsadas', nameTranslations: { pt: 'Vendas Reembolsadas', en: 'Refunded Sales' }, category: 'metrics', isVisible: false, order: 17 },
+  { id: 'chargeback_sales', name: 'Vendas Chargeback', nameTranslations: { pt: 'Vendas Chargeback', en: 'Chargeback Sales' }, category: 'metrics', isVisible: false, order: 18 },
+  { id: 'returned_sales', name: 'Vendas Devolvidas', nameTranslations: { pt: 'Vendas Devolvidas', en: 'Returned Sales' }, category: 'metrics', isVisible: false, order: 19 },
+  { id: 'refund_rate', name: 'Taxa de Reembolso', nameTranslations: { pt: 'Taxa de Reembolso', en: 'Refund Rate' }, category: 'metrics', isVisible: false, order: 20 },
+  { id: 'chargeback_rate', name: 'Taxa de Chargeback', nameTranslations: { pt: 'Taxa de Chargeback', en: 'Chargeback Rate' }, category: 'metrics', isVisible: false, order: 21 },
+  { id: 'arpu', name: 'ARPU', nameTranslations: { pt: 'ARPU', en: 'ARPU' }, category: 'metrics', isVisible: false, order: 22 },
+  { id: 'product_costs', name: 'Custos de Produto', nameTranslations: { pt: 'Custos de Produto', en: 'Product Costs' }, category: 'costs', isVisible: false, order: 23 },
+  { id: 'sales_per_product', name: 'Vendas / Produto', nameTranslations: { pt: 'Vendas / Produto', en: 'Sales / Product' }, category: 'metrics', isVisible: false, order: 24 },
+  { id: 'revenue_per_product', name: 'Faturamento / Produto', nameTranslations: { pt: 'Faturamento / Produto', en: 'Revenue / Product' }, category: 'revenue', isVisible: false, order: 25 },
+  { id: 'approval_rate', name: 'Taxa de Aprovação', nameTranslations: { pt: 'Taxa de Aprovação', en: 'Approval Rate' }, category: 'metrics', isVisible: false, order: 26 },
+  { id: 'sales_per_day', name: 'Vendas / Dia', nameTranslations: { pt: 'Vendas / Dia', en: 'Sales / Day' }, category: 'metrics', isVisible: false, order: 27 }
 ];
 
 export function DashboardFieldsConfig({ fields = defaultFields, onFieldsChange }: DashboardFieldsConfigProps) {
