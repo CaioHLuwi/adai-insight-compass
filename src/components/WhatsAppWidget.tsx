@@ -1,121 +1,159 @@
 
 import React, { useState, useEffect } from 'react';
 import { MessageCircle, X } from 'lucide-react';
-import { Button } from '@/components/ui/button';
 
 const WhatsAppWidget = () => {
   const [isOpen, setIsOpen] = useState(false);
-  const [messages, setMessages] = useState<Array<{ id: number; text: string; isButton?: boolean }>>([]);
+  const [messages, setMessages] = useState<Array<{id: number, text: string, isBot: boolean, isButton?: boolean}>>([]);
   const [isTyping, setIsTyping] = useState(false);
+  const [step, setStep] = useState(0);
+
+  const agentName = "Izy";
+  const agentAvatar = "IZ"; // First and last letters
+
+  const messageSequence = [
+    { text: "Olá, como você está", delay: 1000 },
+    { text: "O que acha que conhecer nossa plataforma e aumentar o faturamento da sua empresa já no primeiro mês?", delay: 2000 },
+    { text: "Entrar em contato", delay: 1500, isButton: true }
+  ];
 
   useEffect(() => {
-    if (isOpen && messages.length === 0) {
-      // First message
-      setTimeout(() => {
-        setMessages([{ id: 1, text: "Olá, como você está? 👋" }]);
+    if (isOpen && step < messageSequence.length) {
+      const currentMessage = messageSequence[step];
+      
+      const timer = setTimeout(() => {
         setIsTyping(true);
         
-        // Second message after typing
-        setTimeout(() => {
+        const typingTimer = setTimeout(() => {
+          setMessages(prev => [...prev, {
+            id: Date.now(),
+            text: currentMessage.text,
+            isBot: true,
+            isButton: currentMessage.isButton
+          }]);
           setIsTyping(false);
-          setMessages(prev => [...prev, { id: 2, text: "O que acha de conhecer nossa plataforma e aumentar o faturamento da sua empresa já no primeiro mês? 🚀" }]);
-          setIsTyping(true);
-          
-          // Button after typing
-          setTimeout(() => {
-            setIsTyping(false);
-            setMessages(prev => [...prev, { id: 3, text: "Entrar em contato", isButton: true }]);
-          }, 2000);
-        }, 3000);
-      }, 1000);
+          setStep(prev => prev + 1);
+        }, 1500);
+
+        return () => clearTimeout(typingTimer);
+      }, currentMessage.delay);
+
+      return () => clearTimeout(timer);
     }
-  }, [isOpen, messages.length]);
+  }, [isOpen, step]);
 
   const handleWhatsAppRedirect = () => {
-    const message = encodeURIComponent("Olá! Gostaria de conhecer mais sobre a plataforma Otmizy.ai");
-    window.open(`https://wa.me/5511999999999?text=${message}`, '_blank');
+    const message = "Olá! Gostaria de conhecer mais sobre a plataforma Otmizy.ai";
+    const whatsappUrl = `https://wa.me/5511999999999?text=${encodeURIComponent(message)}`;
+    window.open(whatsappUrl, '_blank');
+  };
+
+  const resetChat = () => {
+    setMessages([]);
+    setStep(0);
+    setIsTyping(false);
   };
 
   return (
-    <>
-      {/* WhatsApp Button */}
-      <div className="fixed bottom-6 right-6 z-50">
-        <Button
-          onClick={() => setIsOpen(!isOpen)}
-          className="w-14 h-14 rounded-full bg-green-500 hover:bg-green-600 text-white shadow-lg hover:shadow-xl transition-all duration-300"
-          size="sm"
-        >
-          {isOpen ? <X className="w-6 h-6" /> : <MessageCircle className="w-6 h-6" />}
-        </Button>
-      </div>
-
-      {/* Chat Widget */}
+    <div className="fixed bottom-6 right-6 z-50">
       {isOpen && (
-        <div className="fixed bottom-24 right-6 w-80 bg-white rounded-lg shadow-2xl z-50 overflow-hidden animate-slideUp">
+        <div className="mb-4 w-80 bg-white rounded-2xl shadow-2xl border border-gray-200 overflow-hidden animate-scale-in">
           {/* Header */}
-          <div className="bg-green-500 text-white p-4 flex items-center space-x-3">
-            <div className="w-10 h-10 bg-gray-800 rounded-full flex items-center justify-center text-white font-bold text-sm">
-              IZ
+          <div className="bg-yellow-500 p-4 flex items-center justify-between">
+            <div className="flex items-center space-x-3">
+              <div className="w-10 h-10 bg-white rounded-full flex items-center justify-center">
+                <img 
+                  src="/lovable-uploads/a7abf8a9-3e50-41f8-9f5e-3e7949379468.png" 
+                  alt="Izy Avatar" 
+                  className="w-8 h-8 rounded-full object-cover"
+                />
+              </div>
+              <div>
+                <h3 className="font-semibold text-white">{agentName}</h3>
+                <p className="text-xs text-yellow-100">Agente Otmizy.ai</p>
+              </div>
             </div>
-            <div>
-              <p className="font-semibold">Izy</p>
-              <p className="text-xs opacity-90">Assistente Otmizy.ai</p>
-            </div>
+            <button
+              onClick={() => {
+                setIsOpen(false);
+                resetChat();
+              }}
+              className="text-white hover:text-yellow-100 transition-colors"
+            >
+              <X className="w-5 h-5" />
+            </button>
           </div>
 
           {/* Messages */}
-          <div className="h-64 overflow-y-auto p-4 bg-gray-50">
+          <div className="p-4 max-h-64 overflow-y-auto bg-yellow-50">
             {messages.map((message) => (
-              <div key={message.id} className="mb-3 animate-slideUp">
+              <div key={message.id} className="mb-3">
                 <div className="flex items-start space-x-2">
-                  <div className="w-8 h-8 bg-gray-800 rounded-full flex items-center justify-center text-white text-xs font-bold flex-shrink-0">
-                    IZ
+                  <div className="w-8 h-8 bg-yellow-500 rounded-full flex items-center justify-center flex-shrink-0">
+                    <img 
+                      src="/lovable-uploads/a7abf8a9-3e50-41f8-9f5e-3e7949379468.png" 
+                      alt="Izy" 
+                      className="w-6 h-6 rounded-full object-cover"
+                    />
                   </div>
-                  <div className="bg-white rounded-lg rounded-tl-none p-3 shadow-sm max-w-64">
+                  <div className="flex-1">
                     {message.isButton ? (
-                      <Button
+                      <button
                         onClick={handleWhatsAppRedirect}
-                        className="w-full bg-green-500 hover:bg-green-600 text-white text-sm"
-                        size="sm"
+                        className="bg-yellow-500 hover:bg-yellow-600 text-white px-4 py-2 rounded-full text-sm font-medium transition-colors w-full"
                       >
                         {message.text}
-                      </Button>
+                      </button>
                     ) : (
-                      <p className="text-gray-800 text-sm">{message.text}</p>
+                      <div className="bg-white p-3 rounded-2xl rounded-tl-sm shadow-sm">
+                        <p className="text-sm text-gray-800">{message.text}</p>
+                        <p className="text-xs text-gray-500 mt-1">
+                          {new Date().toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' })}
+                        </p>
+                      </div>
                     )}
                   </div>
                 </div>
               </div>
             ))}
             
-            {/* Typing indicator */}
             {isTyping && (
-              <div className="mb-3">
-                <div className="flex items-start space-x-2">
-                  <div className="w-8 h-8 bg-gray-800 rounded-full flex items-center justify-center text-white text-xs font-bold flex-shrink-0">
-                    IZ
-                  </div>
-                  <div className="bg-white rounded-lg rounded-tl-none p-3 shadow-sm">
-                    <div className="flex space-x-1">
-                      <div className="w-2 h-2 bg-gray-400 rounded-full animate-typing"></div>
-                      <div className="w-2 h-2 bg-gray-400 rounded-full animate-typing" style={{ animationDelay: '0.2s' }}></div>
-                      <div className="w-2 h-2 bg-gray-400 rounded-full animate-typing" style={{ animationDelay: '0.4s' }}></div>
-                    </div>
+              <div className="flex items-start space-x-2 mb-3">
+                <div className="w-8 h-8 bg-yellow-500 rounded-full flex items-center justify-center flex-shrink-0">
+                  <img 
+                    src="/lovable-uploads/a7abf8a9-3e50-41f8-9f5e-3e7949379468.png" 
+                    alt="Izy" 
+                    className="w-6 h-6 rounded-full object-cover"
+                  />
+                </div>
+                <div className="bg-white p-3 rounded-2xl rounded-tl-sm shadow-sm">
+                  <div className="flex space-x-1">
+                    <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce"></div>
+                    <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style={{animationDelay: '0.1s'}}></div>
+                    <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style={{animationDelay: '0.2s'}}></div>
                   </div>
                 </div>
               </div>
             )}
           </div>
-
-          {/* Footer */}
-          <div className="p-3 bg-gray-100 border-t">
-            <p className="text-xs text-gray-500 text-center">
-              Powered by WhatsApp
-            </p>
-          </div>
         </div>
       )}
-    </>
+
+      {/* WhatsApp Button */}
+      <button
+        onClick={() => {
+          setIsOpen(!isOpen);
+          if (!isOpen) resetChat();
+        }}
+        className="w-14 h-14 bg-yellow-500 hover:bg-yellow-600 rounded-full shadow-lg flex items-center justify-center transition-all duration-300 hover:scale-110 group"
+      >
+        {isOpen ? (
+          <X className="w-6 h-6 text-white" />
+        ) : (
+          <MessageCircle className="w-6 h-6 text-white" />
+        )}
+      </button>
+    </div>
   );
 };
 

@@ -42,7 +42,6 @@ const defaultFields: DashboardField[] = [
 
 const Index = () => {
   const { language } = useLanguage();
-  const { updateRevenue } = useAchievements();
   const [selectedDashboard, setSelectedDashboard] = useState('overview');
   const [dashboardFields, setDashboardFields] = useState<DashboardField[]>(defaultFields);
 
@@ -94,10 +93,6 @@ const Index = () => {
 
   const selectedConfig = dashboardConfigs[selectedDashboard as keyof typeof dashboardConfigs];
 
-  const handleTestRevenue = () => {
-    updateRevenue(10000);
-  };
-
   const visibleFields = dashboardFields.filter(field => field.isVisible).sort((a, b) => a.order - b.order);
 
   return (
@@ -129,12 +124,6 @@ const Index = () => {
             </h1>
           </div>
           <div className="flex items-center space-x-2">
-            <Button
-              onClick={handleTestRevenue}
-              className="bg-green-600 hover:bg-green-700 text-white"
-            >
-              Test Revenue +10k
-            </Button>
             <DashboardFieldsConfig 
               fields={dashboardFields}
               onFieldsChange={setDashboardFields}

@@ -1,5 +1,6 @@
+
 import React from 'react';
-import { TrendingUp, TrendingDown, AlertTriangle, DollarSign, MousePointer, Target, Zap } from 'lucide-react';
+import { TrendingUp, TrendingDown, AlertTriangle, DollarSign, MousePointer, Target, Zap, Info } from 'lucide-react';
 import { useLanguage } from '@/hooks/useLanguage';
 import AnimatedNumber from './AnimatedNumber';
 
@@ -47,309 +48,152 @@ const SummaryDashboard: React.FC<SummaryDashboardProps> = ({
     }).format(amount);
   };
 
-  const formatTime = (timestamp: string) => {
-    return new Date(timestamp).toLocaleDateString(language === 'pt' ? 'pt-BR' : language === 'es' ? 'es-ES' : language === 'ru' ? 'ru-RU' : language === 'de' ? 'de-DE' : 'en-US', {
-      month: 'short',
-      day: 'numeric',
-      hour: '2-digit',
-      minute: '2-digit'
-    });
-  };
-
-  const getSeverityColor = (severity: AnomalyAlert['severity']) => {
-    switch (severity) {
-      case 'high':
-        return 'text-red-600 bg-red-50 border-red-200 dark:bg-red-900/20 dark:border-red-800';
-      case 'medium':
-        return 'text-orange-600 bg-orange-50 border-orange-200 dark:bg-orange-900/20 dark:border-orange-800';
-      case 'low':
-        return 'text-yellow-600 bg-yellow-50 border-yellow-200 dark:bg-yellow-900/20 dark:border-yellow-800';
-      default:
-        return 'text-gray-600 bg-gray-50 border-gray-200 dark:bg-gray-900/20 dark:border-gray-700';
-    }
-  };
-
   const getFieldValue = (fieldId: string) => {
     const sampleData: Record<string, any> = {
-      gross_revenue: formatCurrency(5694.64),
-      spend: formatCurrency(totalSpendToday),
-      roas: '2.85x',
-      profit: formatCurrency(2847.32),
-      net_revenue: formatCurrency(4847.32),
-      sales_payment: '152',
-      pending_sales: '8',
-      roi: '185%',
-      profit_margin: '50%',
-      refunded_sales: '3',
-      chargeback_sales: '1',
-      returned_sales: '2',
-      refund_rate: '1.97%',
-      chargeback: formatCurrency(45.20),
-      arpu: formatCurrency(37.47),
-      tax: formatCurrency(569.46),
-      product_costs: formatCurrency(1200.00),
-      fee: formatCurrency(142.37),
-      sales_product: '152',
-      revenue_product: formatCurrency(5694.64),
-      approval_rate: '94.7%',
-      sales_day: '152',
-      cpa: formatCurrency(avgCPA)
+      gross_revenue: 5694.64,
+      spend: totalSpendToday,
+      roas: 2.85,
+      profit: -960,
+      net_revenue: 4847.32,
+      daily_budget: 1200,
+      ctr: 2.4,
+      cpa: 45.50,
+      cpc: 1.85,
+      rates: 285.50,
+      tax: 569.46,
+      chargeback: 45.20,
+      pending_sales: 8,
+      roi: 0,
+      profit_margin: 0,
+      sales_payment: 152,
+      refunded_sales: 3,
+      chargeback_sales: 1,
+      returned_sales: 2,
+      refund_rate: 1.97,
+      arpu: 37.47,
+      product_costs: 1200.00,
+      approval_rate: 94.7,
+      sales_day: 152
     };
-    return sampleData[fieldId] || '0';
-  };
-
-  const getFieldIcon = (fieldId: string) => {
-    const iconMap: Record<string, any> = {
-      gross_revenue: DollarSign,
-      spend: MousePointer,
-      roas: Target,
-      profit: TrendingUp,
-      net_revenue: DollarSign,
-      sales_payment: Zap,
-      pending_sales: Target,
-      cpa: Target
-    };
-    return iconMap[fieldId] || DollarSign;
+    return sampleData[fieldId] || 0;
   };
 
   const getFieldName = (field: DashboardField) => {
     return field.nameTranslations[language] || field.nameTranslations['en'] || field.name;
   };
 
-  // Default fields if none provided
-  const defaultFields = [
-    {
-      id: 'gross_revenue',
-      nameTranslations: {
-        en: 'Total Spend Today',
-        pt: 'Gasto Total Hoje',
-        es: 'Gasto Total Hoy',
-        ru: 'Общие расходы сегодня',
-        de: 'Gesamtausgaben heute'
-      },
-      category: 'costs' as const,
-      isVisible: true,
-      order: 1
-    },
-    {
-      id: 'spend',
-      nameTranslations: {
-        en: 'Average CPC',
-        pt: 'CPC Médio',
-        es: 'CPC Promedio',
-        ru: 'Средний CPC',
-        de: 'Durchschnittlicher CPC'
-      },
-      category: 'metrics' as const,
-      isVisible: true,
-      order: 2
-    },
-    {
-      id: 'roas',
-      nameTranslations: {
-        en: 'Average CPA',
-        pt: 'CPA Médio',
-        es: 'CPA Promedio',
-        ru: 'Средний CPA',
-        de: 'Durchschnittlicher CPA'
-      },
-      category: 'metrics' as const,
-      isVisible: true,
-      order: 3
-    },
-    {
-      id: 'profit',
-      nameTranslations: {
-        en: 'Conversions Today',
-        pt: 'Conversões Hoje',
-        es: 'Conversiones Hoy',
-        ru: 'Конверсии сегодня',
-        de: 'Konversionen heute'
-      },
-      category: 'metrics' as const,
-      isVisible: true,
-      order: 4
+  const getFieldColor = (field: DashboardField, value: any) => {
+    if (field.category === 'revenue' && field.id === 'profit' && value < 0) {
+      return 'text-red-400';
     }
-  ];
+    if (field.category === 'revenue') return 'text-green-400';
+    if (field.category === 'costs') return 'text-red-400';
+    if (field.category === 'metrics') return 'text-blue-400';
+    return 'text-yellow-400';
+  };
 
-  const fieldsToDisplay = visibleFields.length > 0 ? visibleFields : defaultFields;
-
-  // Map default values for default fields
-  const getDefaultFieldValue = (fieldId: string) => {
-    switch (fieldId) {
-      case 'gross_revenue': return formatCurrency(totalSpendToday);
-      case 'spend': return formatCurrency(avgCPC);
-      case 'roas': return formatCurrency(avgCPA);
-      case 'profit': return conversionsToday.toLocaleString();
-      default: return getFieldValue(fieldId);
+  const renderFieldValue = (field: DashboardField, value: any) => {
+    if (field.id === 'roas') {
+      return `${value.toFixed(2)}x`;
     }
+    if (field.id === 'ctr' || field.id === 'profit_margin' || field.id === 'refund_rate' || field.id === 'approval_rate') {
+      return `${value}%`;
+    }
+    if (field.category === 'revenue' || field.category === 'costs' || 
+        ['daily_budget', 'cpa', 'cpc', 'rates', 'tax', 'chargeback', 'arpu', 'product_costs'].includes(field.id)) {
+      return formatCurrency(value);
+    }
+    if (field.id === 'roi') {
+      return value === 0 ? '0.00' : `${value}%`;
+    }
+    if (field.id === 'profit_margin') {
+      return value === 0 ? 'N/A' : `${value}%`;
+    }
+    return typeof value === 'number' ? value.toLocaleString() : value;
   };
 
   return (
     <div className="space-y-8">
-      {/* Header */}
-      <div className="flex items-center justify-between">
-        <div>
-          <h1 className="text-3xl font-bold bg-gradient-to-r from-yellow-400 to-yellow-600 bg-clip-text text-transparent">
-            {language === 'pt' ? 'Visão Geral do Dashboard' : 
-             language === 'es' ? 'Resumen del Dashboard' :
-             language === 'ru' ? 'Обзор панели' :
-             language === 'de' ? 'Dashboard-Übersicht' :
-             'Dashboard Overview'}
-          </h1>
-          <p className="text-gray-300 mt-2">
-            {language === 'pt' ? 'Monitore o desempenho dos seus anúncios em tempo real' : 
-             language === 'es' ? 'Monitorea el rendimiento de tus anuncios en tiempo real' :
-             language === 'ru' ? 'Отслеживайте эффективность ваших объявлений в реальном времени' :
-             language === 'de' ? 'Überwachen Sie die Leistung Ihrer Anzeigen in Echtzeit' :
-             'Monitor your ad performance in real-time'}
-          </p>
-        </div>
-        <div className="flex items-center space-x-2 text-sm text-gray-400">
-          <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
-          <span>{language === 'pt' ? 'Dados ao vivo' : 
-                 language === 'es' ? 'Datos en vivo' :
-                 language === 'ru' ? 'Данные в реальном времени' :
-                 language === 'de' ? 'Live-Daten' :
-                 'Live data'}</span>
-        </div>
-      </div>
-
-      {/* KPI Cards Grid */}
+      {/* Main Metrics Grid - styled like the photo */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-        {fieldsToDisplay.map((field, index) => {
-          const Icon = getFieldIcon(field.id);
-          const value = visibleFields.length > 0 ? getFieldValue(field.id) : getDefaultFieldValue(field.id);
+        {visibleFields.map((field) => {
+          const value = getFieldValue(field.id);
+          const displayValue = renderFieldValue(field, value);
+          const textColor = getFieldColor(field, value);
           
           return (
             <div
               key={field.id}
-              className="bg-gray-900 rounded-xl shadow-lg border border-yellow-500/20 p-6 hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1"
+              className="bg-gray-800/60 backdrop-blur-sm rounded-xl p-6 border border-gray-700/50 hover:border-yellow-500/30 transition-all duration-300"
             >
-              <div className="flex items-center justify-between mb-4">
-                <div className="p-3 rounded-lg bg-gradient-to-r from-yellow-500/20 to-yellow-600/20">
-                  <Icon className="w-6 h-6 text-yellow-400" />
-                </div>
-                <div className="flex items-center space-x-1">
-                  <TrendingUp className="w-4 h-4 text-green-500" />
-                  <span className="text-xs text-green-500 font-medium">+12%</span>
-                </div>
+              <div className="flex items-center justify-between mb-2">
+                <h3 className="text-sm font-medium text-gray-300 uppercase tracking-wide">
+                  {getFieldName(field)}
+                </h3>
+                <Info className="w-4 h-4 text-gray-500" />
               </div>
-              <div>
-                <p className="text-sm font-medium text-gray-300 mb-1">{getFieldName(field)}</p>
-                <p className="text-2xl font-bold text-yellow-400">
-                  <AnimatedNumber value={value} />
-                </p>
+              <div className={`text-2xl font-bold ${textColor} mb-1`}>
+                {displayValue}
               </div>
+              {field.id === 'profit' && value < 0 && (
+                <div className="text-xs text-red-400 font-medium">
+                  Prejuízo
+                </div>
+              )}
             </div>
           );
         })}
       </div>
 
-      {/* Recent Anomalies Section */}
-      <div className="bg-gray-900 rounded-xl shadow-lg border border-yellow-500/20 p-6">
-        <div className="flex items-center justify-between mb-6">
-          <div className="flex items-center space-x-3">
-            <div className="p-2 bg-gradient-to-r from-red-500/20 to-red-600/20 rounded-lg">
-              <AlertTriangle className="w-6 h-6 text-red-400" />
+      {/* Conversion Funnel Section - similar to the photo */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <div className="bg-gray-800/60 backdrop-blur-sm rounded-xl p-6 border border-gray-700/50">
+          <h3 className="text-lg font-semibold text-white mb-4 flex items-center">
+            <Target className="w-5 h-5 mr-2 text-yellow-400" />
+            Funil de Conversão (Meta Ads)
+          </h3>
+          <div className="space-y-4">
+            <div className="flex items-center justify-between">
+              <span className="text-gray-300">Cliques</span>
+              <span className="text-white font-semibold">5,432</span>
             </div>
-            <div>
-              <h2 className="text-xl font-bold text-yellow-400">
-                {language === 'pt' ? 'Alertas de Anomalia Recentes' : 
-                 language === 'es' ? 'Alertas de Anomalía Recientes' :
-                 language === 'ru' ? 'Последние предупреждения об аномалиях' :
-                 language === 'de' ? 'Aktuelle Anomalie-Warnungen' :
-                 'Recent Anomaly Alerts'}
-              </h2>
-              <p className="text-gray-300 text-sm">
-                {language === 'pt' ? 'Últimas 3 anomalias detectadas' : 
-                 language === 'es' ? 'Últimas 3 anomalías detectadas' :
-                 language === 'ru' ? 'Последние 3 обнаруженные аномалии' :
-                 language === 'de' ? 'Letzte 3 erkannte Anomalien' :
-                 'Latest 3 detected anomalies'}
-              </p>
+            <div className="flex items-center justify-between">
+              <span className="text-gray-300">Visualizações da Página</span>
+              <span className="text-white font-semibold">4,245</span>
+            </div>
+            <div className="flex items-center justify-between">
+              <span className="text-gray-300">Iniciar Checkout</span>
+              <span className="text-white font-semibold">1,856</span>
+            </div>
+            <div className="flex items-center justify-between">
+              <span className="text-gray-300">Vendas Iniciadas</span>
+              <span className="text-white font-semibold">892</span>
+            </div>
+            <div className="flex items-center justify-between">
+              <span className="text-gray-300">Vendas Aprovadas</span>
+              <span className="text-white font-semibold">645</span>
             </div>
           </div>
-          <span className="bg-gradient-to-r from-red-500/20 to-red-600/20 text-red-300 text-xs font-medium px-3 py-1 rounded-full">
-            {recentAnomalies.length} {language === 'pt' ? 'Ativas' : 
-                                     language === 'es' ? 'Activas' :
-                                     language === 'ru' ? 'Активные' :
-                                     language === 'de' ? 'Aktiv' :
-                                     'Active'}
-          </span>
         </div>
 
-        <div className="space-y-4">
-          {recentAnomalies.length > 0 ? (
-            recentAnomalies.slice(0, 3).map((anomaly) => (
-              <div
-                key={anomaly.id}
-                className={`p-4 rounded-lg border-l-4 ${getSeverityColor(anomaly.severity)} transition-all duration-200 hover:shadow-md`}
-              >
-                <div className="flex items-start justify-between">
-                  <div className="flex-1">
-                    <div className="flex items-center space-x-2 mb-2">
-                      <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium capitalize ${getSeverityColor(anomaly.severity)}`}>
-                        {language === 'pt' ? 
-                          (anomaly.severity === 'high' ? 'Alta' : 
-                           anomaly.severity === 'medium' ? 'Média' : 'Baixa') :
-                         language === 'es' ?
-                          (anomaly.severity === 'high' ? 'Alta' : 
-                           anomaly.severity === 'medium' ? 'Media' : 'Baja') :
-                         language === 'ru' ?
-                          (anomaly.severity === 'high' ? 'Высокая' : 
-                           anomaly.severity === 'medium' ? 'Средняя' : 'Низкая') :
-                         language === 'de' ?
-                          (anomaly.severity === 'high' ? 'Hoch' : 
-                           anomaly.severity === 'medium' ? 'Mittel' : 'Niedrig') :
-                          anomaly.severity}
-                      </span>
-                      {anomaly.campaign && (
-                        <span className="text-xs text-gray-400 bg-gray-800 px-2 py-1 rounded">
-                          {anomaly.campaign}
-                        </span>
-                      )}
-                    </div>
-                    <p className="text-gray-200 font-medium">{anomaly.message}</p>
-                  </div>
-                  <div className="text-right ml-4">
-                    <p className="text-xs text-gray-400">{formatTime(anomaly.timestamp)}</p>
-                  </div>
-                </div>
-              </div>
-            ))
-          ) : (
-            <div className="text-center py-8">
-              <AlertTriangle className="w-12 h-12 text-gray-600 mx-auto mb-4" />
-              <p className="text-gray-400 text-lg font-medium">
-                {language === 'pt' ? 'Nenhuma anomalia detectada' : 
-                 language === 'es' ? 'No se detectaron anomalías' :
-                 language === 'ru' ? 'Аномалий не обнаружено' :
-                 language === 'de' ? 'Keine Anomalien erkannt' :
-                 'No anomalies detected'}
-              </p>
-              <p className="text-gray-500 text-sm">
-                {language === 'pt' ? 'Suas campanhas estão funcionando perfeitamente' : 
-                 language === 'es' ? 'Tus campañas funcionan perfectamente' :
-                 language === 'ru' ? 'Ваши кампании работают отлично' :
-                 language === 'de' ? 'Ihre Kampagnen laufen reibungslos' :
-                 'Your campaigns are running smoothly'}
-              </p>
-            </div>
-          )}
-        </div>
-
-        {recentAnomalies.length > 3 && (
-          <div className="mt-6 pt-4 border-t border-yellow-500/20">
-            <button className="text-yellow-400 hover:text-yellow-300 font-medium text-sm transition-colors duration-200">
-              {language === 'pt' ? 'Ver todas as anomalias →' : 
-               language === 'es' ? 'Ver todas las anomalías →' :
-               language === 'ru' ? 'Посмотреть все аномалии →' :
-               language === 'de' ? 'Alle Anomalien anzeigen →' :
-               'View all anomalies →'}
-            </button>
+        <div className="bg-gray-800/60 backdrop-blur-sm rounded-xl p-6 border border-gray-700/50">
+          <h3 className="text-lg font-semibold text-white mb-4">CPA</h3>
+          <div className="text-3xl font-bold text-gray-400 mb-2">N/A</div>
+          
+          <div className="mt-6">
+            <h4 className="text-sm font-medium text-gray-300 mb-3">ARPU</h4>
+            <div className="text-2xl font-bold text-gray-400 mb-4">N/A</div>
+            
+            <h4 className="text-sm font-medium text-gray-300 mb-3">Vendas por Produto</h4>
+            <div className="text-sm text-gray-400">Nenhuma venda por aqui</div>
           </div>
-        )}
+        </div>
+      </div>
+
+      {/* Sales by Country */}
+      <div className="bg-gray-800/60 backdrop-blur-sm rounded-xl p-6 border border-gray-700/50">
+        <h3 className="text-lg font-semibold text-white mb-4">Vendas por País</h3>
+        <div className="text-sm text-gray-400">Nenhuma venda por aqui</div>
       </div>
     </div>
   );
