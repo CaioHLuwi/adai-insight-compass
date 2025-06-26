@@ -161,10 +161,9 @@ export default function Register() {
   };
 
   return (
-    <div className="min-h-screen bg-background text-foreground flex">
+    <div className="min-h-screen bg-background flex">
       {/* Left side - 65% - Hidden on mobile */}
-      <div className="hidden lg:flex lg:w-[65%] p-8 bg-background">
-        {/* Left side illustration */}
+      <div className="hidden lg:flex lg:w-[65%] p-8">
         <div className="h-full flex items-center justify-center w-full">
           <div className="max-w-2xl w-full">
             <div className="relative">
@@ -236,16 +235,11 @@ export default function Register() {
         <div className="w-full max-w-md space-y-6 relative">
           {/* Logo */}
           <div className="text-center mb-8">
-            <button 
-              onClick={() => navigate('/')}
-              className="inline-block hover:opacity-80 transition-opacity"
-            >
-              <img 
-                src="/horizontal-darkmode.png" 
-                alt="Otmizy.ai Logo" 
-                className="h-12 lg:h-16 mx-auto mb-6"
-              />
-            </button>
+            <img 
+              src="/horizontal-darkmode.png" 
+              alt="Otmizy.ai Logo" 
+              className="h-12 lg:h-16 mx-auto mb-6"
+            />
             <h1 className="text-xl lg:text-2xl font-bold text-foreground mb-2">{t('createAccount')}</h1>
             <p className="text-sm lg:text-base text-muted-foreground">{t('registerSubtitle')}</p>
           </div>
