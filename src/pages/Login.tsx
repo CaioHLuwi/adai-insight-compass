@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Eye, EyeOff } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -26,8 +25,9 @@ export default function Login() {
   const t = (key: string) => getTranslation(language as any, key as any);
 
   const validateEmail = (email: string) => {
+    // More permissive email validation that allows hotmail.com and other domains
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    return emailRegex.test(email);
+    return emailRegex.test(email.trim());
   };
 
   const handleEmailChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -39,18 +39,25 @@ export default function Login() {
     } else {
       setEmailError('');
     }
+    
+    // Clear login error when user starts typing
+    if (loginError) {
+      setLoginError('');
+    }
   };
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoginError('');
     
-    if (!email) {
+    const trimmedEmail = email.trim().toLowerCase();
+    
+    if (!trimmedEmail) {
       setEmailError(t('emailRequired'));
       return;
     }
     
-    if (!validateEmail(email)) {
+    if (!validateEmail(trimmedEmail)) {
       setEmailError(t('emailInvalid'));
       return;
     }
@@ -61,13 +68,18 @@ export default function Login() {
     }
 
     setLoading(true);
-    const { error } = await signIn(email, password);
+    console.log('Login attempt for:', trimmedEmail);
+    
+    const { error } = await signIn(trimmedEmail, password);
     
     if (error) {
-      if (error.message.includes('Invalid login credentials')) {
+      console.error('Login error:', error);
+      if (error.message.includes('Invalid login credentials') || error.message.includes('invalid_credentials')) {
         setLoginError(t('invalidCredentials'));
+      } else if (error.message.includes('Email not confirmed')) {
+        setLoginError('Please check your email and confirm your account before signing in.');
       } else {
-        setLoginError(t('loginError'));
+        setLoginError(error.message || t('loginError'));
       }
     }
     setLoading(false);
@@ -158,6 +170,7 @@ export default function Login() {
                 onChange={handleEmailChange}
                 className={emailError ? 'border-red-500' : ''}
                 placeholder={t('email')}
+                autoComplete="email"
               />
               {emailError && (
                 <p className="text-sm text-red-500">{emailError}</p>
@@ -172,8 +185,12 @@ export default function Login() {
                   id="password"
                   type={showPassword ? 'text' : 'password'}
                   value={password}
-                  onChange={(e) => setPassword(e.target.value)}
+                  onChange={(e) => {
+                    setPassword(e.target.value);
+                    if (loginError) setLoginError('');
+                  }}
                   placeholder={t('password')}
+                  autoComplete="current-password"
                 />
                 <button
                   type="button"
@@ -196,7 +213,7 @@ export default function Login() {
               className="w-full bg-yellow-500 hover:bg-yellow-600 text-black font-medium"
               disabled={loading}
             >
-              {loading ? 'Carregando...' : t('enter')}
+              {loading ? 'Entrando...' : t('enter')}
             </Button>
           </form>
 

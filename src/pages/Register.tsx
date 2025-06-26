@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Eye, EyeOff } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -27,14 +26,15 @@ export default function Register() {
   const [loading, setLoading] = useState(false);
   const [showSuccessModal, setShowSuccessModal] = useState(false);
   const navigate = useNavigate();
-  const { language, toggleLanguage } = useLanguage();
+  const { language } = useLanguage();
   const { signUp } = useAuth();
 
   const t = (key: string) => getTranslation(language as any, key as any);
 
   const validateEmail = (email: string) => {
+    // More permissive email validation that allows hotmail.com and other domains
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    return emailRegex.test(email);
+    return emailRegex.test(email.trim());
   };
 
   const validatePassword = (password: string) => {
@@ -99,12 +99,14 @@ export default function Register() {
     e.preventDefault();
     setRegisterError('');
     
-    if (!email) {
+    const trimmedEmail = email.trim().toLowerCase();
+    
+    if (!trimmedEmail) {
       setEmailError(t('emailRequired'));
       return;
     }
 
-    if (!validateEmail(email)) {
+    if (!validateEmail(trimmedEmail)) {
       setEmailError(t('emailInvalid'));
       return;
     }
@@ -130,16 +132,22 @@ export default function Register() {
     }
 
     setLoading(true);
-    const { error } = await signUp(email, password, name);
+    console.log('Register attempt for:', trimmedEmail, 'with name:', name);
+    
+    const { error } = await signUp(trimmedEmail, password, name || trimmedEmail.split('@')[0]);
     
     if (error) {
-      if (error.message.includes('User already registered')) {
+      console.error('Registration error:', error);
+      if (error.message.includes('User already registered') || error.message.includes('already_registered')) {
         setRegisterError(t('userAlreadyExists'));
+      } else if (error.message.includes('Password should be at least')) {
+        setPasswordError('A senha deve ter pelo menos 6 caracteres.');
       } else {
-        setRegisterError(t('registerError'));
+        setRegisterError(error.message || t('registerError'));
       }
       setLoading(false);
     } else {
+      console.log('Registration successful');
       setLoading(false);
       setShowSuccessModal(true);
     }
