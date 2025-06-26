@@ -1,3 +1,4 @@
+
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -24,13 +25,13 @@ import EditAccount from "./pages/EditAccount";
 import NotFound from "./pages/NotFound";
 import Reports from "./pages/Reports";
 import Achievements from "./pages/Achievements";
-import Shop from "./pages/Shop";
 import ProductDetail from "./pages/ProductDetail";
 import Login from "./pages/Login";
 import Register from "./pages/Register";
 import Terms from "./pages/Terms";
 import Privacy from "./pages/Privacy";
 import Cookies from "./pages/Cookies";
+import Landing from "./pages/Landing";
 
 const queryClient = new QueryClient();
 
@@ -62,6 +63,9 @@ const App = () => (
                 <Toaster />
                 <Sonner />
                 <Routes>
+                  {/* Landing page - public */}
+                  <Route path="/landing" element={<Landing />} />
+                  
                   {/* Auth routes without sidebar */}
                   <Route path="/login" element={<Login />} />
                   <Route path="/register" element={<Register />} />
@@ -96,8 +100,6 @@ const App = () => (
                                 <Route path="/rates" element={<Rates />} />
                                 <Route path="/notifications" element={<Notifications />} />
                                 <Route path="/achievements" element={<Achievements />} />
-                                <Route path="/shop" element={<Shop />} />
-                                <Route path="/shop/item/:id" element={<ProductDetail />} />
                                 <Route path="/settings" element={<Settings />} />
                                 <Route path="/edit-account" element={<EditAccount />} />
                                 <Route path="*" element={<NotFound />} />

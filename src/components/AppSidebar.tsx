@@ -18,7 +18,6 @@ import {
   DollarSign,
   FileText,
   Bell,
-  ShoppingBag,
   Trophy,
   Settings,
   Crown
@@ -121,26 +120,12 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
         ru: 'В процессе',
         de: 'In Bearbeitung'
       },
-      shop: {
-        en: 'Shop',
-        pt: 'Loja',
-        es: 'Tienda',
-        ru: 'Магазин',
-        de: 'Shop'
-      },
       achievements: {
         en: 'Achievements',
         pt: 'Conquistas',
         es: 'Logros',
         ru: 'Достижения',
         de: 'Erfolge'
-      },
-      comingSoon: {
-        en: 'Coming Soon',
-        pt: 'Em breve',
-        es: 'Próximamente',
-        ru: 'Скоро',
-        de: 'Bald verfügbar'
       }
     };
 
@@ -225,12 +210,6 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
       },
     ],
     progressItems: [
-      {
-        title: `${translations.shop[language] || translations.shop.en} - ${translations.comingSoon[language] || translations.comingSoon.en}`,
-        url: "#",
-        icon: ShoppingBag,
-        disabled: true,
-      },
       {
         title: translations.achievements[language] || translations.achievements.en,
         url: "/achievements",

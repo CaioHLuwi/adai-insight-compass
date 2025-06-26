@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { Eye, EyeOff, Globe, CheckCircle } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -139,7 +140,8 @@ export default function Register() {
       setLoading(false);
     } else {
       setLoading(false);
-      setShowSuccessModal(true);
+      // Direct redirect to dashboard since email confirmation is disabled
+      navigate('/');
     }
   };
 
@@ -261,12 +263,13 @@ export default function Register() {
               )}
             </div>
 
-            {/* Terms checkbox */}
+            {/* Terms checkbox - REQUIRED */}
             <div className="flex items-start space-x-2">
               <Checkbox
                 id="terms"
                 checked={agreedToTerms}
                 onCheckedChange={(checked) => setAgreedToTerms(checked as boolean)}
+                required
               />
               <label htmlFor="terms" className="text-sm text-muted-foreground leading-relaxed">
                 {t('termsText')}{' '}
@@ -306,7 +309,7 @@ export default function Register() {
             <Button 
               type="submit" 
               className="w-full bg-yellow-500 hover:bg-yellow-600 text-black font-medium"
-              disabled={loading}
+              disabled={loading || !agreedToTerms}
             >
               {loading ? 'Cadastrando...' : t('register')}
             </Button>
@@ -339,34 +342,6 @@ export default function Register() {
           </div>
         </div>
       </div>
-
-      {/* Success Modal */}
-      <Dialog open={showSuccessModal} onOpenChange={setShowSuccessModal}>
-        <DialogContent className="sm:max-w-md">
-          <DialogHeader>
-            <div className="flex items-center justify-center mb-4">
-              <CheckCircle className="w-16 h-16 text-green-500" />
-            </div>
-            <DialogTitle className="text-center text-xl">
-              {t('registrationSuccess')}
-            </DialogTitle>
-          </DialogHeader>
-          <div className="text-center space-y-4">
-            <p className="text-muted-foreground">
-              {t('confirmationEmailSent')}
-            </p>
-            <Button 
-              onClick={() => {
-                setShowSuccessModal(false);
-                navigate('/login');
-              }}
-              className="w-full bg-yellow-500 hover:bg-yellow-600 text-black"
-            >
-              {t('goToLogin')}
-            </Button>
-          </div>
-        </DialogContent>
-      </Dialog>
     </div>
   );
 }
