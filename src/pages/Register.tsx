@@ -1,15 +1,14 @@
-
 import React, { useState } from 'react';
-import { Eye, EyeOff, Globe, CheckCircle } from 'lucide-react';
+import { Eye, EyeOff, Globe } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Checkbox } from '@/components/ui/checkbox';
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { useNavigate } from 'react-router-dom';
 import { useLanguage } from '@/hooks/useLanguage';
 import { useAuth } from '@/contexts/AuthContext';
 import { getTranslation } from '@/utils/translations';
+import { RegistrationSuccessModal } from '@/components/RegistrationSuccessModal';
 
 export default function Register() {
   const [email, setEmail] = useState('');
@@ -140,9 +139,13 @@ export default function Register() {
       setLoading(false);
     } else {
       setLoading(false);
-      // Direct redirect to dashboard since email confirmation is disabled
-      navigate('/');
+      setShowSuccessModal(true);
     }
+  };
+
+  const handleSuccessModalContinue = () => {
+    setShowSuccessModal(false);
+    navigate('/');
   };
 
   return (
@@ -342,6 +345,13 @@ export default function Register() {
           </div>
         </div>
       </div>
+
+      {/* Success Modal */}
+      <RegistrationSuccessModal 
+        open={showSuccessModal}
+        onOpenChange={setShowSuccessModal}
+        onContinue={handleSuccessModalContinue}
+      />
     </div>
   );
 }

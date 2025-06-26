@@ -63,15 +63,18 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       options: {
         data: {
           name: name || email.split('@')[0]
-        }
+        },
+        emailRedirectTo: undefined // Disable email confirmation
       }
     });
     return { error };
   };
 
   const signOut = async () => {
-    await supabase.auth.signOut();
-    navigate('/login');
+    const { error } = await supabase.auth.signOut();
+    if (!error) {
+      navigate('/login');
+    }
   };
 
   return (
