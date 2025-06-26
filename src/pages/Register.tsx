@@ -10,7 +10,7 @@ import { useLanguage } from '@/hooks/useLanguage';
 import { useAuth } from '@/contexts/AuthContext';
 import { getTranslation } from '@/utils/translations';
 import LanguageDropdown from '@/components/LanguageDropdown';
-import RegistrationSuccessModal from '@/components/RegistrationSuccessModal';
+import { RegistrationSuccessModal } from '@/components/RegistrationSuccessModal';
 
 export default function Register() {
   const [formData, setFormData] = useState({
@@ -474,9 +474,12 @@ export default function Register() {
 
       {/* Success Modal */}
       <RegistrationSuccessModal 
-        isOpen={showSuccessModal}
-        onClose={() => setShowSuccessModal(false)}
-        userEmail={formData.email}
+        open={showSuccessModal}
+        onOpenChange={setShowSuccessModal}
+        onContinue={() => {
+          setShowSuccessModal(false);
+          navigate('/');
+        }}
       />
     </div>
   );
