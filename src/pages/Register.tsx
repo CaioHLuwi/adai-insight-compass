@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Eye, EyeOff, User, Mail, Lock, Check } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -119,12 +118,8 @@ export default function Register() {
     setLoading(true);
 
     try {
-      const redirectUrl = `${window.location.origin}/`;
-      const { error } = await signUp(formData.email, formData.password, {
-        first_name: formData.firstName,
-        last_name: formData.lastName,
-        accept_marketing: formData.acceptMarketing
-      }, redirectUrl);
+      const fullName = `${formData.firstName} ${formData.lastName}`;
+      const { error } = await signUp(formData.email, formData.password, fullName);
 
       if (error) {
         if (error.message.includes('User already registered')) {
