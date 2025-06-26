@@ -20,8 +20,10 @@ import {
   Bell,
   Trophy,
   Settings,
-  Crown
+  Crown,
+  Calculator
 } from "lucide-react"
+import { useLocation } from "react-router-dom"
 
 import { NavMain } from "@/components/nav-main"
 import { NavProjects } from "@/components/nav-projects"
@@ -40,6 +42,7 @@ import {
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   const { language } = useLanguage();
+  const location = useLocation();
 
   const getTranslations = () => {
     const translations = {
@@ -126,6 +129,13 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
         es: 'Logros',
         ru: 'Достижения',
         de: 'Erfolge'
+      },
+      rates: {
+        en: 'Rates',
+        pt: 'Taxas',
+        es: 'Tasas',
+        ru: 'Ставки',
+        de: 'Tarife'
       }
     };
 
@@ -150,44 +160,57 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
     navMain: [
       {
         title: translations.dashboard[language] || translations.dashboard.en,
-        url: "/",
+        url: "/dashboard",
         icon: LayoutDashboard,
-        isActive: true,
+        isActive: location.pathname === "/dashboard",
       },
       {
         title: translations.otmizy[language] || translations.otmizy.en,
         url: "/chatbot",
         icon: Bot,
+        isActive: location.pathname === "/chatbot",
       },
       {
         title: translations.campaigns[language] || translations.campaigns.en,
         url: "/campaigns",
         icon: PieChart,
+        isActive: location.pathname === "/campaigns",
       },
       {
         title: translations.users[language] || translations.users.en,
         url: "/users",
         icon: Users,
+        isActive: location.pathname === "/users",
       },
       {
         title: translations.adsAccounts[language] || translations.adsAccounts.en,
         url: "/ads-accounts",
         icon: CreditCard,
+        isActive: location.pathname === "/ads-accounts",
       },
       {
         title: translations.expenses[language] || translations.expenses.en,
         url: "/expenses",
         icon: DollarSign,
+        isActive: location.pathname === "/expenses",
+      },
+      {
+        title: translations.rates[language] || translations.rates.en,
+        url: "/rates",
+        icon: Calculator,
+        isActive: location.pathname === "/rates",
       },
       {
         title: translations.reports[language] || translations.reports.en,
         url: "/reports",
         icon: FileText,
+        isActive: location.pathname === "/reports",
       },
       {
         title: translations.notifications[language] || translations.notifications.en,
         url: "/notifications",
         icon: Bell,
+        isActive: location.pathname === "/notifications",
       },
     ],
     navSecondary: [
@@ -195,11 +218,13 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
         title: translations.settings[language] || translations.settings.en,
         url: "/settings",
         icon: Settings,
+        isActive: location.pathname === "/settings",
       },
       {
         title: translations.subscription[language] || translations.subscription.en,
         url: "/subscription",
         icon: Crown,
+        isActive: location.pathname === "/subscription",
       },
     ],
     projects: [
@@ -214,6 +239,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
         title: translations.achievements[language] || translations.achievements.en,
         url: "/achievements",
         icon: Trophy,
+        isActive: location.pathname === "/achievements",
       },
     ],
   }
@@ -224,7 +250,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
         <SidebarMenu>
           <SidebarMenuItem>
             <SidebarMenuButton size="lg" asChild>
-              <a href="/">
+              <a href="/dashboard">
                 <img src="/horizontal-darkmode.png" alt="Otmizy.ai Logo" style={{ height: '47px', width: 'auto' }} />
               </a>
             </SidebarMenuButton>

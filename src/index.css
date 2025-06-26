@@ -42,8 +42,8 @@
   }
 }
 
-/* Platform carousel animation */
-@keyframes scroll {
+/* Platform carousel animations */
+@keyframes scroll-left {
   0% {
     transform: translateX(0);
   }
@@ -52,11 +52,25 @@
   }
 }
 
-.animate-scroll {
-  animation: scroll 45s linear infinite;
+@keyframes scroll-right {
+  0% {
+    transform: translateX(-50%);
+  }
+  100% {
+    transform: translateX(0);
+  }
 }
 
-.animate-scroll:hover {
+.animate-scroll-left {
+  animation: scroll-left 25s linear infinite;
+}
+
+.animate-scroll-right {
+  animation: scroll-right 25s linear infinite;
+}
+
+.animate-scroll-left:hover,
+.animate-scroll-right:hover {
   animation-play-state: paused;
 }
 
@@ -99,4 +113,33 @@
 
 .animate-pulse-slow {
   animation: pulse-slow 4s ease-in-out infinite;
+}
+
+/* WhatsApp chat animations */
+@keyframes typing {
+  0%, 60%, 100% {
+    transform: translateY(0);
+  }
+  30% {
+    transform: translateY(-10px);
+  }
+}
+
+.animate-typing {
+  animation: typing 1.5s ease-in-out infinite;
+}
+
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-slideUp {
+  animation: slideUp 0.3s ease-out forwards;
 }

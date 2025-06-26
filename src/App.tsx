@@ -1,4 +1,3 @@
-
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -34,6 +33,7 @@ import Cookies from "./pages/Cookies";
 import Landing from "./pages/Landing";
 import Features from "./pages/Features";
 import Pricing from "./pages/Pricing";
+import WhatsAppWidget from "@/components/WhatsAppWidget";
 
 const queryClient = new QueryClient();
 
@@ -331,6 +331,9 @@ const App = () => (
                   } />
                   <Route path="*" element={<NotFound />} />
                 </Routes>
+                
+                {/* WhatsApp Widget - only on landing and public pages */}
+                <WhatsAppWidget />
               </TooltipProvider>
             </AchievementsProvider>
           </AuthProvider>

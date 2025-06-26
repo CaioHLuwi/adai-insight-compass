@@ -1,5 +1,4 @@
-
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -33,6 +32,135 @@ export function DashboardConfig({ fields, onFieldsChange }: DashboardConfigProps
   const [isOpen, setIsOpen] = useState(false);
   const [draggedField, setDraggedField] = useState<DashboardField | null>(null);
   const [dropZone, setDropZone] = useState<'visible' | 'hidden' | null>(null);
+
+  // Initialize default fields if empty
+  React.useEffect(() => {
+    if (fields.length === 0) {
+      const defaultFields: DashboardField[] = [
+        {
+          id: 'dailyBudget',
+          name: 'Daily Budget',
+          nameTranslations: { pt: 'Orçamento Diário', en: 'Daily Budget', es: 'Presupuesto Diario' },
+          category: 'costs',
+          isVisible: true,
+          order: 1
+        },
+        {
+          id: 'ctr',
+          name: 'CTR',
+          nameTranslations: { pt: 'CTR', en: 'CTR', es: 'CTR' },
+          category: 'metrics',
+          isVisible: true,
+          order: 2
+        },
+        {
+          id: 'cpa',
+          name: 'CPA',
+          nameTranslations: { pt: 'CPA', en: 'CPA', es: 'CPA' },
+          category: 'costs',
+          isVisible: true,
+          order: 3
+        },
+        {
+          id: 'cpc',
+          name: 'CPC',
+          nameTranslations: { pt: 'CPC', en: 'CPC', es: 'CPC' },
+          category: 'costs',
+          isVisible: true,
+          order: 4
+        },
+        {
+          id: 'grossRevenue',
+          name: 'Gross Revenue',
+          nameTranslations: { pt: 'Faturamento Bruto', en: 'Gross Revenue', es: 'Ingresos Brutos' },
+          category: 'revenue',
+          isVisible: true,
+          order: 5
+        },
+        {
+          id: 'spend',
+          name: 'Spend',
+          nameTranslations: { pt: 'Gasto', en: 'Spend', es: 'Gasto' },
+          category: 'costs',
+          isVisible: true,
+          order: 6
+        },
+        {
+          id: 'profit',
+          name: 'Profit',
+          nameTranslations: { pt: 'Lucro', en: 'Profit', es: 'Ganancia' },
+          category: 'revenue',
+          isVisible: true,
+          order: 7
+        },
+        {
+          id: 'roas',
+          name: 'ROAS',
+          nameTranslations: { pt: 'ROAS', en: 'ROAS', es: 'ROAS' },
+          category: 'metrics',
+          isVisible: true,
+          order: 8
+        },
+        {
+          id: 'netRevenue',
+          name: 'Net Revenue',
+          nameTranslations: { pt: 'Faturamento Líquido', en: 'Net Revenue', es: 'Ingresos Netos' },
+          category: 'revenue',
+          isVisible: false,
+          order: 9
+        },
+        {
+          id: 'rates',
+          name: 'Rates',
+          nameTranslations: { pt: 'Taxas', en: 'Rates', es: 'Tasas' },
+          category: 'costs',
+          isVisible: false,
+          order: 10
+        },
+        {
+          id: 'pendingSales',
+          name: 'Pending Sales',
+          nameTranslations: { pt: 'Vendas Pendentes', en: 'Pending Sales', es: 'Ventas Pendientes' },
+          category: 'revenue',
+          isVisible: false,
+          order: 11
+        },
+        {
+          id: 'roi',
+          name: 'ROI',
+          nameTranslations: { pt: 'ROI', en: 'ROI', es: 'ROI' },
+          category: 'metrics',
+          isVisible: false,
+          order: 12
+        },
+        {
+          id: 'profitMargin',
+          name: 'Profit Margin',
+          nameTranslations: { pt: 'Margem de Lucro', en: 'Profit Margin', es: 'Margen de Ganancia' },
+          category: 'metrics',
+          isVisible: false,
+          order: 13
+        },
+        {
+          id: 'tax',
+          name: 'Tax',
+          nameTranslations: { pt: 'Imposto', en: 'Tax', es: 'Impuesto' },
+          category: 'costs',
+          isVisible: false,
+          order: 14
+        },
+        {
+          id: 'chargeback',
+          name: 'Chargeback',
+          nameTranslations: { pt: 'Chargeback', en: 'Chargeback', es: 'Contracargo' },
+          category: 'costs',
+          isVisible: false,
+          order: 15
+        }
+      ];
+      onFieldsChange(defaultFields);
+    }
+  }, [fields.length, onFieldsChange]);
 
   const visibleFields = fields.filter(f => f.isVisible).sort((a, b) => a.order - b.order);
   const hiddenFields = fields.filter(f => !f.isVisible);
