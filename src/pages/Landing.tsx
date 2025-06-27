@@ -260,20 +260,23 @@ const Landing = () => {
         name: getText('starter'),
         price: 'R$ 99',
         originalPrice: 'R$ 149',
-        features: ['Até 5 campanhas', 'Relatórios básicos', 'Suporte por email', 'Otimização básica']
+        features: ['Até 5 campanhas', 'Relatórios básicos', 'Suporte por email', 'Otimização básica'],
+        savings: undefined
       },
       {
         name: getText('professional'),
         price: 'R$ 299',
         originalPrice: 'R$ 399',
         features: ['Campanhas ilimitadas', 'Analytics avançado', 'Suporte prioritário', 'IA completa', 'Integrações'],
-        popular: true
+        popular: true,
+        savings: undefined
       },
       {
         name: getText('enterprise'),
         price: 'Personalizado',
         originalPrice: '',
-        features: ['Tudo do Pro', 'Suporte dedicado', 'SLA garantido', 'Customizações', 'Treinamentos']
+        features: ['Tudo do Pro', 'Suporte dedicado', 'SLA garantido', 'Customizações', 'Treinamentos'],
+        savings: undefined
       }
     ];
 
