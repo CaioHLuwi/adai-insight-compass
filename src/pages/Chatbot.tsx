@@ -1,6 +1,6 @@
 
 import React, { useState, useRef, useEffect } from 'react';
-import { Send, Bot, User, Sparkles, TrendingUp, Target, Zap, BarChart3, Settings, MessageCircle } from 'lucide-react';
+import { Send, Bot, User, Sparkles, TrendingUp, Target, Zap, BarChart3, Settings, MessageCircle, ArrowRight, Lightbulb } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -12,6 +12,16 @@ interface ChatMessage {
   role: 'user' | 'assistant';
   content: string;
   timestamp: Date;
+}
+
+interface Strategy {
+  id: number;
+  title: string;
+  description: string;
+  impact: string;
+  icon: React.ReactNode;
+  color: string;
+  active: boolean;
 }
 
 const Chatbot = () => {
@@ -26,7 +36,45 @@ const Chatbot = () => {
   ]);
   const [inputMessage, setInputMessage] = useState('');
   const [isLoading, setIsLoading] = useState(false);
+  const [currentStrategy, setCurrentStrategy] = useState(0);
   const messagesEndRef = useRef<HTMLDivElement>(null);
+
+  const strategies: Strategy[] = [
+    {
+      id: 1,
+      title: "Otimização de Audience",
+      description: "Identifiquei que seu público de 25-34 anos tem 3x mais conversões. Sugiro aumentar o budget para essa faixa etária.",
+      impact: "+47% ROAS",
+      icon: <Target className="w-6 h-6 text-blue-400" />,
+      color: "border-blue-500/30 bg-blue-500/5",
+      active: true
+    },
+    {
+      id: 2,
+      title: "Ajuste de Horários",
+      description: "Suas campanhas performam melhor entre 19h-22h. Recomendo concentrar 60% do budget nesse período.",
+      impact: "+32% CTR",
+      icon: <TrendingUp className="w-6 h-6 text-green-400" />,
+      color: "border-green-500/30 bg-green-500/5",
+      active: false
+    },
+    {
+      id: 3,
+      title: "Palavras-chave Negativas",
+      description: "Detectei 15 termos que estão gastando budget sem converter. Adicionar essas palavras negativas pode economizar R$ 1.2k/mês.",
+      impact: "-28% CPC",
+      icon: <Zap className="w-6 h-6 text-yellow-400" />,
+      color: "border-yellow-500/30 bg-yellow-500/5",
+      active: false
+    }
+  ];
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setCurrentStrategy((prev) => (prev + 1) % strategies.length);
+    }, 4000);
+    return () => clearInterval(interval);
+  }, []);
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
@@ -147,7 +195,6 @@ const Chatbot = () => {
     if (!messageText) setInputMessage('');
     setIsLoading(true);
 
-    // Simulate AI thinking time
     setTimeout(() => {
       const response = generateResponse(textToSend);
       const assistantMessage: ChatMessage = {
@@ -188,6 +235,83 @@ const Chatbot = () => {
           <Badge className="mt-4 bg-yellow-500/10 text-yellow-400 border-yellow-500/20 animate-pulse">
             🤖 IA Avançada • Disponível 24/7
           </Badge>
+        </div>
+
+        {/* Izy AI Agent Preview Section */}
+        <div className="mb-8">
+          <Card className="bg-gradient-to-r from-yellow-500/20 to-orange-500/20 border-yellow-500/20 p-6">
+            <div className="bg-gray-900/80 rounded-xl p-6 backdrop-blur-sm">
+              {/* Izy Header */}
+              <div className="flex items-center justify-center mb-8">
+                <div className="flex items-center space-x-3">
+                  <div className="relative">
+                    <div className="w-12 h-12 bg-gradient-to-r from-yellow-400 to-orange-500 rounded-full flex items-center justify-center animate-pulse">
+                      <Bot className="w-6 h-6 text-black" />
+                    </div>
+                    <div className="absolute -top-1 -right-1 w-4 h-4 bg-green-400 rounded-full animate-ping"></div>
+                  </div>
+                  <div>
+                    <h3 className="text-xl font-bold text-yellow-400">Izy AI Assistant</h3>
+                    <p className="text-sm text-muted-foreground">Analisando suas campanhas em tempo real</p>
+                  </div>
+                </div>
+              </div>
+
+              {/* Strategy Cards */}
+              <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
+                {strategies.map((strategy, index) => (
+                  <Card 
+                    key={strategy.id}
+                    className={`relative cursor-pointer transition-all duration-500 hover-scale ${
+                      index === currentStrategy 
+                        ? `${strategy.color} ring-2 ring-yellow-500/50 transform scale-105` 
+                        : 'bg-gray-800/50 border-gray-700/50 hover:bg-gray-800/70'
+                    }`}
+                  >
+                    <CardContent className="p-6">
+                      <div className="flex items-start space-x-3 mb-4">
+                        {strategy.icon}
+                        <div>
+                          <h4 className="font-semibold text-lg mb-2">{strategy.title}</h4>
+                          <p className="text-sm text-muted-foreground leading-relaxed">
+                            {strategy.description}
+                          </p>
+                        </div>
+                      </div>
+                      <div className="flex items-center justify-between">
+                        <span className="text-xl font-bold text-green-400">{strategy.impact}</span>
+                        {index === currentStrategy && (
+                          <div className="flex items-center text-yellow-400 text-sm">
+                            <Lightbulb className="w-4 h-4 mr-1" />
+                            Ativa
+                          </div>
+                        )}
+                      </div>
+                    </CardContent>
+                  </Card>
+                ))}
+              </div>
+
+              {/* Action Buttons */}
+              <div className="flex flex-col sm:flex-row gap-4 justify-center items-center mb-6">
+                <Button className="bg-yellow-500 hover:bg-yellow-600 text-black px-6 py-3 rounded-lg">
+                  Aplicar Sugestões da Izy
+                  <ArrowRight className="ml-2 w-4 h-4" />
+                </Button>
+                <Button variant="outline" className="border-yellow-500/20 hover:bg-yellow-500/10 px-6 py-3 rounded-lg">
+                  Ver Mais Insights
+                </Button>
+              </div>
+
+              {/* Real-time indicator */}
+              <div className="text-center">
+                <div className="inline-flex items-center space-x-2 text-sm text-muted-foreground">
+                  <div className="w-2 h-2 bg-green-400 rounded-full animate-pulse"></div>
+                  <span>Monitoramento em tempo real • Última atualização: agora</span>
+                </div>
+              </div>
+            </div>
+          </Card>
         </div>
 
         <div className="grid lg:grid-cols-3 gap-8">
