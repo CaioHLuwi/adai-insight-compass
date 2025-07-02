@@ -34,8 +34,6 @@ import Landing from "./pages/Landing";
 import Features from "./pages/Features";
 import Pricing from "./pages/Pricing";
 import WhatsAppWidget from "@/components/WhatsAppWidget";
-import Success from "./pages/Success";
-import Cancel from "./pages/Cancel";
 
 const queryClient = new QueryClient();
 
@@ -77,10 +75,6 @@ const App = () => (
                   {/* Public pages without sidebar */}
                   <Route path="/features" element={<Features />} />
                   <Route path="/pricing" element={<Pricing />} />
-
-                  {/* Novas rotas para Stripe Checkout */}
-                  <Route path="/success" element={<Success />} />
-                  <Route path="/cancel" element={<Cancel />} />
                   
                   {/* Policy routes without sidebar */}
                   <Route path="/terms" element={<Terms />} />
