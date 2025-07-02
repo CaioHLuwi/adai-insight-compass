@@ -1,4 +1,3 @@
-
 import React, { useEffect, useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
@@ -86,7 +85,7 @@ const Landing = () => {
       subtitle: {
         pt: 'A primeira plataforma que te permitirá ter lucro REAL mesmo sem saber estratégias complexas de otimização de campanhas de tráfego pago e mais.',
         en: 'The first platform that will allow you to have REAL profit even without knowing complex traffic campaign optimization strategies and more.',
-        es: 'La primera plataforma que te permitirá tener ganancias REALES incluso sin conocer estrategias complejas de optimización de campañas de tráfico y más.'
+        es: 'La primera plataforma que te permitirá tener ganancias REALES incluso sin conocer estrategias complejas de optimización de campañas de tráfego y más.'
       },
       startFree: {
         pt: 'Testar 7 dias Grátis',
