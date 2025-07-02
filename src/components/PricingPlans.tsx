@@ -203,27 +203,6 @@ const Pricing = () => {
 
   return (
     <div className="min-h-screen bg-background">
-      {/* Header */}
-      <nav className="fixed top-0 w-full bg-background/80 backdrop-blur-md border-b border-yellow-500/20 z-50">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between items-center h-16">
-            <div className="flex items-center">
-              <img src="/horizontal-darkmode.png" alt="Otmizy.ai" className="h-8" />
-            </div>
-            <div className="flex items-center space-x-4">
-              <LanguageDropdown />
-              <Button
-                onClick={() => navigate('/landing')}
-                variant="outline"
-                className="border-yellow-500/20 hover:bg-yellow-500/10"
-              >
-                <ArrowLeft className="w-4 h-4 mr-2" />
-                {getText('backToHome')}
-              </Button>
-            </div>
-          </div>
-        </div>
-      </nav>
 
       {/* Hero Section */}
       <section className="pt-32 pb-20 px-4 sm:px-6 lg:px-8">
