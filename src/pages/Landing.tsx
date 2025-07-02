@@ -31,6 +31,7 @@ import LanguageDropdown from '@/components/LanguageDropdown';
 import PlatformsCarousel from '@/components/PlatformsCarousel';
 import AchievementSection from '@/components/AchievementSection';
 import IzyAIAgent from '@/components/IzyAIAgent';
+import PricingPlans from '@/components/PricingPlans';
 
 const Landing = () => {
   const navigate = useNavigate();
@@ -449,8 +450,8 @@ const Landing = () => {
         </div>
       </section>
 
-      {/* Pricing Section */}
-      <section id="pricing" className={`py-20 px-4 sm:px-6 lg:px-8 bg-gray-900/20 relative z-10 transition-all duration-1000 delay-400 ${isVisible.pricing ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`}>
+      {/* Pricing Section
+        <section id="pricing" className={`py-20 px-4 sm:px-6 lg:px-8 bg-gray-900/20 relative z-10 transition-all duration-1000 delay-400 ${isVisible.pricing ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`}>
         <div className="max-w-7xl mx-auto">
           <div className="text-center mb-16">
             <h2 className="text-3xl md:text-4xl font-bold mb-4">{getText('pricingTitle')}</h2>
@@ -458,7 +459,6 @@ const Landing = () => {
               Escolha o plano ideal para seu negócio
             </p>
             
-            {/* Pricing Toggle */}
             <div className="flex items-center justify-center space-x-4 mb-8">
               <span className={`text-sm ${!isAnnual ? 'text-yellow-400 font-semibold' : 'text-muted-foreground'}`}>
                 Mensal
@@ -530,8 +530,9 @@ const Landing = () => {
             ))}
           </div>
         </div>
-      </section>
-
+      </section> 
+        */}
+      <PricingPlans />
       {/* Testimonials Section */}
       <section id="testimonials" className={`py-20 px-4 sm:px-6 lg:px-8 relative z-10 transition-all duration-1000 delay-500 ${isVisible.testimonials ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`}>
         <div className="max-w-7xl mx-auto">
