@@ -450,89 +450,9 @@ const Landing = () => {
         </div>
       </section>
 
-      {/* Pricing Section
-        <section id="pricing" className={`py-20 px-4 sm:px-6 lg:px-8 bg-gray-900/20 relative z-10 transition-all duration-1000 delay-400 ${isVisible.pricing ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`}>
-        <div className="max-w-7xl mx-auto">
-          <div className="text-center mb-16">
-            <h2 className="text-3xl md:text-4xl font-bold mb-4">{getText('pricingTitle')}</h2>
-            <p className="text-xl text-muted-foreground mb-8">
-              Escolha o plano ideal para seu negócio
-            </p>
-            
-            <div className="flex items-center justify-center space-x-4 mb-8">
-              <span className={`text-sm ${!isAnnual ? 'text-yellow-400 font-semibold' : 'text-muted-foreground'}`}>
-                Mensal
-              </span>
-              <Switch
-                checked={isAnnual}
-                onCheckedChange={setIsAnnual}
-                className="data-[state=checked]:bg-yellow-500"
-              />
-              <span className={`text-sm ${isAnnual ? 'text-yellow-400 font-semibold' : 'text-muted-foreground'}`}>
-                Anual
-              </span>
-              {isAnnual && (
-                <Badge className="bg-green-500/10 text-green-400 border-green-500/20 animate-pulse">
-                  Economize 20%
-                </Badge>
-              )}
-            </div>
-          </div>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            {getPlans().map((plan, index) => (
-              <Card key={index} className={`relative hover-scale rounded-lg ${plan.popular ? 'border-yellow-500 bg-yellow-500/5' : 'bg-gray-800/50 border-yellow-500/20'}`}>
-                {plan.popular && (
-                  <Badge className="absolute -top-3 left-1/2 transform -translate-x-1/2 bg-yellow-500 text-black">
-                    Mais usado
-                  </Badge>
-                )}
-                <CardContent className="p-6">
-                  <h3 className="text-2xl font-bold mb-2">{plan.name}</h3>
-                  <div className="mb-4">
-                    <div className="flex items-center space-x-2">
-                      <div className="text-3xl font-bold">
-                        {plan.price}
-                      </div>
-                      {plan.originalPrice && (
-                        <div className="text-lg text-muted-foreground line-through">
-                          {plan.originalPrice}
-                        </div>
-                      )}
-                    </div>
-                    {plan.price !== 'Personalizado' && (
-                      <span className="text-sm text-muted-foreground">
-                        {isAnnual ? getText('perYear') : getText('perMonth')}
-                      </span>
-                    )}
-                    {plan.savings && (
-                      <Badge className="mt-2 bg-green-500/10 text-green-400 border-green-500/20">
-                        {plan.savings}
-                      </Badge>
-                    )}
-                  </div>
-                  <ul className="space-y-3 mb-6">
-                    {plan.features.map((feature, featureIndex) => (
-                      <li key={featureIndex} className="flex items-center">
-                        <CheckCircle className="w-4 h-4 text-green-400 mr-2" />
-                        <span className="text-sm">{feature}</span>
-                      </li>
-                    ))}
-                  </ul>
-                  <Button 
-                    className={`w-full rounded-lg ${plan.popular ? 'bg-yellow-500 hover:bg-yellow-600 text-black' : 'border-yellow-500/20 hover:bg-yellow-500/10'}`}
-                    variant={plan.popular ? 'default' : 'outline'}
-                    onClick={() => navigate('/register')}
-                  >
-                    {getText('selectPlan')}
-                  </Button>
-                </CardContent>
-              </Card>
-            ))}
-          </div>
-        </div>
-      </section> 
-        */}
+      {/* Pricing Section */}
       <PricingPlans />
+      
       {/* Testimonials Section */}
       <section id="testimonials" className={`py-20 px-4 sm:px-6 lg:px-8 relative z-10 transition-all duration-1000 delay-500 ${isVisible.testimonials ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`}>
         <div className="max-w-7xl mx-auto">
