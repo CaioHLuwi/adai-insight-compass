@@ -459,7 +459,7 @@ const Landing = () => {
           <div className="text-center mb-16">
             <h2 className="text-3xl md:text-4xl font-bold mb-4">{getText('testimonialsTitle')}</h2>
           </div>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+          <div className="grid grid-cols-1 md:grid-3 gap-8">
             {testimonials.map((testimonial, index) => (
               <Card key={index} className="bg-gray-800/50 border-yellow-500/20 hover-scale rounded-lg">
                 <CardContent className="p-6">
