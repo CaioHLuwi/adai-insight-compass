@@ -351,8 +351,8 @@ const Landing = () => {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center h-16">
             <div className="flex items-center">
-              <a href="/" className="flex-shrink-0">
-                <img src="/horizontal-darkmode.png" alt="Otmizy.ai" className="h-8 w-auto object-contain" />
+              <a href="/">
+                <img src="/horizontal-darkmode.png" alt="Otmizy.ai" className="h-8" />
               </a>
             </div>
             <div className="hidden md:flex items-center space-x-8">
@@ -371,14 +371,14 @@ const Landing = () => {
               <LanguageDropdown />
               <Button
                 onClick={() => navigate('/login')}
-                variant="outline"
-                className="text-yellow-400 hover:text-yellow-300 border-yellow-500/20 hover:bg-yellow-500/10 rounded-lg"
+                variant="ghost"
+                className="text-yellow-400 hover:text-yellow-300"
               >
                 {getText('login')}
               </Button>
               <Button
                 onClick={() => navigate('/register')}
-                className="bg-yellow-500 hover:bg-yellow-600 text-black rounded-lg"
+                className="bg-yellow-500 hover:bg-yellow-600 text-black"
               >
                 {getText('startFree')}
               </Button>
