@@ -24,7 +24,8 @@ import {
   Bot,
   Lightbulb,
   Rocket,
-  Brain
+  Brain,
+  ArrowLeft
 } from 'lucide-react';
 import LanguageDropdown from '@/components/LanguageDropdown';
 import PlatformsCarousel from '@/components/PlatformsCarousel';
@@ -226,6 +227,11 @@ const Landing = () => {
         pt: 'Entrar',
         en: 'Login',
         es: 'Iniciar Sesión'
+      },
+      backToHome: {
+        pt: 'Voltar ao Início',
+        en: 'Back to Home',
+        es: 'Volver al Inicio'
       }
     };
     return translations[key]?.[language] || translations[key]?.['pt'] || key;
@@ -347,7 +353,7 @@ const Landing = () => {
       </div>
 
       {/* Header */}
-      <nav className="fixed top-0 w-full bg-background/80 backdrop-blur-md border-b border-yellow-500/20 z-50">
+      <nav className="fixed top-0 w-full bg-gray-900/95 backdrop-blur-md border-b border-yellow-500/20 z-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center h-16">
             <div className="flex items-center">
@@ -355,33 +361,17 @@ const Landing = () => {
                 <img src="/horizontal-darkmode.png" alt="Otmizy.ai" className="h-8 w-auto object-contain" />
               </a>
             </div>
-            <div className="hidden md:flex items-center space-x-8">
-              <a href="#features" className="text-muted-foreground hover:text-yellow-400 transition-colors">
-                {getText('features')}
-              </a>
-              <a href="#achievements" className="text-muted-foreground hover:text-yellow-400 transition-colors">
-                Conquistas
-              </a>
-              <a href="#pricing" className="text-muted-foreground hover:text-yellow-400 transition-colors">
-                {getText('pricing')}
-              </a>
-              <a href="#testimonials" className="text-muted-foreground hover:text-yellow-400 transition-colors">
-                {getText('testimonials')}
-              </a>
+            <div className="flex items-center space-x-4">
+              <Button
+                onClick={() => navigate('/')}
+                variant="ghost"
+                className="text-muted-foreground hover:text-yellow-400 transition-colors flex items-center space-x-2"
+              >
+                <ArrowLeft className="w-4 h-4" />
+                <span>{getText('backToHome')}</span>
+              </Button>
+              <span className="text-muted-foreground">BR</span>
               <LanguageDropdown />
-              <Button
-                onClick={() => navigate('/login')}
-                variant="outline"
-                className="text-yellow-400 hover:text-yellow-300 border-yellow-500/20 hover:bg-yellow-500/10 rounded-lg"
-              >
-                {getText('login')}
-              </Button>
-              <Button
-                onClick={() => navigate('/register')}
-                className="bg-yellow-500 hover:bg-yellow-600 text-black rounded-lg"
-              >
-                {getText('startFree')}
-              </Button>
             </div>
           </div>
         </div>
