@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { Eye, EyeOff, User, Mail, Lock, Check } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -13,13 +14,11 @@ import { RegistrationSuccessModal } from '@/components/RegistrationSuccessModal'
 
 export default function Register() {
   const [formData, setFormData] = useState({
-    firstName: '',
-    lastName: '',
+    fullName: '',
     email: '',
     password: '',
     confirmPassword: '',
-    acceptTerms: false,
-    acceptMarketing: false
+    acceptTerms: false
   });
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
@@ -36,18 +35,11 @@ export default function Register() {
     const newErrors = { ...errors };
 
     switch (name) {
-      case 'firstName':
+      case 'fullName':
         if (!value.trim()) {
-          newErrors.firstName = t('firstNameRequired');
+          newErrors.fullName = 'Nome completo é obrigatório';
         } else {
-          delete newErrors.firstName;
-        }
-        break;
-      case 'lastName':
-        if (!value.trim()) {
-          newErrors.lastName = t('lastNameRequired');
-        } else {
-          delete newErrors.lastName;
+          delete newErrors.fullName;
         }
         break;
       case 'email':
@@ -80,7 +72,7 @@ export default function Register() {
         break;
       case 'acceptTerms':
         if (!value) {
-          newErrors.acceptTerms = t('termsRequired');
+          newErrors.acceptTerms = 'É necessário aceitar os termos de uso e privacidade';
         } else {
           delete newErrors.acceptTerms;
         }
@@ -118,8 +110,7 @@ export default function Register() {
     setLoading(true);
 
     try {
-      const fullName = `${formData.firstName} ${formData.lastName}`;
-      const { error } = await signUp(formData.email, formData.password, fullName);
+      const { error } = await signUp(formData.email, formData.password, formData.fullName);
 
       if (error) {
         if (error.message.includes('User already registered')) {
@@ -167,53 +158,68 @@ export default function Register() {
         <div className="h-full flex items-center justify-center w-full">
           <div className="max-w-2xl w-full">
             <div className="relative">
-              {/* Modern illustration with dashboard preview */}
-              <div className="w-full h-96 bg-gradient-to-br from-yellow-500/20 to-orange-500/20 rounded-lg flex items-center justify-center relative overflow-hidden">
-                <div className="absolute inset-0 bg-gradient-to-r from-yellow-400/10 to-orange-400/10"></div>
+              {/* Modern tech illustration */}
+              <div className="w-full h-96 bg-gradient-to-br from-blue-500/20 via-purple-500/20 to-pink-500/20 rounded-2xl flex items-center justify-center relative overflow-hidden">
+                <div className="absolute inset-0 bg-gradient-to-r from-blue-400/10 via-purple-400/10 to-pink-400/10"></div>
                 
-                {/* Dashboard mockup */}
+                {/* Main central element */}
                 <div className="relative z-10 w-full max-w-lg">
-                  <div className="bg-gray-900/80 backdrop-blur-sm rounded-lg p-6 shadow-2xl border border-yellow-500/20">
-                    {/* Header */}
-                    <div className="flex items-center justify-between mb-6">
-                      <div className="h-8 bg-yellow-500/20 rounded w-32"></div>
-                      <div className="flex space-x-2">
-                        <div className="w-8 h-8 bg-yellow-500/30 rounded-full"></div>
-                        <div className="w-8 h-8 bg-orange-500/30 rounded-full"></div>
+                  <div className="bg-gray-900/90 backdrop-blur-sm rounded-2xl p-8 shadow-2xl border border-blue-500/20">
+                    {/* Header with user avatar */}
+                    <div className="flex items-center justify-between mb-8">
+                      <div className="flex items-center space-x-3">
+                        <div className="w-12 h-12 bg-gradient-to-r from-blue-500 to-purple-500 rounded-full flex items-center justify-center">
+                          <User className="w-6 h-6 text-white" />
+                        </div>
+                        <div>
+                          <div className="h-3 bg-blue-500/30 rounded w-20 mb-1"></div>
+                          <div className="h-2 bg-gray-600 rounded w-16"></div>
+                        </div>
+                      </div>
+                      <div className="flex space-x-1">
+                        <div className="w-3 h-3 bg-green-400 rounded-full"></div>
+                        <div className="w-3 h-3 bg-yellow-400 rounded-full"></div>
+                        <div className="w-3 h-3 bg-red-400 rounded-full"></div>
                       </div>
                     </div>
                     
-                    {/* Stats cards */}
-                    <div className="grid grid-cols-2 gap-4 mb-6">
-                      <div className="bg-green-500/10 border border-green-500/20 rounded-lg p-3">
-                        <div className="text-green-400 text-2xl font-bold">+127%</div>
-                        <div className="text-green-300 text-sm">ROI</div>
-                      </div>
-                      <div className="bg-blue-500/10 border border-blue-500/20 rounded-lg p-3">
-                        <div className="text-blue-400 text-2xl font-bold">R$ 45k</div>
-                        <div className="text-blue-300 text-sm">Revenue</div>
-                      </div>
+                    {/* Welcome message */}
+                    <div className="text-center mb-6">
+                      <h3 className="text-2xl font-bold text-white mb-2">Bem-vindo!</h3>
+                      <p className="text-gray-300">Cadastre-se e comece sua jornada</p>
                     </div>
                     
-                    {/* Chart representation */}
-                    <div className="bg-gray-800/50 rounded p-4">
-                      <div className="flex items-end space-x-1 h-16">
-                        {[...Array(12)].map((_, i) => (
-                          <div
-                            key={i}
-                            className="bg-yellow-500/40 flex-1 rounded-t"
-                            style={{ height: `${Math.random() * 100}%` }}
-                          ></div>
-                        ))}
+                    {/* Form elements mockup */}
+                    <div className="space-y-4">
+                      <div className="h-12 bg-gray-800/50 border border-blue-500/20 rounded-lg flex items-center px-4">
+                        <div className="w-5 h-5 bg-blue-500/40 rounded mr-3"></div>
+                        <div className="h-2 bg-gray-600 rounded flex-1"></div>
+                      </div>
+                      <div className="h-12 bg-gray-800/50 border border-purple-500/20 rounded-lg flex items-center px-4">
+                        <div className="w-5 h-5 bg-purple-500/40 rounded mr-3"></div>
+                        <div className="h-2 bg-gray-600 rounded flex-1"></div>
+                      </div>
+                      <div className="h-12 bg-gradient-to-r from-blue-500 to-purple-500 rounded-lg flex items-center justify-center">
+                        <div className="text-white font-semibold">Criar Conta</div>
                       </div>
                     </div>
                   </div>
                 </div>
 
-                {/* Floating elements */}
-                <div className="absolute top-6 left-6 w-12 h-12 border-2 border-yellow-400/30 rounded-lg animate-pulse"></div>
-                <div className="absolute bottom-6 right-6 w-16 h-16 border-2 border-orange-400/30 rounded-full animate-pulse"></div>
-                <div className="absolute top-1/2 left-12 w-8 h-8 bg-yellow-400/20 rounded animate-bounce"></div>
+                {/* Floating decorative elements */}
+                <div className="absolute top-8 left-8 w-16 h-16 border-2 border-blue-400/30 rounded-full animate-pulse"></div>
+                <div className="absolute bottom-8 right-8 w-12 h-12 border-2 border-purple-400/30 rounded-lg rotate-45 animate-pulse"></div>
+                <div className="absolute top-1/3 left-16 w-8 h-8 bg-pink-400/20 rounded-full animate-bounce"></div>
+                <div className="absolute bottom-1/3 right-16 w-6 h-6 bg-blue-400/20 rounded animate-bounce" style={{ animationDelay: '0.5s' }}></div>
+                
+                {/* Tech grid pattern */}
+                <div className="absolute inset-0 opacity-10">
+                  <div className="grid grid-cols-8 grid-rows-8 h-full">
+                    {[...Array(64)].map((_, i) => (
+                      <div key={i} className="border border-white/10"></div>
+                    ))}
+                  </div>
+                </div>
               </div>
             </div>
           </div>
@@ -238,41 +244,22 @@ export default function Register() {
             </div>
 
             <form onSubmit={handleSubmit} className="space-y-4">
-              {/* Name fields */}
-              <div className="grid grid-cols-2 gap-4">
-                <div className="space-y-2">
-                  <Label htmlFor="firstName">{t('firstName')}</Label>
-                  <div className="relative">
-                    <User className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground w-4 h-4" />
-                    <Input
-                      id="firstName"
-                      name="firstName"
-                      type="text"
-                      value={formData.firstName}
-                      onChange={handleInputChange}
-                      className={`pl-10 ${errors.firstName ? 'border-red-500' : ''}`}
-                      placeholder={t('firstName')}
-                    />
-                  </div>
-                  {errors.firstName && <p className="text-sm text-red-500">{errors.firstName}</p>}
+              {/* Full Name field */}
+              <div className="space-y-2">
+                <Label htmlFor="fullName">Nome Completo</Label>
+                <div className="relative">
+                  <User className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground w-4 h-4" />
+                  <Input
+                    id="fullName"
+                    name="fullName"
+                    type="text"
+                    value={formData.fullName}
+                    onChange={handleInputChange}
+                    className={`pl-10 ${errors.fullName ? 'border-red-500' : ''}`}
+                    placeholder="Digite seu nome completo"
+                  />
                 </div>
-
-                <div className="space-y-2">
-                  <Label htmlFor="lastName">{t('lastName')}</Label>
-                  <div className="relative">
-                    <User className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground w-4 h-4" />
-                    <Input
-                      id="lastName"
-                      name="lastName"
-                      type="text"
-                      value={formData.lastName}
-                      onChange={handleInputChange}
-                      className={`pl-10 ${errors.lastName ? 'border-red-500' : ''}`}
-                      placeholder={t('lastName')}
-                    />
-                  </div>
-                  {errors.lastName && <p className="text-sm text-red-500">{errors.lastName}</p>}
-                </div>
+                {errors.fullName && <p className="text-sm text-red-500">{errors.fullName}</p>}
               </div>
 
               {/* Email field */}
@@ -388,30 +375,26 @@ export default function Register() {
                       htmlFor="acceptTerms"
                       className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
                     >
-                      {t('acceptTerms')}
+                      Aceito os{' '}
+                      <button
+                        type="button"
+                        onClick={() => navigate('/terms')}
+                        className="text-yellow-500 hover:text-yellow-400 underline"
+                      >
+                        Termos de Uso
+                      </button>
+                      {' '}e{' '}
+                      <button
+                        type="button"
+                        onClick={() => navigate('/privacy')}
+                        className="text-yellow-500 hover:text-yellow-400 underline"
+                      >
+                        Termos de Privacidade
+                      </button>
                     </label>
                   </div>
                 </div>
                 {errors.acceptTerms && <p className="text-sm text-red-500">{errors.acceptTerms}</p>}
-
-                <div className="flex items-start space-x-2">
-                  <Checkbox
-                    id="acceptMarketing"
-                    name="acceptMarketing"
-                    checked={formData.acceptMarketing}
-                    onCheckedChange={(checked) => handleInputChange({
-                      target: { name: 'acceptMarketing', type: 'checkbox', checked }
-                    } as React.ChangeEvent<HTMLInputElement>)}
-                  />
-                  <div className="grid gap-1.5 leading-none">
-                    <label
-                      htmlFor="acceptMarketing"
-                      className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
-                    >
-                      {t('acceptMarketing')}
-                    </label>
-                  </div>
-                </div>
               </div>
 
               {/* Register error */}
@@ -433,7 +416,7 @@ export default function Register() {
                 type="button"
                 onClick={handleGoogleRegister}
                 variant="outline"
-                className="w-full border-gray-300 hover:bg-gray-50"
+                className="w-full border-gray-300 hover:bg-black hover:text-white transition-colors"
                 disabled={loading}
               >
                 <svg className="w-5 h-5 mr-2" viewBox="0 0 24 24">
