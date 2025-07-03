@@ -1,10 +1,10 @@
-
 import React, { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Users, Activity, DollarSign, TrendingUp, Calendar, Eye, UserCheck, Clock } from 'lucide-react';
+import { Users, Activity, DollarSign, TrendingUp, Calendar, Eye, UserCheck, Clock, User } from 'lucide-react';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, BarChart, Bar, PieChart, Pie, Cell, AreaChart, Area } from 'recharts';
 import { useLanguage } from '@/hooks/useLanguage';
+import { UserProfile } from '@/components/UserProfile';
 
 const Zeuz = () => {
   const { language } = useLanguage();
@@ -480,6 +480,11 @@ const Zeuz = () => {
               Zeuz - Dashboard Administrativo
             </h1>
             <p className="text-gray-400 mt-2">Painel de controle e monitoramento da plataforma</p>
+          </div>
+          
+          {/* User Profile Area */}
+          <div className="flex items-center space-x-4">
+            <UserProfile />
           </div>
         </div>
 
