@@ -9,6 +9,11 @@ import { UserProfile } from '@/components/UserProfile';
 const Zeuz = () => {
   const { language } = useLanguage();
   const [activeSection, setActiveSection] = useState('overview');
+  const [user] = useState({
+    name: 'Admin User',
+    email: 'admin@otmizy.ai',
+    role: 'Administrator'
+  });
 
   // Mock data for dashboard
   const monthlyRevenue = [
@@ -480,6 +485,9 @@ const Zeuz = () => {
               Zeuz - Dashboard Administrativo
             </h1>
             <p className="text-gray-400 mt-2">Painel de controle e monitoramento da plataforma</p>
+            <p className="text-yellow-400 mt-1 font-medium">
+              Seja bem vindo {user.name}! É um prazer construir esse império com você.
+            </p>
           </div>
           
           {/* User Profile Area */}
