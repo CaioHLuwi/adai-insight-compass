@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -479,14 +480,14 @@ const Zeuz = () => {
     <div className="min-h-screen bg-background">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {/* Header */}
-        <div className="flex items-center justify-between mb-8">
+        <div className="flex items-center justify-between mb-6">
           <div>
             <h1 className="text-3xl font-bold bg-gradient-to-r from-yellow-400 to-yellow-600 bg-clip-text text-transparent">
               Zeuz - Dashboard Administrativo
             </h1>
             <p className="text-gray-400 mt-2">Painel de controle e monitoramento da plataforma</p>
-            <p className="text-yellow-400 mt-1 font-medium">
-              Seja bem vindo {user.name}! É um prazer construir esse império com você.
+            <p className="text-yellow-400 mt-3 font-semibold text-lg bg-gradient-to-r from-yellow-300 via-yellow-400 to-yellow-500 bg-clip-text text-transparent tracking-wide">
+              Seja bem-vindo, <span className="font-bold">{user.name}</span>! É um prazer construir esse império com você.
             </p>
           </div>
           
