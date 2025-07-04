@@ -4,7 +4,7 @@ import { Button } from '@/components/ui/button';
 import { Users, Activity, DollarSign, TrendingUp, Calendar, Eye, UserCheck, Clock, User } from 'lucide-react';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, BarChart, Bar, PieChart, Pie, Cell, AreaChart, Area } from 'recharts';
 import { useLanguage } from '@/hooks/useLanguage';
-import { UserProfile } from '@/components/UserProfile';
+import UserProfile  from '../components/UserProfile';
 
 const Zeuz = () => {
   const { language } = useLanguage();
