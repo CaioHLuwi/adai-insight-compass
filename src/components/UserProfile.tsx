@@ -7,7 +7,7 @@ import { useLanguage } from '@/hooks/useLanguage';
 import { useToast } from '@/hooks/use-toast';
 import { User, Upload, Save, Lock, Eye, EyeOff } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
-import { ProfileService } from '@/services/ProfileService';
+import { ProfileService } from '../services/ProfileService';
 import { useAuth } from '@/contexts/AuthContext';
 
 const UserProfile = () => {

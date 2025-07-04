@@ -36,6 +36,8 @@ import Pricing from "./pages/Pricing";
 import WhatsAppWidget from "@/components/WhatsAppWidget";
 import Success from "./pages/Success";
 import Cancel from "./pages/Cancel";
+import Zeuz from "./pages/Zeuz";
+import AdminLogin from "./pages/AdminLogin";
 
 const queryClient = new QueryClient();
 
@@ -73,6 +75,10 @@ const App = () => (
                   {/* Auth routes without sidebar */}
                   <Route path="/login" element={<Login />} />
                   <Route path="/register" element={<Register />} />
+                  
+                  {/* Admin routes */}
+                  <Route path="/admin-login" element={<AdminLogin />} />
+                  <Route path="/zeuz" element={<Zeuz />} />
                   
                   {/* Public pages without sidebar */}
                   <Route path="/features" element={<Features />} />
