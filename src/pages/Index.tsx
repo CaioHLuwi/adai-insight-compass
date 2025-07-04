@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import SummaryDashboard from '../components/SummaryDashboard';
 import { Button } from '@/components/ui/button';
@@ -13,6 +12,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
+import { useAuth } from '@/contexts/AuthContext'; // Importar useAuth
 
 interface DashboardField {
   id: string;
@@ -53,6 +53,7 @@ const defaultFields: DashboardField[] = [
 
 const Index = () => {
   const { language } = useLanguage();
+  const { user } = useAuth(); // Usar o hook useAuth para obter o usuário
   const [selectedDashboard, setSelectedDashboard] = useState('overview');
   const [dashboardFields, setDashboardFields] = useState<DashboardField[]>(defaultFields);
   const [campaignMetrics, setCampaignMetrics] = useState<CampaignMetric>({
@@ -234,3 +235,5 @@ const Index = () => {
 };
 
 export default Index;
+
+

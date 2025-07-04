@@ -1,4 +1,3 @@
-
 import * as React from "react"
 import {
   AudioWaveform,
@@ -30,6 +29,7 @@ import { NavProjects } from "@/components/nav-projects"
 import { NavSecondary } from "@/components/nav-secondary"
 import { NavUser } from "@/components/nav-user"
 import { useLanguage } from "@/hooks/useLanguage"
+import { useAuth } from "@/contexts/AuthContext" // Importar useAuth
 import {
   Sidebar,
   SidebarContent,
@@ -43,6 +43,7 @@ import {
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   const { language } = useLanguage();
   const location = useLocation();
+  const { user } = useAuth(); // Usar o hook useAuth para obter o usuário
 
   const getTranslations = () => {
     const translations = {
@@ -145,11 +146,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   const translations = getTranslations();
 
   const data = {
-    user: {
-      name: "Caio Henrique",
-      email: "caio@otmizy.ai",
-      avatar: "/avatars/shadcn.jpg",
-    },
+    // Remover o objeto user hardcoded
     teams: [
       {
         name: "Otmizy.AI",
@@ -263,8 +260,15 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
         <NavSecondary items={data.navSecondary} className="mt-auto" />
       </SidebarContent>
       <SidebarFooter>
-        <NavUser user={data.user} />
+        {/* Passar o objeto user do useAuth para NavUser */}
+        {user && <NavUser user={{
+          name: user.user_metadata?.name || user.email?.split('@')[0] || 'Usuário',
+          email: user.email || 'email@exemplo.com',
+          avatar: user.user_metadata?.avatar_url || '/avatars/default.jpg' // Usar avatar_url se existir, senão um default
+        }} />}
       </SidebarFooter>
     </Sidebar>
   )
 }
+
+
