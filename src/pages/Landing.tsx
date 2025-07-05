@@ -390,7 +390,7 @@ const Landing = () => {
       </nav>
 
       {/* Hero Section */}
-      <section id="hero" className={`pt-32 pb-20 px-4 sm:px-6 lg:px-8 relative z-10 transition-all duration-1000 ${isVisible.hero ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`}>
+      <section id="hero" className={`pt-32 pb-16 px-4 sm:px-6 lg:px-8 relative z-10 transition-all duration-1000 ${isVisible.hero ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`}>
         <div className="max-w-7xl mx-auto text-center">
           <Badge className="mb-6 bg-yellow-500/10 text-yellow-400 border-yellow-500/20">
             🏆 A primeira plataforma com sistema de gamificação
@@ -434,9 +434,9 @@ const Landing = () => {
       />
 
       {/* Features Section */}
-      <section id="features" className={`py-20 px-4 sm:px-6 lg:px-8 relative z-10 transition-all duration-1000 delay-300 ${isVisible.features ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`}>
+      <section id="features" className={`py-16 px-4 sm:px-6 lg:px-8 relative z-10 transition-all duration-1000 delay-300 ${isVisible.features ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`}>
         <div className="max-w-7xl mx-auto">
-          <div className="text-center mb-16">
+          <div className="text-center mb-12">
             <h2 className="text-3xl md:text-4xl font-bold mb-4">Tudo que você precisa para otimizar suas campanhas</h2>
             <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
               {getText('featureTitle')}
@@ -460,9 +460,9 @@ const Landing = () => {
       <PricingPlans />
       
       {/* Testimonials Section */}
-      <section id="testimonials" className={`py-20 px-4 sm:px-6 lg:px-8 relative z-10 transition-all duration-1000 delay-500 ${isVisible.testimonials ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`}>
+      <section id="testimonials" className={`py-16 px-4 sm:px-6 lg:px-8 relative z-10 transition-all duration-1000 delay-500 ${isVisible.testimonials ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`}>
         <div className="max-w-7xl mx-auto">
-          <div className="text-center mb-16">
+          <div className="text-center mb-12">
             <h2 className="text-3xl md:text-4xl font-bold mb-4">{getText('testimonialsTitle')}</h2>
           </div>
           <div className="grid grid-cols-1 md:grid-3 gap-8">
@@ -490,7 +490,7 @@ const Landing = () => {
       </section>
 
       {/* CTA Section */}
-      <section className="py-20 px-4 sm:px-6 lg:px-8 bg-gradient-to-r from-yellow-500/10 to-orange-500/10 relative z-10">
+      <section className="py-16 px-4 sm:px-6 lg:px-8 bg-gradient-to-r from-yellow-500/10 to-orange-500/10 relative z-10">
         <div className="max-w-4xl mx-auto text-center">
           <h2 className="text-3xl md:text-4xl font-bold mb-4">{getText('cta')}</h2>
           <p className="text-xl text-muted-foreground mb-8">
@@ -508,9 +508,9 @@ const Landing = () => {
       </section>
 
       {/* Platforms Integration Section */}
-      <section className="py-16 px-4 sm:px-6 lg:px-8 bg-gray-900/20 relative z-10">
+      <section className="py-14 px-4 sm:px-6 lg:px-8 bg-gray-900/20 relative z-10">
         <div className="max-w-7xl mx-auto">
-          <div className="text-center mb-12">
+          <div className="text-center mb-10">
             <h2 className="text-3xl md:text-4xl font-bold mb-4">
               Conecte com +55 plataformas diferentes
             </h2>
@@ -520,6 +520,92 @@ const Landing = () => {
           </div>
           
           <PlatformsCarousel />
+        </div>
+      </section>
+
+      {/* Video Promotion Section */}
+      <section className="py-16 px-4 sm:px-6 lg:px-8 bg-gradient-to-r from-purple-900/20 to-blue-900/20 relative z-10">
+        <div className="max-w-6xl mx-auto text-center">
+          <div className="mb-8">
+            <h2 className="text-3xl md:text-5xl font-bold bg-gradient-to-r from-yellow-400 to-orange-400 bg-clip-text text-transparent mb-4">
+              🚀 Veja a Otmizy.ai em Ação
+            </h2>
+            <p className="text-xl text-muted-foreground max-w-3xl mx-auto">
+              Descubra como nossa IA revoluciona o mundo do tráfego pago. 
+              Mais de 10.000 empresas já transformaram seus resultados com nossa plataforma.
+            </p>
+          </div>
+          
+          <div className="relative max-w-4xl mx-auto">
+            <div className="aspect-video bg-gradient-to-br from-gray-800 to-gray-900 rounded-2xl border-2 border-yellow-500/20 overflow-hidden shadow-2xl">
+              <div className="w-full h-full flex items-center justify-center relative">
+                {/* Video placeholder with play button */}
+                <div className="absolute inset-0 bg-black/50 flex items-center justify-center">
+                  <Button
+                    onClick={() => setDemoOpen(true)}
+                    size="lg"
+                    className="bg-yellow-500 hover:bg-yellow-600 text-black rounded-full w-20 h-20 p-0 shadow-lg hover:scale-110 transition-transform"
+                  >
+                    <Play className="w-8 h-8 ml-1" />
+                  </Button>
+                </div>
+                
+                {/* Background pattern for video placeholder */}
+                <div className="w-full h-full bg-gradient-to-br from-yellow-500/10 to-orange-500/10 relative">
+                  <div className="absolute inset-0 flex items-center justify-center">
+                    <div className="text-center">
+                      <div className="text-6xl mb-4">📊</div>
+                      <h3 className="text-2xl font-bold text-white mb-2">Demo Interativo</h3>
+                      <p className="text-gray-300">Clique para ver nossa plataforma em ação</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            
+            {/* Video stats */}
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-8">
+              <div className="text-center">
+                <div className="text-3xl font-bold text-yellow-400 mb-2">+300%</div>
+                <p className="text-gray-300">ROI Médio dos Clientes</p>
+              </div>
+              <div className="text-center">
+                <div className="text-3xl font-bold text-green-400 mb-2">10.000+</div>
+                <p className="text-gray-300">Empresas Atendidas</p>
+              </div>
+              <div className="text-center">
+                <div className="text-3xl font-bold text-blue-400 mb-2">24/7</div>
+                <p className="text-gray-300">Otimização Automática</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* FAQ Section - Moved to bottom */}
+      <section className="py-16 px-4 sm:px-6 lg:px-8 bg-gray-900/20 relative z-10">
+        <div className="max-w-4xl mx-auto">
+          <h2 className="text-3xl font-bold text-center mb-10">Perguntas Frequentes</h2>
+          <div className="space-y-6">
+            <Card className="bg-gray-800/50 border-yellow-500/20">
+              <CardContent className="p-6">
+                <h3 className="font-semibold mb-2">Posso mudar de plano a qualquer momento?</h3>
+                <p className="text-muted-foreground">Sim! Você pode fazer upgrade ou downgrade do seu plano a qualquer momento. As mudanças são aplicadas no próximo ciclo de cobrança.</p>
+              </CardContent>
+            </Card>
+            <Card className="bg-gray-800/50 border-yellow-500/20">
+              <CardContent className="p-6">
+                <h3 className="font-semibold mb-2">Existe período de teste gratuito?</h3>
+                <p className="text-muted-foreground">Sim! Oferecemos 14 dias de teste gratuito em todos os planos. Não é necessário cartão de crédito para começar.</p>
+              </CardContent>
+            </Card>
+            <Card className="bg-gray-800/50 border-yellow-500/20">
+              <CardContent className="p-6">
+                <h3 className="font-semibold mb-2">Como funciona o suporte?</h3>
+                <p className="text-muted-foreground">Oferecemos suporte por email para todos os planos. O plano Professional inclui suporte prioritário, e o Enterprise tem suporte dedicado 24/7.</p>
+              </CardContent>
+            </Card>
+          </div>
         </div>
       </section>
 
