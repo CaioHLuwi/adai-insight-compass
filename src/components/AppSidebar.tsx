@@ -23,13 +23,15 @@ import {
   Calculator
 } from "lucide-react"
 import { useLocation } from "react-router-dom"
+import { useState, useEffect } from "react"
 
 import { NavMain } from "@/components/nav-main"
 import { NavProjects } from "@/components/nav-projects"
 import { NavSecondary } from "@/components/nav-secondary"
 import { NavUser } from "@/components/nav-user"
 import { useLanguage } from "@/hooks/useLanguage"
-import { useAuth } from "@/contexts/AuthContext" // Importar useAuth
+import { useAuth } from "@/contexts/AuthContext"
+import { supabase } from "@/integrations/supabase/client"
 import {
   Sidebar,
   SidebarContent,
@@ -41,9 +43,33 @@ import {
 } from "@/components/ui/sidebar"
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
-  const { language } = useLanguage();
-  const location = useLocation();
-  const { user } = useAuth(); // Usar o hook useAuth para obter o usuário
+  const { language } = useLanguage()
+  const { user } = useAuth()
+  const location = useLocation()
+  const [userData, setUserData] = useState<any>(null)
+
+  // Load user data from database
+  useEffect(() => {
+    const loadUserData = async () => {
+      if (user) {
+        try {
+          const { data, error } = await supabase
+            .from('users')
+            .select('name, email, avatar_url')
+            .eq('id', user.id)
+            .single();
+
+          if (!error && data) {
+            setUserData(data);
+          }
+        } catch (error) {
+          console.error('Error loading user data:', error);
+        }
+      }
+    };
+
+    loadUserData();
+  }, [user]);
 
   const getTranslations = () => {
     const translations = {
@@ -260,11 +286,10 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
         <NavSecondary items={data.navSecondary} className="mt-auto" />
       </SidebarContent>
       <SidebarFooter>
-        {/* Passar o objeto user do useAuth para NavUser */}
-        {user && <NavUser user={{
-          name: user.user_metadata?.name || user.email?.split('@')[0] || 'Usuário',
-          email: user.email || 'email@exemplo.com',
-          avatar: user.user_metadata?.avatar_url || '/avatars/default.jpg' // Usar avatar_url se existir, senão um default
+        {userData && <NavUser user={{
+          name: userData.name || user?.email?.split('@')[0] || 'Usuário',
+          email: userData.email || user?.email || 'email@exemplo.com',
+          avatar: userData.avatar_url || '/avatars/default.jpg'
         }} />}
       </SidebarFooter>
     </Sidebar>

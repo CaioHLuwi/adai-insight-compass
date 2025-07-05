@@ -30,7 +30,7 @@ const AdminProtectedRoute: React.FC<AdminProtectedRouteProps> = ({ children }) =
             variant: "destructive",
           });
           setIsAdmin(false);
-        } else if (data && data.role === "Admin") {
+        } else if (data && data.role === "admin") {
           setIsAdmin(true);
         } else {
           toast({

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -38,41 +38,41 @@ const EditAccount = () => {
   });
 
   // Load user data from Supabase
-  useEffect(() => {
-    const loadUserData = async () => {
-      if (user) {
-        try {
-          const { data, error } = await supabase
-            .from('users')
-            .select('name, email, role, phone, department, avatar_url')
-            .eq('id', user.id)
-            .single();
+  const loadUserData = useCallback(async () => {
+    if (user) {
+      try {
+        const { data, error } = await supabase
+          .from('users')
+          .select('name, email, role, phone, department, avatar_url')
+          .eq('id', user.id)
+          .single();
 
-          if (error) {
-            console.error('Error loading user data:', error);
-            toast({
-              title: "Erro",
-              description: "Não foi possível carregar seus dados.",
-              variant: "destructive"
-            });
-          } else if (data) {
-            setUserData({
-              name: data.name || '',
-              email: data.email || '',
-              role: data.role || '',
-              phone: data.phone || '',
-              department: data.department || '',
-              avatar: data.avatar_url || null
-            });
-          }
-        } catch (error) {
+        if (error) {
           console.error('Error loading user data:', error);
+          toast({
+            title: "Erro",
+            description: "Não foi possível carregar seus dados.",
+            variant: "destructive"
+          });
+        } else if (data) {
+          setUserData({
+            name: data.name || '',
+            email: data.email || '',
+            role: data.role || '',
+            phone: data.phone || '',
+            department: data.department || '',
+            avatar: data.avatar_url || null
+          });
         }
+      } catch (error) {
+        console.error('Error loading user data:', error);
       }
-    };
-
-    loadUserData();
+    }
   }, [user, toast]);
+
+  useEffect(() => {
+    loadUserData();
+  }, [loadUserData]);
 
   const passwordRequirements = [
     { text: language === 'pt' ? 'Entre 8 e 50 caracteres' : 'Between 8 and 50 characters', check: (pwd: string) => pwd.length >= 8 && pwd.length <= 50 },
@@ -226,7 +226,8 @@ const EditAccount = () => {
           title: "Dados atualizados",
           description: "Suas informações foram atualizadas com sucesso!",
         });
-        navigate(-1);
+        // Refresh user data after successful update
+        loadUserData();
       }
     } catch (error) {
       console.error('Error saving user data:', error);
