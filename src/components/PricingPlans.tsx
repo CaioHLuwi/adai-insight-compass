@@ -10,6 +10,7 @@ import {
   X
 } from 'lucide-react';
 import LanguageDropdown from '@/components/LanguageDropdown';
+import { Switch } from '@/components/ui/switch';
 import { loadStripe } from '@stripe/stripe-js';
 
 // Substitua pela sua chave publicável do Stripe (pk_test_... ou pk_live_...)
@@ -52,7 +53,7 @@ const Pricing = () => {
       subtitle: {
         pt: 'Escolha o plano ideal para seu negócio e comece a otimizar suas campanhas hoje mesmo.',
         en: 'Choose the ideal plan for your business and start optimizing your campaigns today.',
-        es: 'Elige el plan ideal para tu negocio y comienza a optimizar tus campañas hoy mismo.'
+        es: 'Elige el plan ideal para tu negócio y comienza a optimizar tus campañas hoy mismo.'
       },
       backToHome: {
         pt: 'Voltar ao Início',
@@ -68,9 +69,44 @@ const Pricing = () => {
         pt: '/mês',
         en: '/month',
         es: '/mes'
+      },
+      perYear: {
+        pt: '/ano',
+        en: '/year',
+        es: '/año'
+      },
+      monthly: {
+        pt: 'Mensal',
+        en: 'Monthly',
+        es: 'Mensual'
+      },
+      annual: {
+        pt: 'Anual',
+        en: 'Annual',
+        es: 'Anual'
+      },
+      save: {
+        pt: 'Economize 5%',
+        en: 'Save 5%',
+        es: 'Ahorra 5%'
       }
     };
     return translations[key]?.[language] || translations[key]?.['pt'] || key;
+  };
+
+  const getDisplayPrice = (plan) => {
+    if (plan.price === 'Grátis') return plan.price;
+    
+    // Extract numeric value from price string like "R$ 149,90"
+    const numericPrice = parseFloat(plan.price.replace('R$ ', '').replace(',', '.'));
+    
+    if (isAnnual) {
+      // Calculate annual price with 5% discount
+      const annualPrice = (numericPrice * 12 * 0.95).toFixed(2).replace('.', ',');
+      return `R$ ${annualPrice}`;
+    }
+    
+    return plan.price;
   };
 
   const plans = [
@@ -216,6 +252,30 @@ const Pricing = () => {
         </div>
       </section>
 
+      {/* Billing Toggle Section */}
+      <section className="pb-10 px-4 sm:px-6 lg:px-8">
+        <div className="max-w-7xl mx-auto">
+          <div className="flex items-center justify-center gap-4">
+            <span className={`text-sm font-medium ${!isAnnual ? 'text-foreground' : 'text-muted-foreground'}`}>
+              {getText('monthly')}
+            </span>
+            <Switch
+              checked={isAnnual}
+              onCheckedChange={setIsAnnual}
+              className="data-[state=checked]:bg-yellow-500"
+            />
+            <span className={`text-sm font-medium ${isAnnual ? 'text-foreground' : 'text-muted-foreground'}`}>
+              {getText('annual')}
+            </span>
+            {isAnnual && (
+              <Badge variant="secondary" className="bg-green-500/10 text-green-400 border-green-500/20">
+                {getText('save')}
+              </Badge>
+            )}
+          </div>
+        </div>
+      </section>
+
       {/* Pricing Section */}
       <section className="py-20 px-4 sm:px-6 lg:px-8">
         <div className="max-w-7xl mx-auto">
@@ -230,10 +290,14 @@ const Pricing = () => {
                 <CardContent className="p-8">
                   <h3 className="text-2xl font-bold mb-2">{plan.name}</h3>
                   <p className="text-muted-foreground mb-4">{plan.description}</p>
-                  <div className="text-4xl font-bold mb-6">
-                    {plan.price}
-                    {plan.price !== 'Personalizado' && <span className="text-sm text-muted-foreground">{getText('perMonth')}</span>}
-                  </div>
+                   <div className="text-4xl font-bold mb-6">
+                     {getDisplayPrice(plan)}
+                     {plan.price !== 'Grátis' && (
+                       <span className="text-sm text-muted-foreground">
+                         {isAnnual ? getText('perYear') : getText('perMonth')}
+                       </span>
+                     )}
+                   </div>
                   
                   <ul className="space-y-3 mb-8">
                     {plan.features.map((feature, featureIndex) => (
