@@ -1,20 +1,42 @@
 import React, { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Users, Activity, DollarSign, TrendingUp, Calendar, Eye, UserCheck, Clock, User } from 'lucide-react';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, BarChart, Bar, PieChart, Pie, Cell, AreaChart, Area } from 'recharts';
 import { useLanguage } from '@/hooks/useLanguage';
-import UserProfile from '../components/UserProfile';
+import { useAuth } from '@/contexts/AuthContext';
+import { supabase } from '@/integrations/supabase/client';
 import AdminProtectedRoute from '../components/AdminProtectedRoute';
 
 const Zeuz = () => {
   const { language } = useLanguage();
+  const { user } = useAuth();
   const [activeSection, setActiveSection] = useState('overview');
-  const [user] = useState({
-    name: 'Admin User',
-    email: 'admin@otmizy.ai',
-    role: 'Administrator'
-  });
+  const [userData, setUserData] = useState<any>(null);
+
+  // Load user data from database
+  useEffect(() => {
+    const loadUserData = async () => {
+      if (user) {
+        try {
+          const { data, error } = await supabase
+            .from('users')
+            .select('name, email, avatar_url, role')
+            .eq('id', user.id)
+            .single();
+
+          if (!error && data) {
+            setUserData(data);
+          }
+        } catch (error) {
+          console.error('Error loading user data:', error);
+        }
+      }
+    };
+
+    loadUserData();
+  }, [user]);
 
   // Mock data for dashboard
   const monthlyRevenue = [
@@ -494,13 +516,22 @@ const Zeuz = () => {
               </h1>
               <p className="text-gray-400 mt-2 text-sm sm:text-base">Painel de controle e monitoramento da plataforma</p>
               <p className="text-yellow-400 mt-3 font-semibold text-base sm:text-lg bg-gradient-to-r from-yellow-300 via-yellow-400 to-yellow-500 bg-clip-text text-transparent tracking-wide">
-                Seja bem-vindo, <span className="font-bold">{user.name}</span>! É um prazer construir esse império com você.
+                Seja bem-vindo, <span className="font-bold">{userData?.name || 'Admin'}</span>! É um prazer construir esse império com você.
               </p>
             </div>
             
-            {/* User Profile Area */}
-            <div className="flex items-center space-x-4 self-start sm:self-center">
-              <UserProfile />
+            {/* User Avatar */}
+            <div className="flex items-center space-x-3">
+              <Avatar className="h-10 w-10">
+                <AvatarImage src={userData?.avatar_url || ''} alt={userData?.name || ''} />
+                <AvatarFallback className="bg-yellow-500 text-gray-900">
+                  {userData?.name ? userData.name.split(' ').map(n => n[0]).join('').slice(0, 2) : 'U'}
+                </AvatarFallback>
+              </Avatar>
+              <div className="text-right">
+                <p className="text-sm font-medium text-white">{userData?.name || 'User'}</p>
+                <p className="text-xs text-gray-400">{userData?.role || 'Admin'}</p>
+              </div>
             </div>
           </div>
 
