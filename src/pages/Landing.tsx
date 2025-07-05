@@ -31,12 +31,14 @@ import PlatformsCarousel from '@/components/PlatformsCarousel';
 import AchievementSection from '@/components/AchievementSection';
 import IzyAIAgent from '@/components/IzyAIAgent';
 import PricingPlans from '@/components/PricingPlans';
+import DemoPopup from '@/components/DemoPopup';
 
 const Landing = () => {
   const navigate = useNavigate();
   const { language } = useLanguage();
   const [scrollY, setScrollY] = useState(0);
   const [isAnnual, setIsAnnual] = useState(true);
+  const [demoOpen, setDemoOpen] = useState(false);
   const [isVisible, setIsVisible] = useState({
     hero: false,
     features: false,
@@ -408,7 +410,12 @@ const Landing = () => {
               {getText('startFree')}
               <ArrowRight className="ml-2 w-4 h-4" />
             </Button>
-            <Button variant="outline" size="lg" className="border-yellow-500/20 hover:bg-yellow-500/10 hover-scale rounded-lg">
+            <Button 
+              variant="outline" 
+              size="lg" 
+              onClick={() => setDemoOpen(true)}
+              className="border-yellow-500/20 hover:bg-yellow-500/10 hover-scale rounded-lg"
+            >
               <Play className="mr-2 w-4 h-4" />
               {getText('watchDemo')}
             </Button>
@@ -516,8 +523,11 @@ const Landing = () => {
         </div>
       </section>
 
+      {/* Demo Popup */}
+      <DemoPopup open={demoOpen} onOpenChange={setDemoOpen} />
+
       {/* Footer */}
-      <footer className="py-12 px-4 sm:px-6 lg:px-8 border-t border-yellow-500/20 relative z-10">
+      <footer className="py-8 px-4 sm:px-6 lg:px-8 border-t border-yellow-500/20 relative z-10">
         <div className="max-w-7xl mx-auto">
           <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
             <div>

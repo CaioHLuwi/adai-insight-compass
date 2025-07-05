@@ -4,7 +4,8 @@ import { Button } from '@/components/ui/button';
 import { Users, Activity, DollarSign, TrendingUp, Calendar, Eye, UserCheck, Clock, User } from 'lucide-react';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, BarChart, Bar, PieChart, Pie, Cell, AreaChart, Area } from 'recharts';
 import { useLanguage } from '@/hooks/useLanguage';
-import UserProfile  from '../components/UserProfile';
+import UserProfile from '../components/UserProfile';
+import AdminProtectedRoute from '../components/AdminProtectedRoute';
 
 const Zeuz = () => {
   const { language } = useLanguage();
@@ -482,76 +483,78 @@ const Zeuz = () => {
   };
 
   return (
-    <div className="min-h-screen bg-background">
-      <div className="max-w-7xl mx-auto px-3 sm:px-4 lg:px-8 py-4 sm:py-8">
-        {/* Header */}
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between mb-4 sm:mb-6 space-y-4 sm:space-y-0">
-          <div className="flex-1">
-            <h1 className="text-2xl sm:text-3xl font-bold bg-gradient-to-r from-yellow-400 to-yellow-600 bg-clip-text text-transparent">
-              Zeuz - Dashboard Administrativo
-            </h1>
-            <p className="text-gray-400 mt-2 text-sm sm:text-base">Painel de controle e monitoramento da plataforma</p>
-            <p className="text-yellow-400 mt-3 font-semibold text-base sm:text-lg bg-gradient-to-r from-yellow-300 via-yellow-400 to-yellow-500 bg-clip-text text-transparent tracking-wide">
-              Seja bem-vindo, <span className="font-bold">{user.name}</span>! É um prazer construir esse império com você.
-            </p>
+    <AdminProtectedRoute>
+      <div className="min-h-screen bg-background">
+        <div className="max-w-7xl mx-auto px-3 sm:px-4 lg:px-8 py-4 sm:py-8">
+          {/* Header */}
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between mb-4 sm:mb-6 space-y-4 sm:space-y-0">
+            <div className="flex-1">
+              <h1 className="text-2xl sm:text-3xl font-bold bg-gradient-to-r from-yellow-400 to-yellow-600 bg-clip-text text-transparent">
+                Zeuz - Dashboard Administrativo
+              </h1>
+              <p className="text-gray-400 mt-2 text-sm sm:text-base">Painel de controle e monitoramento da plataforma</p>
+              <p className="text-yellow-400 mt-3 font-semibold text-base sm:text-lg bg-gradient-to-r from-yellow-300 via-yellow-400 to-yellow-500 bg-clip-text text-transparent tracking-wide">
+                Seja bem-vindo, <span className="font-bold">{user.name}</span>! É um prazer construir esse império com você.
+              </p>
+            </div>
+            
+            {/* User Profile Area */}
+            <div className="flex items-center space-x-4 self-start sm:self-center">
+              <UserProfile />
+            </div>
           </div>
-          
-          {/* User Profile Area */}
-          <div className="flex items-center space-x-4 self-start sm:self-center">
-            <UserProfile />
+
+          {/* Navigation */}
+          <div className="flex flex-wrap gap-2 mb-4 sm:mb-8">
+            <Button
+              onClick={() => setActiveSection('overview')}
+              variant={activeSection === 'overview' ? 'default' : 'outline'}
+              className={`text-xs sm:text-sm ${activeSection === 'overview' ? 'bg-yellow-500 text-black' : 'border-yellow-500/20 text-white hover:bg-yellow-500/10'}`}
+            >
+              Visão Geral
+            </Button>
+            <Button
+              onClick={() => setActiveSection('users')}
+              variant={activeSection === 'users' ? 'default' : 'outline'}
+              className={`text-xs sm:text-sm ${activeSection === 'users' ? 'bg-yellow-500 text-black' : 'border-yellow-500/20 text-white hover:bg-yellow-500/10'}`}
+            >
+              <Users className="w-3 h-3 sm:w-4 sm:h-4 mr-1 sm:mr-2" />
+              Usuários
+            </Button>
+            <Button
+              onClick={() => setActiveSection('sessions')}
+              variant={activeSection === 'sessions' ? 'default' : 'outline'}
+              className={`text-xs sm:text-sm ${activeSection === 'sessions' ? 'bg-yellow-500 text-black' : 'border-yellow-500/20 text-white hover:bg-yellow-500/10'}`}
+            >
+              <Activity className="w-3 h-3 sm:w-4 sm:h-4 mr-1 sm:mr-2" />
+              <span className="hidden sm:inline">Sessões Atuais</span>
+              <span className="sm:hidden">Sessões</span>
+            </Button>
+            <Button
+              onClick={() => setActiveSection('revenue')}
+              variant={activeSection === 'revenue' ? 'default' : 'outline'}
+              className={`text-xs sm:text-sm ${activeSection === 'revenue' ? 'bg-yellow-500 text-black' : 'border-yellow-500/20 text-white hover:bg-yellow-500/10'}`}
+            >
+              <DollarSign className="w-3 h-3 sm:w-4 sm:h-4 mr-1 sm:mr-2" />
+              <span className="hidden sm:inline">Faturamento Mensal</span>
+              <span className="sm:hidden">Receita</span>
+            </Button>
+            <Button
+              onClick={() => setActiveSection('forecast')}
+              variant={activeSection === 'forecast' ? 'default' : 'outline'}
+              className={`text-xs sm:text-sm ${activeSection === 'forecast' ? 'bg-yellow-500 text-black' : 'border-yellow-500/20 text-white hover:bg-yellow-500/10'}`}
+            >
+              <TrendingUp className="w-3 h-3 sm:w-4 sm:h-4 mr-1 sm:mr-2" />
+              <span className="hidden sm:inline">Previsão Anual</span>
+              <span className="sm:hidden">Previsão</span>
+            </Button>
           </div>
-        </div>
 
-        {/* Navigation */}
-        <div className="flex flex-wrap gap-2 mb-4 sm:mb-8">
-          <Button
-            onClick={() => setActiveSection('overview')}
-            variant={activeSection === 'overview' ? 'default' : 'outline'}
-            className={`text-xs sm:text-sm ${activeSection === 'overview' ? 'bg-yellow-500 text-black' : 'border-yellow-500/20 text-white hover:bg-yellow-500/10'}`}
-          >
-            Visão Geral
-          </Button>
-          <Button
-            onClick={() => setActiveSection('users')}
-            variant={activeSection === 'users' ? 'default' : 'outline'}
-            className={`text-xs sm:text-sm ${activeSection === 'users' ? 'bg-yellow-500 text-black' : 'border-yellow-500/20 text-white hover:bg-yellow-500/10'}`}
-          >
-            <Users className="w-3 h-3 sm:w-4 sm:h-4 mr-1 sm:mr-2" />
-            Usuários
-          </Button>
-          <Button
-            onClick={() => setActiveSection('sessions')}
-            variant={activeSection === 'sessions' ? 'default' : 'outline'}
-            className={`text-xs sm:text-sm ${activeSection === 'sessions' ? 'bg-yellow-500 text-black' : 'border-yellow-500/20 text-white hover:bg-yellow-500/10'}`}
-          >
-            <Activity className="w-3 h-3 sm:w-4 sm:h-4 mr-1 sm:mr-2" />
-            <span className="hidden sm:inline">Sessões Atuais</span>
-            <span className="sm:hidden">Sessões</span>
-          </Button>
-          <Button
-            onClick={() => setActiveSection('revenue')}
-            variant={activeSection === 'revenue' ? 'default' : 'outline'}
-            className={`text-xs sm:text-sm ${activeSection === 'revenue' ? 'bg-yellow-500 text-black' : 'border-yellow-500/20 text-white hover:bg-yellow-500/10'}`}
-          >
-            <DollarSign className="w-3 h-3 sm:w-4 sm:h-4 mr-1 sm:mr-2" />
-            <span className="hidden sm:inline">Faturamento Mensal</span>
-            <span className="sm:hidden">Receita</span>
-          </Button>
-          <Button
-            onClick={() => setActiveSection('forecast')}
-            variant={activeSection === 'forecast' ? 'default' : 'outline'}
-            className={`text-xs sm:text-sm ${activeSection === 'forecast' ? 'bg-yellow-500 text-black' : 'border-yellow-500/20 text-white hover:bg-yellow-500/10'}`}
-          >
-            <TrendingUp className="w-3 h-3 sm:w-4 sm:h-4 mr-1 sm:mr-2" />
-            <span className="hidden sm:inline">Previsão Anual</span>
-            <span className="sm:hidden">Previsão</span>
-          </Button>
+          {/* Content */}
+          {renderContent()}
         </div>
-
-        {/* Content */}
-        {renderContent()}
       </div>
-    </div>
+    </AdminProtectedRoute>
   );
 };
 

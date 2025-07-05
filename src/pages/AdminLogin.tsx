@@ -6,6 +6,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { useNavigate } from 'react-router-dom';
+import { supabase } from '@/integrations/supabase/client';
 
 export default function AdminLogin() {
   const [email, setEmail] = useState('');
@@ -59,20 +60,38 @@ export default function AdminLogin() {
 
     setLoading(true);
     
-    // Mock authentication - replace with real authentication later
     try {
-      // Simulate API call
-      await new Promise(resolve => setTimeout(resolve, 1000));
-      
-      // For demo purposes, accept any email/password
-      // In production, this should connect to your admin authentication system
-      if (trimmedEmail && password) {
+      // Authenticate with Supabase
+      const { data: authData, error: authError } = await supabase.auth.signInWithPassword({
+        email: trimmedEmail,
+        password,
+      });
+
+      if (authError) {
+        setLoginError('Credenciais inválidas ou erro no servidor');
+        return;
+      }
+
+      if (authData.user) {
+        // Check if user has admin role
+        const { data: userData, error: userError } = await supabase
+          .from('users')
+          .select('role')
+          .eq('id', authData.user.id)
+          .single();
+
+        if (userError || !userData || userData.role !== 'admin') {
+          setLoginError('Acesso negado. Apenas administradores podem entrar.');
+          // Sign out the user since they don't have admin access
+          await supabase.auth.signOut();
+          return;
+        }
+
         // Redirect to Zeuz dashboard
         navigate('/zeuz');
-      } else {
-        setLoginError('Credenciais inválidas');
       }
     } catch (error) {
+      console.error('Login error:', error);
       setLoginError('Erro ao fazer login. Tente novamente.');
     } finally {
       setLoading(false);

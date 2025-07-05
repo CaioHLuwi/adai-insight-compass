@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -7,11 +7,15 @@ import { useLanguage } from '@/hooks/useLanguage';
 import { useToast } from '@/hooks/use-toast';
 import { User, Upload, Save, Lock, Eye, EyeOff } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
+import { useAuth } from '@/contexts/AuthContext';
+import { supabase } from '@/integrations/supabase/client';
 
 const EditAccount = () => {
   const { language } = useLanguage();
   const { toast } = useToast();
   const navigate = useNavigate();
+  const { user } = useAuth();
+  const [loading, setLoading] = useState(false);
   const [showPasswords, setShowPasswords] = useState({
     current: false,
     new: false,
@@ -19,11 +23,11 @@ const EditAccount = () => {
   });
   
   const [userData, setUserData] = useState({
-    name: 'Caio Henrique',
-    email: 'caio@otmizy.ai',
-    role: 'Admin',
-    phone: '+55 11 99999-9999',
-    department: 'Marketing',
+    name: '',
+    email: '',
+    role: '',
+    phone: '',
+    department: '',
     avatar: null as string | null
   });
 
@@ -32,6 +36,43 @@ const EditAccount = () => {
     newPassword: '',
     repeatPassword: ''
   });
+
+  // Load user data from Supabase
+  useEffect(() => {
+    const loadUserData = async () => {
+      if (user) {
+        try {
+          const { data, error } = await supabase
+            .from('users')
+            .select('name, email, role, phone, department, avatar_url')
+            .eq('id', user.id)
+            .single();
+
+          if (error) {
+            console.error('Error loading user data:', error);
+            toast({
+              title: "Erro",
+              description: "Não foi possível carregar seus dados.",
+              variant: "destructive"
+            });
+          } else if (data) {
+            setUserData({
+              name: data.name || '',
+              email: data.email || '',
+              role: data.role || '',
+              phone: data.phone || '',
+              department: data.department || '',
+              avatar: data.avatar_url || null
+            });
+          }
+        } catch (error) {
+          console.error('Error loading user data:', error);
+        }
+      }
+    };
+
+    loadUserData();
+  }, [user, toast]);
 
   const passwordRequirements = [
     { text: language === 'pt' ? 'Entre 8 e 50 caracteres' : 'Between 8 and 50 characters', check: (pwd: string) => pwd.length >= 8 && pwd.length <= 50 },
@@ -158,20 +199,54 @@ const EditAccount = () => {
       : names[0][0] + (names[0][1] || '');
   };
 
-  const handleSave = () => {
-    console.log('Saving user data:', userData);
-    toast({
-      title: "Account updated",
-      description: "Your account information has been updated successfully!",
-    });
-    navigate(-1);
+  const handleSave = async () => {
+    if (!user) return;
+    
+    setLoading(true);
+    try {
+      const { error } = await supabase
+        .from('users')
+        .update({
+          name: userData.name,
+          phone: userData.phone,
+          department: userData.department,
+          avatar_url: userData.avatar
+        })
+        .eq('id', user.id);
+
+      if (error) {
+        console.error('Error updating user data:', error);
+        toast({
+          title: "Erro",
+          description: "Não foi possível atualizar seus dados.",
+          variant: "destructive"
+        });
+      } else {
+        toast({
+          title: "Dados atualizados",
+          description: "Suas informações foram atualizadas com sucesso!",
+        });
+        navigate(-1);
+      }
+    } catch (error) {
+      console.error('Error saving user data:', error);
+      toast({
+        title: "Erro",
+        description: "Ocorreu um erro inesperado.",
+        variant: "destructive"
+      });
+    } finally {
+      setLoading(false);
+    }
   };
 
-  const handlePasswordSave = () => {
+  const handlePasswordSave = async () => {
+    if (!user) return;
+
     if (passwordData.newPassword !== passwordData.repeatPassword) {
       toast({
-        title: "Error",
-        description: "New passwords don't match!",
+        title: "Erro",
+        description: "As novas senhas não coincidem!",
         variant: "destructive"
       });
       return;
@@ -180,19 +255,43 @@ const EditAccount = () => {
     const isValidPassword = passwordRequirements.every(req => req.check(passwordData.newPassword));
     if (!isValidPassword) {
       toast({
-        title: "Error",
-        description: "Password doesn't meet requirements!",
+        title: "Erro",
+        description: "A senha não atende aos requisitos!",
         variant: "destructive"
       });
       return;
     }
 
-    console.log('Changing password...');
-    toast({
-      title: "Password changed",
-      description: "Your password has been changed successfully!",
-    });
-    setPasswordData({ currentPassword: '', newPassword: '', repeatPassword: '' });
+    setLoading(true);
+    try {
+      const { error } = await supabase.auth.updateUser({
+        password: passwordData.newPassword
+      });
+
+      if (error) {
+        console.error('Error updating password:', error);
+        toast({
+          title: "Erro",
+          description: "Não foi possível alterar a senha.",
+          variant: "destructive"
+        });
+      } else {
+        toast({
+          title: "Senha alterada",
+          description: "Sua senha foi alterada com sucesso!",
+        });
+        setPasswordData({ currentPassword: '', newPassword: '', repeatPassword: '' });
+      }
+    } catch (error) {
+      console.error('Error updating password:', error);
+      toast({
+        title: "Erro",
+        description: "Ocorreu um erro inesperado ao alterar a senha.",
+        variant: "destructive"
+      });
+    } finally {
+      setLoading(false);
+    }
   };
 
   const handleAvatarUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -317,10 +416,11 @@ const EditAccount = () => {
               </Button>
               <Button
                 onClick={handleSave}
+                disabled={loading}
                 className="bg-gradient-to-r from-yellow-400 to-yellow-600 text-gray-900 hover:from-yellow-500 hover:to-yellow-700"
               >
                 <Save className="w-4 h-4 mr-2" />
-                {getText('saveChanges')}
+                {loading ? 'Salvando...' : getText('saveChanges')}
               </Button>
             </div>
           </CardContent>
@@ -421,10 +521,11 @@ const EditAccount = () => {
             <div className="flex items-center justify-end pt-4 border-t border-gray-600">
               <Button
                 onClick={handlePasswordSave}
+                disabled={loading}
                 className="bg-gradient-to-r from-yellow-400 to-yellow-600 text-gray-900 hover:from-yellow-500 hover:to-yellow-700"
               >
                 <Lock className="w-4 h-4 mr-2" />
-                {getText('changePassword')}
+                {loading ? 'Alterando...' : getText('changePassword')}
               </Button>
             </div>
           </CardContent>

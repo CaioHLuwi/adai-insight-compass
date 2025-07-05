@@ -59,7 +59,7 @@ const AdminProtectedRoute: React.FC<AdminProtectedRouteProps> = ({ children }) =
   }
 
   if (!user || !isAdmin) {
-    return <Navigate to="/login-admin" replace />;
+    return <Navigate to="/admin-login" replace />;
   }
 
   return <>{children}</>;
