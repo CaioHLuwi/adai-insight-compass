@@ -28,6 +28,7 @@ import ProductDetail from "./pages/ProductDetail";
 import Login from "./pages/Login";
 import Register from "./pages/Register";
 import Terms from "./pages/Terms";
+import TermsOfService from "./pages/TermsOfService";
 import Privacy from "./pages/Privacy";
 import Cookies from "./pages/Cookies";
 import Landing from "./pages/Landing";
@@ -90,6 +91,7 @@ const App = () => (
                   
                   {/* Policy routes without sidebar */}
                   <Route path="/terms" element={<Terms />} />
+                  <Route path="/terms-of-service" element={<TermsOfService />} />
                   <Route path="/privacy" element={<Privacy />} />
                   <Route path="/cookies" element={<Cookies />} />
                   
