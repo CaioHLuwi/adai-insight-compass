@@ -46,15 +46,19 @@ export default function TermsOfService() {
           content: 'Podemos encerrar ou suspender sua conta imediatamente, sem aviso prévio, por qualquer motivo, incluindo violação destes Termos de Serviço.'
         },
         {
-          title: '9. Modificações dos Termos',
+          title: '9. Proteção de Dados e Exclusão',
+          content: 'Você tem o direito de solicitar a exclusão dos seus dados pessoais de nossa plataforma. Para exercer este direito, utilize nosso formulário de solicitação de exclusão de dados disponível em nosso site ou entre em contato com nossa equipe de suporte.'
+        },
+        {
+          title: '10. Modificações dos Termos',
           content: 'Reservamo-nos o direito de modificar estes termos a qualquer momento. Mudanças significativas serão notificadas através do serviço ou por e-mail.'
         },
         {
-          title: '10. Lei Aplicável',
+          title: '11. Lei Aplicável',
           content: 'Estes Termos serão regidos e interpretados de acordo com as leis do Brasil, sem consideração aos seus conflitos de princípios legais.'
         },
         {
-          title: '11. Contato',
+          title: '12. Contato',
           content: 'Se você tiver dúvidas sobre estes Termos de Serviço, entre em contato conosco através dos canais de suporte disponíveis.'
         }
       ]
@@ -96,15 +100,19 @@ export default function TermsOfService() {
           content: 'We may terminate or suspend your account immediately, without prior notice, for any reason, including violation of these Terms of Service.'
         },
         {
-          title: '9. Terms Modifications',
+          title: '9. Data Protection and Deletion',
+          content: 'You have the right to request the deletion of your personal data from our platform. To exercise this right, use our data deletion request form available on our website or contact our support team.'
+        },
+        {
+          title: '10. Terms Modifications',
           content: 'We reserve the right to modify these terms at any time. Significant changes will be notified through the service or by email.'
         },
         {
-          title: '10. Governing Law',
+          title: '11. Governing Law',
           content: 'These Terms will be governed by and interpreted in accordance with the laws of Brazil, without regard to its conflict of legal principles.'
         },
         {
-          title: '11. Contact',
+          title: '12. Contact',
           content: 'If you have questions about these Terms of Service, please contact us through the available support channels.'
         }
       ]
@@ -146,15 +154,19 @@ export default function TermsOfService() {
           content: 'Podemos terminar o suspender su cuenta inmediatamente, sin previo aviso, por cualquier motivo, incluyendo violación de estos Términos de Servicio.'
         },
         {
-          title: '9. Modificaciones de los Términos',
+          title: '9. Protección de Datos y Eliminación',
+          content: 'Usted tiene el derecho de solicitar la eliminación de sus datos personales de nuestra plataforma. Para ejercer este derecho, utilice nuestro formulario de solicitud de eliminación de datos disponible en nuestro sitio web o contacte a nuestro equipo de soporte.'
+        },
+        {
+          title: '10. Modificaciones de los Términos',
           content: 'Nos reservamos el derecho de modificar estos términos en cualquier momento. Los cambios significativos serán notificados a través del servicio o por correo electrónico.'
         },
         {
-          title: '10. Ley Aplicable',
+          title: '11. Ley Aplicable',
           content: 'Estos Términos se regirán e interpretarán de acuerdo con las leyes de Brasil, sin consideración a sus conflictos de principios legales.'
         },
         {
-          title: '11. Contacto',
+          title: '12. Contacto',
           content: 'Si tiene preguntas sobre estos Términos de Servicio, contáctenos a través de los canales de soporte disponibles.'
         }
       ]
