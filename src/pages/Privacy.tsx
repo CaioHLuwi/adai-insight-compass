@@ -47,7 +47,11 @@ export default function Privacy() {
           content: 'Podemos atualizar esta política de privacidade periodicamente. Notificaremos você sobre mudanças significativas publicando a nova política em nosso site.'
         },
         {
-          title: '9. Contato',
+          title: '9. Autenticação OAuth (Meta e Google)',
+          content: 'Quando você faz login usando sua conta do Meta (Facebook) ou Google, não armazenamos seus dados de login em nosso banco de dados. Utilizamos as APIs OAuth oficiais do Meta e Google apenas para autenticação segura. Suas credenciais permanecem exclusivamente com esses provedores.'
+        },
+        {
+          title: '10. Contato',
           content: 'Se você tiver dúvidas sobre esta Política de Privacidade, entre em contato conosco através dos canais de suporte disponíveis.'
         }
       ]
@@ -89,7 +93,11 @@ export default function Privacy() {
           content: 'We may update this privacy policy periodically. We will notify you of significant changes by posting the new policy on our website.'
         },
         {
-          title: '9. Contact',
+          title: '9. OAuth Authentication (Meta and Google)',
+          content: 'When you log in using your Meta (Facebook) or Google account, we do not store your login data in our database. We use official OAuth APIs from Meta and Google solely for secure authentication. Your credentials remain exclusively with these providers.'
+        },
+        {
+          title: '10. Contact',
           content: 'If you have questions about this Privacy Policy, please contact us through the available support channels.'
         }
       ]
@@ -131,7 +139,11 @@ export default function Privacy() {
           content: 'Podemos actualizar esta política de privacidad periódicamente. Le notificaremos sobre cambios significativos publicando la nueva política en nuestro sitio web.'
         },
         {
-          title: '9. Contacto',
+          title: '9. Autenticación OAuth (Meta y Google)',
+          content: 'Cuando inicia sesión usando su cuenta de Meta (Facebook) o Google, no almacenamos sus datos de inicio de sesión en nuestra base de datos. Utilizamos las APIs OAuth oficiales de Meta y Google únicamente para autenticación segura. Sus credenciales permanecen exclusivamente con estos proveedores.'
+        },
+        {
+          title: '10. Contacto',
           content: 'Si tiene preguntas sobre esta Política de Privacidad, contáctenos a través de los canales de soporte disponibles.'
         }
       ]

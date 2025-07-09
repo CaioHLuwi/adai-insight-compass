@@ -636,6 +636,7 @@ const Landing = () => {
                 <li><a href="/terms" className="hover:text-yellow-400 story-link">Termos</a></li>
                 <li><a href="/privacy" className="hover:text-yellow-400 story-link">Privacidade</a></li>
                 <li><a href="/cookies" className="hover:text-yellow-400 story-link">Cookies</a></li>
+                <li><a href="/data-deletion" className="hover:text-yellow-400 story-link">Exclusão de Dados</a></li>
               </ul>
             </div>
             <div>
