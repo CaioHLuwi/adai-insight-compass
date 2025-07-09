@@ -2,8 +2,8 @@ import axios from 'axios';
 
 // Configuração base da API
 const API_BASE_URL = process.env.NODE_ENV === 'production' 
-  ? '/api/meta-ads' // Em produção, usar URL relativa
-  : 'http://localhost:5000/api/meta-ads'; // Em desenvolvimento, usar URL completa
+  ? 'https://zeuz.otmizy.com/oauth_meta' // Em produção, usar URL relativa
+  : 'localhost:8080/oauth_meta'; // Em desenvolvimento, usar URL completa
 
 // Tipos TypeScript para as respostas da API OAuth
 export interface OAuthInitiateResponse {

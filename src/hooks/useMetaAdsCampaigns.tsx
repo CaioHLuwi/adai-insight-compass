@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback } from 'react';
-import { MetaAdsCampaign, MetaAdsAccount, metaAdsService } from '@/services/metaAdsService';
+import { MetaAdsCampaign, MetaAdsAccount, metaAdsService } from '../services/metaAdsService';
 
 interface UseMetaAdsCampaignsProps {
   accessToken?: string;
