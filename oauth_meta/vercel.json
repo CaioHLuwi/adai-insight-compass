@@ -8,8 +8,8 @@
       "outputDirectory": "dist"
     },
     {
-      "name": "meta-ads-backend",
-      "root": "meta-ads-backend",
+      "name": "oauth_meta",
+      "root": "oauth_meta",
       "buildCommand": "npm install",
       "outputDirectory": "api", 
       "functions": {
