@@ -95,30 +95,50 @@ const OptimizationResults: React.FC<OptimizationResultsProps> = ({ selectedStrat
 
         {/* Loading Steps */}
         <div className="mb-6">
-          <div className="space-y-2">
+          <div className="space-y-3">
             {steps.map((step, index) => (
               <div 
                 key={index}
-                className={`flex items-center space-x-3 transition-all duration-500 ${
+                className={`flex items-center space-x-3 transition-all duration-700 ease-out transform ${
                   index <= currentStep 
-                    ? 'opacity-100 translate-x-0' 
-                    : 'opacity-50 translate-x-4'
+                    ? 'opacity-100 translate-x-0 scale-100' 
+                    : 'opacity-30 translate-x-8 scale-95'
                 }`}
+                style={{
+                  transitionDelay: `${index * 200}ms`
+                }}
               >
-                <div className={`w-2 h-2 rounded-full ${
+                <div className={`w-3 h-3 rounded-full transition-all duration-500 ${
                   index < currentStep 
-                    ? 'bg-green-400' 
+                    ? 'bg-green-400 scale-100' 
                     : index === currentStep 
-                      ? 'bg-yellow-400 animate-pulse' 
-                      : 'bg-gray-600'
+                      ? 'bg-yellow-400 animate-pulse scale-110' 
+                      : 'bg-gray-600 scale-75'
                 }`}></div>
-                <span className={`text-sm ${
-                  index <= currentStep ? 'text-white' : 'text-muted-foreground'
-                }`}>
-                  {step}
+                <span className={`text-sm transition-all duration-500 ${
+                  index <= currentStep ? 'text-white font-medium' : 'text-muted-foreground'
+                } ${index === currentStep ? 'animate-pulse' : ''}`}>
+                  {index === currentStep ? (
+                    <span className="inline-block">
+                      {step.split('').map((char, charIndex) => (
+                        <span
+                          key={charIndex}
+                          className="inline-block animate-fade-in"
+                          style={{
+                            animationDelay: `${charIndex * 50}ms`,
+                            animationFillMode: 'both'
+                          }}
+                        >
+                          {char === ' ' ? '\u00A0' : char}
+                        </span>
+                      ))}
+                    </span>
+                  ) : (
+                    step
+                  )}
                 </span>
                 {index < currentStep && (
-                  <CheckCircle className="w-4 h-4 text-green-400" />
+                  <CheckCircle className="w-4 h-4 text-green-400 animate-scale-in" />
                 )}
               </div>
             ))}
@@ -134,22 +154,14 @@ const OptimizationResults: React.FC<OptimizationResultsProps> = ({ selectedStrat
           <div className="relative">
             <Progress 
               value={progress} 
-              className="h-3 bg-gray-700"
+              className="h-4 bg-gray-700"
             />
             <div 
-              className="absolute top-0 left-0 h-3 rounded-full transition-all duration-300"
+              className="absolute top-0 left-0 h-4 rounded-full transition-all duration-300 ease-out"
               style={{
                 width: `${progress}%`,
-                background: `linear-gradient(90deg, 
-                  hsl(var(--background)) 0%, 
-                  hsl(var(--background)) 25%, 
-                  #fbbf24 25%, 
-                  #fbbf24 50%, 
-                  hsl(var(--background)) 50%, 
-                  hsl(var(--background)) 75%, 
-                  #fbbf24 75%, 
-                  #fbbf24 100%
-                )`
+                background: `linear-gradient(90deg, #fbbf24 0%, #f59e0b 50%, #fbbf24 100%)`,
+                boxShadow: '0 0 10px rgba(251, 191, 36, 0.3)'
               }}
             />
           </div>

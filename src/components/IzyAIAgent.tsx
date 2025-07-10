@@ -39,17 +39,7 @@ const IzyAIAgent = () => {
     }
   ];
 
-  useEffect(() => {
-    const interval = setInterval(() => {
-      setIsAnimating(true);
-      setTimeout(() => {
-        setCurrentStrategy((prev) => (prev + 1) % strategies.length);
-        setIsAnimating(false);
-      }, 300);
-    }, 4000);
-
-    return () => clearInterval(interval);
-  }, []);
+  // Removed auto-cycling - keeping "Otimização de Audience" as default
 
   const handleStrategyClick = (index: number) => {
     setIsAnimating(true);
