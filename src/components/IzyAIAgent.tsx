@@ -3,10 +3,14 @@ import React, { useState, useEffect } from 'react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Bot, Lightbulb, TrendingUp, Target, Zap, ArrowRight } from 'lucide-react';
+import OptimizationResults from './OptimizationResults';
+import InsightsPopup from './InsightsPopup';
 
 const IzyAIAgent = () => {
   const [currentStrategy, setCurrentStrategy] = useState(0);
   const [isAnimating, setIsAnimating] = useState(false);
+  const [showResults, setShowResults] = useState(false);
+  const [showInsights, setShowInsights] = useState(false);
 
   const strategies = [
     {
@@ -55,6 +59,14 @@ const IzyAIAgent = () => {
     }, 300);
   };
 
+  const handleApplySuggestions = () => {
+    setShowResults(true);
+  };
+
+  const handleShowInsights = () => {
+    setShowInsights(true);
+  };
+
   return (
     <div className="mt-12 relative">
       <div className="bg-gradient-to-r from-yellow-500/20 to-orange-500/20 rounded-xl p-8 mx-auto max-w-5xl">
@@ -69,7 +81,7 @@ const IzyAIAgent = () => {
                 <div className="absolute -top-1 -right-1 w-4 h-4 bg-green-400 rounded-full animate-ping"></div>
               </div>
               <div>
-                <h3 className="text-xl font-bold text-yellow-400">Izy AI Assistant</h3>
+                <h3 className="text-xl font-bold text-yellow-400">Izy.Ai</h3>
                 <p className="text-sm text-muted-foreground">Analisando suas campanhas em tempo real</p>
               </div>
             </div>
@@ -113,11 +125,18 @@ const IzyAIAgent = () => {
 
           {/* Action Buttons */}
           <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
-            <Button className="bg-yellow-500 hover:bg-yellow-600 text-black px-6 py-3 rounded-lg">
+            <Button 
+              onClick={handleApplySuggestions}
+              className="bg-yellow-500 hover:bg-yellow-600 text-background px-6 py-3 rounded-lg"
+            >
               Aplicar Sugestões da Izy
               <ArrowRight className="ml-2 w-4 h-4" />
             </Button>
-            <Button variant="outline" className="border-yellow-500/20 hover:bg-yellow-500/10 px-6 py-3 rounded-lg">
+            <Button 
+              onClick={handleShowInsights}
+              variant="outline" 
+              className="border-yellow-500/20 hover:bg-yellow-500/10 px-6 py-3 rounded-lg"
+            >
               Ver Mais Insights
             </Button>
           </div>
@@ -131,6 +150,18 @@ const IzyAIAgent = () => {
           </div>
         </div>
       </div>
+      
+      {/* Optimization Results */}
+      {showResults && (
+        <OptimizationResults selectedStrategy={strategies[currentStrategy]} />
+      )}
+
+      {/* Insights Popup */}
+      <InsightsPopup 
+        isOpen={showInsights}
+        onClose={() => setShowInsights(false)}
+        selectedStrategy={strategies[currentStrategy]}
+      />
     </div>
   );
 };
