@@ -129,6 +129,7 @@ export class MetaAdsOAuthService {
           const validOrigins = [
             window.location.origin,
             'https://otmizy-meta-ads.vercel.app',
+            'https://otmizy.com',
             'http://localhost:5000'
           ];
           
