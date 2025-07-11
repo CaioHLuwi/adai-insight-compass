@@ -94,12 +94,15 @@ export class MetaAdsOAuthService {
   }
 
   /**
-   * Abre uma janela popup para o fluxo OAuth
+   * Abre uma janela popup para o fluxo OAuth usando localStorage
    * Retorna uma Promise que resolve com o access token diretamente
    */
   async openOAuthPopup(): Promise<string> {
     return new Promise(async (resolve, reject) => {
       try {
+        // Limpar resultado anterior do localStorage
+        localStorage.removeItem('meta_ads_oauth_result');
+        
         // Obter URL de autorização
         const authUrl = await this.initiateOAuth();
         
@@ -115,54 +118,46 @@ export class MetaAdsOAuthService {
           return;
         }
 
-        // Monitorar o popup para capturar o código de autorização
-        const checkClosed = setInterval(() => {
+        // Monitorar localStorage para resultado do OAuth
+        const checkResult = setInterval(() => {
+          // Verificar se popup foi fechado
           if (popup.closed) {
-            clearInterval(checkClosed);
-            reject(new Error('Autenticação cancelada pelo usuário'));
+            clearInterval(checkResult);
+            
+            // Verificar se há resultado no localStorage
+            const resultStr = localStorage.getItem('meta_ads_oauth_result');
+            if (resultStr) {
+              try {
+                const result = JSON.parse(resultStr);
+                console.log('Resultado OAuth recebido via localStorage:', result);
+                
+                // Limpar localStorage
+                localStorage.removeItem('meta_ads_oauth_result');
+                
+                if (result.type === 'META_ADS_OAUTH_SUCCESS') {
+                  resolve(result.accessToken);
+                } else if (result.type === 'META_ADS_OAUTH_ERROR') {
+                  reject(new Error(result.error || 'Erro na autenticação'));
+                } else {
+                  reject(new Error('Resultado OAuth inválido'));
+                }
+              } catch (e) {
+                reject(new Error('Erro ao processar resultado OAuth'));
+              }
+            } else {
+              reject(new Error('Autenticação cancelada pelo usuário'));
+            }
           }
         }, 1000);
 
-        // Listener para mensagens do popup (quando o callback for processado)
-        const messageListener = (event: MessageEvent) => {
-          // Verificar origens válidas (incluindo Vercel)
-          const validOrigins = [
-            window.location.origin,
-            'https://otmizy-meta-ads.vercel.app',
-            'https://otmizy.com',
-            'http://localhost:5000'
-          ];
-          
-          if (!validOrigins.includes(event.origin)) {
-            console.log('Mensagem de origem não autorizada:', event.origin);
-            return;
-          }
-
-          console.log('Mensagem recebida do popup:', event.data);
-
-          if (event.data.type === 'META_ADS_OAUTH_SUCCESS') {
-            clearInterval(checkClosed);
-            window.removeEventListener('message', messageListener);
+        // Timeout de segurança (5 minutos)
+        setTimeout(() => {
+          clearInterval(checkResult);
+          if (!popup.closed) {
             popup.close();
-            
-            // Retornar o access token diretamente (não o código)
-            if (event.data.accessToken) {
-              resolve(event.data.accessToken);
-            } else if (event.data.code) {
-              // Fallback: se só tiver o código, usar o método antigo
-              resolve(event.data.code);
-            } else {
-              reject(new Error('Access token não recebido'));
-            }
-          } else if (event.data.type === 'META_ADS_OAUTH_ERROR') {
-            clearInterval(checkClosed);
-            window.removeEventListener('message', messageListener);
-            popup.close();
-            reject(new Error(event.data.error || 'Erro na autenticação'));
           }
-        };
-
-        window.addEventListener('message', messageListener);
+          reject(new Error('Timeout na autenticação'));
+        }, 5 * 60 * 1000);
 
       } catch (error) {
         reject(error);
@@ -175,21 +170,14 @@ export class MetaAdsOAuthService {
    */
   async completeOAuthFlow(): Promise<{ accessToken: string; accounts: MetaAdsAccountInfo[] }> {
     try {
-      // Abrir popup e obter access token diretamente
+      // Abrir popup e obter access token diretamente via localStorage
       const accessToken = await this.openOAuthPopup();
       
-      // Se recebemos um código em vez de token, trocar por token
-      let finalAccessToken = accessToken;
-      if (accessToken.length < 50) { // Códigos são mais curtos que tokens
-        const tokenResponse = await this.exchangeCodeForToken(accessToken);
-        finalAccessToken = tokenResponse.access_token;
-      }
-      
       // Buscar informações das contas
-      const accounts = await this.getAccountInfo(finalAccessToken);
+      const accounts = await this.getAccountInfo(accessToken);
       
       return {
-        accessToken: finalAccessToken,
+        accessToken,
         accounts
       };
     } catch (error: any) {

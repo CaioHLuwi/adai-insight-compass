@@ -2,130 +2,179 @@ const express = require("express");
 const axios = require("axios");
 const router = express.Router();
 
-// Variáveis de ambiente para App ID e App Secret
+// Carrega variáveis de ambiente do .env
+require("dotenv").config();
+
 const META_APP_ID = process.env.META_APP_ID;
 const META_APP_SECRET = process.env.META_APP_SECRET;
-const REDIRECT_URI = process.env.REDIRECT_URI || "http://localhost:5000/oauth-callback.html"; // Ajuste conforme seu ambiente
+const REDIRECT_URI = process.env.REDIRECT_URI || "http://localhost:5000/oauth-callback.html";
 
-/**
- * Middleware para validar access token
- */
-const validateAccessToken = (req, res, next) => {
-  const authHeader = req.headers.authorization;
-  if (!authHeader || !authHeader.startsWith("Bearer ")) {
-    return res.status(401).json({ error: "Access token não fornecido." });
-  }
-  req.accessToken = authHeader.split(" ")[1];
-  next();
-};
-
-// Rota para iniciar o fluxo OAuth
+// Rota para iniciar o fluxo OAuth (usando apenas public_profile para teste)
 router.get("/oauth/initiate", (req, res) => {
   if (!META_APP_ID) {
     return res.status(500).json({ error: "META_APP_ID não configurado no ambiente." });
   }
-  const authUrl = `https://www.facebook.com/v23.0/dialog/oauth?client_id=${META_APP_ID}&redirect_uri=${REDIRECT_URI}&scope=ads_read,ads_management,public_profile`;
+  
+  const authUrl = `https://www.facebook.com/v23.0/dialog/oauth?client_id=${META_APP_ID}&redirect_uri=${REDIRECT_URI}&scope=public_profile`;
   res.json({ authUrl });
 });
 
-// Rota de callback para o OAuth
-router.get("/oauth-callback", async (req, res) => {
+// Rota de callback para o OAuth - processa e redireciona
+router.get("/oauth-callback.html", async (req, res) => {
   const code = req.query.code;
+  const error = req.query.error;
+  const error_description = req.query.error_description;
 
-  if (!code) {
-    // Se não houver código, é um erro ou o usuário cancelou
-    return res.status(400).json({ error: "Código de autorização não recebido." });
+  // Se há erro, redirecionar para página de erro
+  if (error) {
+    return res.redirect(`/oauth_meta/oauth-result.html?error=${encodeURIComponent(error_description || error)}`);
   }
 
+  // Se não há código, erro
+  if (!code) {
+    return res.redirect(`/oauth_meta/oauth-result.html?error=${encodeURIComponent('Código de autorização não recebido')}`);
+  }
+
+  // Verificar variáveis de ambiente
   if (!META_APP_ID || !META_APP_SECRET || !REDIRECT_URI) {
-    return res.status(500).json({ error: "Variáveis de ambiente do Meta Ads não configuradas." });
+    return res.redirect(`/oauth_meta/oauth-result.html?error=${encodeURIComponent('Variáveis de ambiente não configuradas')}`);
   }
 
   try {
+    // Trocar código por access token
     const tokenExchangeUrl = `https://graph.facebook.com/v23.0/oauth/access_token?client_id=${META_APP_ID}&client_secret=${META_APP_SECRET}&redirect_uri=${REDIRECT_URI}&code=${code}`;
     const response = await axios.get(tokenExchangeUrl);
     const accessToken = response.data.access_token;
 
-    // Enviar mensagem para a janela pai (o popup)
-    // Isso é crucial para o frontend receber o token
-    res.send(`
-      <!DOCTYPE html>
-      <html>
-      <head>
-          <title>Meta Ads OAuth Callback</title>
-          <script>
-              window.opener.postMessage({
-                  type: 'META_ADS_OAUTH_SUCCESS',
-                  code: '${code}' // Enviamos o código de volta para o frontend trocar pelo token
-              }, window.location.origin);
-              window.close();
-          </script>
-      </head>
-      <body>
-          <p>Autenticação concluída. Fechando esta janela...</p>
-      </body>
-      </html>
-    `);
+    // Redirecionar para página de sucesso com access token
+    res.redirect(`/oauth_meta/oauth-result.html?access_token=${encodeURIComponent(accessToken)}&code=${encodeURIComponent(code)}`);
 
   } catch (error) {
     console.error("Erro ao trocar código por token:", error.response?.data || error.message);
-    res.status(500).json({ error: "Erro ao obter access token." });
+    res.redirect(`/oauth_meta/oauth-result.html?error=${encodeURIComponent('Erro ao obter access token')}`);
   }
 });
 
-// Rota para testar o access token
-router.get("/test-token", validateAccessToken, async (req, res) => {
-  try {
-    const response = await axios.get(
-      `https://graph.facebook.com/v20.0/me?access_token=${req.accessToken}`
-    );
-    res.json({ valid: true, user: response.data });
-  } catch (error) {
-    res.status(401).json({ valid: false, error: "Token inválido ou expirado." });
-  }
+// Página de resultado do OAuth (usando localStorage)
+router.get("/oauth-result.html", (req, res) => {
+  const accessToken = req.query.access_token;
+  const code = req.query.code;
+  const error = req.query.error;
+
+  const htmlContent = `
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Meta Ads OAuth Result</title>
+    <meta charset="utf-8">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            padding: 50px;
+            background-color: #f5f5f5;
+        }
+        .success { color: #28a745; font-size: 18px; margin-bottom: 20px; }
+        .error { color: #dc3545; font-size: 18px; margin-bottom: 20px; }
+        .token {
+            background-color: #e9ecef;
+            padding: 10px;
+            border-radius: 5px;
+            font-family: monospace;
+            word-break: break-all;
+            margin: 20px 0;
+        }
+    </style>
+</head>
+<body>
+    ${accessToken ? `
+        <div class="success">
+            <h2>Autenticação Concluída com Sucesso!</h2>
+            <p>Fechando esta janela...</p>
+            <div class="token">Access Token: ${accessToken.substring(0, 20)}...</div>
+        </div>
+    ` : `
+        <div class="error">
+            <h2>Erro na Autenticação</h2>
+            <p>${error || 'Erro desconhecido'}</p>
+        </div>
+    `}
+    
+    <script>
+        // Usar localStorage para comunicação (não depende de window.opener)
+        const urlParams = new URLSearchParams(window.location.search);
+        const accessToken = urlParams.get('access_token');
+        const error = urlParams.get('error');
+        
+        if (accessToken) {
+            // Salvar resultado no localStorage
+            const oauthResult = {
+                type: 'META_ADS_OAUTH_SUCCESS',
+                accessToken: accessToken,
+                code: urlParams.get('code'),
+                timestamp: Date.now()
+            };
+            
+            localStorage.setItem('meta_ads_oauth_result', JSON.stringify(oauthResult));
+            console.log('Access token salvo no localStorage:', accessToken.substring(0, 20) + '...');
+            
+            // Fechar popup após 2 segundos
+            setTimeout(() => {
+                window.close();
+            }, 2000);
+            
+        } else if (error) {
+            // Salvar erro no localStorage
+            const oauthResult = {
+                type: 'META_ADS_OAUTH_ERROR',
+                error: error,
+                timestamp: Date.now()
+            };
+            
+            localStorage.setItem('meta_ads_oauth_result', JSON.stringify(oauthResult));
+            console.log('Erro salvo no localStorage:', error);
+            
+            // Fechar popup após 3 segundos
+            setTimeout(() => {
+                window.close();
+            }, 3000);
+        }
+    </script>
+</body>
+</html>`;
+
+  res.send(htmlContent);
 });
 
-// Rota para buscar contas de anúncio
-router.get("/ad-accounts", validateAccessToken, async (req, res) => {
-  try {
-    const response = await axios.get(
-      `https://graph.facebook.com/v20.0/me/adaccounts?access_token=${req.accessToken}`
-    );
-    res.json({ ad_accounts: response.data.data });
-  } catch (error) {
-    res.status(500).json({ error: "Erro ao buscar contas de anúncio." });
-  }
+// Rota de saúde para o prefixo /oauth_meta
+router.get("/health", (req, res) => {
+  res.status(200).json({ status: "ok", message: "Backend is healthy" });
 });
 
-// Rota para buscar campanhas de uma conta de anúncio
-router.get("/campaigns", validateAccessToken, async (req, res) => {
-  const { ad_account_id } = req.query;
-  if (!ad_account_id) {
-    return res.status(400).json({ error: "ID da conta de anúncio é obrigatório." });
+// Rota para testar o access token (usando Graph API básica)
+router.get("/test-token", async (req, res) => {
+  const authHeader = req.headers.authorization;
+  
+  if (!authHeader || !authHeader.startsWith("Bearer ")) {
+    return res.status(401).json({ error: "Access token não fornecido." });
   }
-  try {
-    const response = await axios.get(
-      `https://graph.facebook.com/v20.0/${ad_account_id}/campaigns?access_token=${req.accessToken}`
-    );
-    res.json({ campaigns: response.data.data });
-  } catch (error) {
-    res.status(500).json({ error: "Erro ao buscar campanhas." });
-  }
-});
 
-// Rota para buscar insights de campanhas
-router.get("/campaign-insights", validateAccessToken, async (req, res) => {
-  const { campaign_id, fields, date_preset } = req.query;
-  if (!campaign_id) {
-    return res.status(400).json({ error: "ID da campanha é obrigatório." });
-  }
+  const accessToken = authHeader.split(" ")[1];
+
   try {
-    const response = await axios.get(
-      `https://graph.facebook.com/v20.0/${campaign_id}/insights?access_token=${req.accessToken}&fields=${fields || 'spend,impressions,clicks,cpc,ctr,actions,action_values'}&date_preset=${date_preset || 'lifetime'}`
-    );
-    res.json({ insights: response.data.data });
+    // Testa o token com a Graph API básica
+    const response = await axios.get(`https://graph.facebook.com/me?access_token=${accessToken}`);
+    res.json({ 
+      success: true, 
+      user: response.data,
+      message: "Token válido!" 
+    });
   } catch (error) {
-    res.status(500).json({ error: "Erro ao buscar insights da campanha." });
+    console.error("Erro ao validar token:", error.response?.data || error.message);
+    res.status(401).json({ 
+      error: "Token inválido ou expirado.",
+      details: error.response?.data || error.message 
+    });
   }
 });
 
