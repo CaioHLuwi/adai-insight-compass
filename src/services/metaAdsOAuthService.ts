@@ -2,8 +2,8 @@ import axios from 'axios';
 
 // Configuração base da API
 const API_BASE_URL = process.env.NODE_ENV === 'production' 
-  ? 'https://otmizy-meta-ads.vercel.app/oauth_meta' // Em produção, usar URL relativa
-  : 'localhost:8080/oauth_meta'; // Em desenvolvimento, usar URL completa
+  ? 'https://otmizy-meta-ads.vercel.app/oauth_meta' // Em produção, usar URL da Vercel
+  : 'http://localhost:5000/api/meta-ads'; // Em desenvolvimento, usar URL completa
 
 // Tipos TypeScript para as respostas da API OAuth
 export interface OAuthInitiateResponse {
@@ -95,7 +95,7 @@ export class MetaAdsOAuthService {
 
   /**
    * Abre uma janela popup para o fluxo OAuth
-   * Retorna uma Promise que resolve com o código de autorização
+   * Retorna uma Promise que resolve com o access token diretamente
    */
   async openOAuthPopup(): Promise<string> {
     return new Promise(async (resolve, reject) => {
@@ -125,16 +125,34 @@ export class MetaAdsOAuthService {
 
         // Listener para mensagens do popup (quando o callback for processado)
         const messageListener = (event: MessageEvent) => {
-          // Verificar origem por segurança
-          if (event.origin !== window.location.origin) {
+          // Verificar origens válidas (incluindo Vercel)
+          const validOrigins = [
+            window.location.origin,
+            'https://otmizy-meta-ads.vercel.app',
+            'http://localhost:5000'
+          ];
+          
+          if (!validOrigins.includes(event.origin)) {
+            console.log('Mensagem de origem não autorizada:', event.origin);
             return;
           }
+
+          console.log('Mensagem recebida do popup:', event.data);
 
           if (event.data.type === 'META_ADS_OAUTH_SUCCESS') {
             clearInterval(checkClosed);
             window.removeEventListener('message', messageListener);
             popup.close();
-            resolve(event.data.code);
+            
+            // Retornar o access token diretamente (não o código)
+            if (event.data.accessToken) {
+              resolve(event.data.accessToken);
+            } else if (event.data.code) {
+              // Fallback: se só tiver o código, usar o método antigo
+              resolve(event.data.code);
+            } else {
+              reject(new Error('Access token não recebido'));
+            }
           } else if (event.data.type === 'META_ADS_OAUTH_ERROR') {
             clearInterval(checkClosed);
             window.removeEventListener('message', messageListener);
@@ -152,21 +170,25 @@ export class MetaAdsOAuthService {
   }
 
   /**
-   * Fluxo completo de OAuth: abre popup, obtém código e troca por token
+   * Fluxo completo de OAuth: abre popup e obtém access token diretamente
    */
   async completeOAuthFlow(): Promise<{ accessToken: string; accounts: MetaAdsAccountInfo[] }> {
     try {
-      // Abrir popup e obter código
-      const code = await this.openOAuthPopup();
+      // Abrir popup e obter access token diretamente
+      const accessToken = await this.openOAuthPopup();
       
-      // Trocar código por token
-      const tokenResponse = await this.exchangeCodeForToken(code);
+      // Se recebemos um código em vez de token, trocar por token
+      let finalAccessToken = accessToken;
+      if (accessToken.length < 50) { // Códigos são mais curtos que tokens
+        const tokenResponse = await this.exchangeCodeForToken(accessToken);
+        finalAccessToken = tokenResponse.access_token;
+      }
       
       // Buscar informações das contas
-      const accounts = await this.getAccountInfo(tokenResponse.access_token);
+      const accounts = await this.getAccountInfo(finalAccessToken);
       
       return {
-        accessToken: tokenResponse.access_token,
+        accessToken: finalAccessToken,
         accounts
       };
     } catch (error: any) {
