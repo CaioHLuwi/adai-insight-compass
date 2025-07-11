@@ -194,4 +194,3 @@ export const metaAdsOAuthService = new MetaAdsOAuthService();
 export const useMetaAdsOAuth = () => {
   return metaAdsOAuthService;
 };
-
