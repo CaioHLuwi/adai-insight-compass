@@ -329,32 +329,6 @@ const Pricing = () => {
         </div>
       </section>
 
-      {/* FAQ Section */}
-      <section className="py-20 px-4 sm:px-6 lg:px-8 bg-gray-900/20">
-        <div className="max-w-4xl mx-auto">
-          <h2 className="text-3xl font-bold text-center mb-12">Perguntas Frequentes</h2>
-          <div className="space-y-6">
-            <Card className="bg-gray-800/50 border-yellow-500/20">
-              <CardContent className="p-6">
-                <h3 className="font-semibold mb-2">Posso mudar de plano a qualquer momento?</h3>
-                <p className="text-muted-foreground">Sim! Você pode fazer upgrade ou downgrade do seu plano a qualquer momento. As mudanças são aplicadas no próximo ciclo de cobrança.</p>
-              </CardContent>
-            </Card>
-            <Card className="bg-gray-800/50 border-yellow-500/20">
-              <CardContent className="p-6">
-                <h3 className="font-semibold mb-2">Existe período de teste gratuito?</h3>
-                <p className="text-muted-foreground">Sim! Oferecemos 14 dias de teste gratuito em todos os planos. Não é necessário cartão de crédito para começar.</p>
-              </CardContent>
-            </Card>
-            <Card className="bg-gray-800/50 border-yellow-500/20">
-              <CardContent className="p-6">
-                <h3 className="font-semibold mb-2">Como funciona o suporte?</h3>
-                <p className="text-muted-foreground">Oferecemos suporte por email para todos os planos. O plano Professional inclui suporte prioritário, e o Enterprise tem suporte dedicado 24/7.</p>
-              </CardContent>
-            </Card>
-          </div>
-        </div>
-      </section>
     </div>
   );
 };

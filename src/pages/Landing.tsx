@@ -380,7 +380,7 @@ const Landing = () => {
               </Button>
               <Button
                 onClick={() => navigate('/register')}
-                className="bg-yellow-500 hover:bg-yellow-600 text-black"
+                className="bg-yellow-500 hover:bg-yellow-600 text-background"
               >
                 {getText('startFree')}
               </Button>
@@ -395,7 +395,7 @@ const Landing = () => {
           <Badge className="mb-6 bg-yellow-500/10 text-yellow-400 border-yellow-500/20">
             🏆 A primeira plataforma com sistema de gamificação
           </Badge>
-          <h1 className="text-4xl md:text-6xl font-bold bg-gradient-to-r from-white to-yellow-400 bg-clip-text text-transparent mb-6">
+          <h1 className="text-4xl md:text-6xl font-bold text-white mb-6">
             {getText('title')}
           </h1>
           <p className="text-xl text-muted-foreground mb-8 max-w-3xl mx-auto">
@@ -405,7 +405,7 @@ const Landing = () => {
             <Button
               onClick={() => navigate('/register')}
               size="lg"
-              className="bg-yellow-500 hover:bg-yellow-600 text-black hover-scale rounded-lg"
+              className="bg-yellow-500 hover:bg-yellow-600 text-background hover-scale rounded-lg"
             >
               {getText('startFree')}
               <ArrowRight className="ml-2 w-4 h-4" />
@@ -499,7 +499,7 @@ const Landing = () => {
           <Button
             onClick={() => navigate('/register')}
             size="lg"
-            className="bg-yellow-500 hover:bg-yellow-600 text-black hover-scale rounded-lg"
+            className="bg-yellow-500 hover:bg-yellow-600 text-background hover-scale rounded-lg"
           >
             {getText('startFree')}
             <ArrowRight className="ml-2 w-4 h-4" />
