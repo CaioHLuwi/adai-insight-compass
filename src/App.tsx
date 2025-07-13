@@ -40,6 +40,7 @@ import Success from "./pages/Success";
 import Cancel from "./pages/Cancel";
 import Zeuz from "./pages/Zeuz";
 import AdminLogin from "./pages/AdminLogin";
+import Comunidade from "./pages/Comunidade";
 
 const queryClient = new QueryClient();
 
@@ -339,6 +340,25 @@ const App = () => (
                             </header>
                             <main className="flex-1 bg-background min-h-screen">
                               <EditAccount />
+                            </main>
+                          </SidebarInset>
+                        </div>
+                      </SidebarProvider>
+                    </ProtectedRoute>
+                  } />
+                  <Route path="/comunidade" element={
+                    <ProtectedRoute>
+                      <SidebarProvider>
+                        <div className="min-h-screen flex w-full bg-sidebarbackground relative">
+                          <div className="animated-bg"></div>
+                          <AppSidebar />
+                          <SidebarInset className="flex-1 bg-background">
+                            <header className="flex h-16 shrink-0 items-center justify-between gap-2 border-b border-yellow-500/20 px-4 bg-background/80 backdrop-blur-sm">
+                              <SidebarTrigger className="-ml-1 text-yellow-400 hover:bg-yellow-500/10" />
+                              <HeaderControls />
+                            </header>
+                            <main className="flex-1 bg-background min-h-screen">
+                              <Comunidade />
                             </main>
                           </SidebarInset>
                         </div>
