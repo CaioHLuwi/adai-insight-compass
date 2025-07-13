@@ -120,33 +120,30 @@ export class MetaAdsOAuthService {
 
         // Monitorar localStorage para resultado do OAuth
         const checkResult = setInterval(() => {
-          // Verificar se popup foi fechado
-          if (popup.closed) {
+          // Verificar se há resultado no localStorage
+          const resultStr = localStorage.getItem('meta_ads_oauth_result');
+          if (resultStr) {
             clearInterval(checkResult);
-            
-            // Verificar se há resultado no localStorage
-            const resultStr = localStorage.getItem('meta_ads_oauth_result');
-            if (resultStr) {
-              try {
-                const result = JSON.parse(resultStr);
-                console.log('Resultado OAuth recebido via localStorage:', result);
-                
-                // Limpar localStorage
-                localStorage.removeItem('meta_ads_oauth_result');
-                
-                if (result.type === 'META_ADS_OAUTH_SUCCESS') {
-                  resolve(result.accessToken);
-                } else if (result.type === 'META_ADS_OAUTH_ERROR') {
-                  reject(new Error(result.error || 'Erro na autenticação'));
-                } else {
-                  reject(new Error('Resultado OAuth inválido'));
-                }
-              } catch (e) {
-                reject(new Error('Erro ao processar resultado OAuth'));
+            try {
+              const result = JSON.parse(resultStr);
+              console.log('Resultado OAuth recebido via localStorage:', result);
+              
+              // Limpar localStorage
+              localStorage.removeItem('meta_ads_oauth_result');
+              
+              if (result.type === 'META_ADS_OAUTH_SUCCESS') {
+                resolve(result.accessToken);
+              } else if (result.type === 'META_ADS_OAUTH_ERROR') {
+                reject(new Error(result.error || 'Erro na autenticação'));
+              } else {
+                reject(new Error('Resultado OAuth inválido'));
               }
-            } else {
-              reject(new Error('Autenticação cancelada pelo usuário'));
+            } catch (e) {
+              reject(new Error('Erro ao processar resultado OAuth'));
             }
+          } else if (popup.closed) { // Só rejeita se o popup fechar E não houver resultado
+            clearInterval(checkResult);
+            reject(new Error('Autenticação cancelada pelo usuário'));
           }
         }, 1000);
 
@@ -194,3 +191,6 @@ export const metaAdsOAuthService = new MetaAdsOAuthService();
 export const useMetaAdsOAuth = () => {
   return metaAdsOAuthService;
 };
+
+
+
