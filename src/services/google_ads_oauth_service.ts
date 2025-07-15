@@ -1,6 +1,6 @@
 // services/googleAdsOAuthService.ts
 
-const API = process.env.BACKEND_OTMIZY_OAUTH;
+const API = 'https://otmizy-meta.vercel.app';
 
 export interface GoogleAdsAccountInfo {
   id: string;
