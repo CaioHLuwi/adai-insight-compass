@@ -33,6 +33,7 @@ import DataDeletion from "./pages/DataDeletion";
 import Privacy from "./pages/Privacy";
 import Cookies from "./pages/Cookies";
 import Landing from "./pages/Landing";
+import LandingSecondary from "./pages/LandingSecondary";
 import Features from "./pages/Features";
 import Pricing from "./pages/Pricing";
 import WhatsAppWidget from "@/components/WhatsAppWidget";
@@ -75,6 +76,7 @@ const App = () => (
                 <Routes>
                   {/* Landing page as default */}
                   <Route path="/" element={<Landing />} />
+                  <Route path="/landing-secondary" element={<LandingSecondary />} />
                   
                   {/* Auth routes without sidebar */}
                   <Route path="/login" element={<Login />} />
