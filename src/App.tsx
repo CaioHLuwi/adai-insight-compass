@@ -41,6 +41,7 @@ import Cancel from "./pages/Cancel";
 import Zeuz from "./pages/Zeuz";
 import AdminLogin from "./pages/AdminLogin";
 import Comunidade from "./pages/Comunidade";
+import Ferramentas from "./pages/Ferramentas";
 
 const queryClient = new QueryClient();
 
@@ -360,6 +361,21 @@ const App = () => (
                             <main className="flex-1 bg-background min-h-screen">
                               <Comunidade />
                             </main>
+                          </SidebarInset>
+                        </div>
+                      </SidebarProvider>
+                    </ProtectedRoute>
+                  } />
+                  <Route path="/ferramentas" element={
+                    <ProtectedRoute>
+                      <SidebarProvider>
+                        <div className="flex h-screen w-full">
+                          <AppSidebar />
+                          <SidebarInset className="flex-1">
+                            <HeaderControls />
+                            <div className="flex-1 overflow-auto">
+                              <Ferramentas />
+                            </div>
                           </SidebarInset>
                         </div>
                       </SidebarProvider>

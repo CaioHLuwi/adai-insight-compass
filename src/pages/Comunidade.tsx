@@ -173,12 +173,10 @@ export default function Comunidade() {
 
     const postsWithStats = await Promise.all(
       postsData.map(async (post) => {
-        // Get user data for each post
-        const { data: userData } = await supabase
-          .from('users')
-          .select('id, name, email, avatar_url, department')
-          .eq('id', post.user_id)
-          .maybeSingle();
+        // Get user data for each post using edge function to fetch auth user data
+        const { data: userData } = await supabase.functions.invoke('get-user-profile', {
+          body: { user_id: post.user_id }
+        });
 
         // Get likes count and check if current user liked
         const { data: postLikes } = await supabase
@@ -216,11 +214,10 @@ export default function Comunidade() {
     if (messagesData) {
       const messagesWithUsers = await Promise.all(
         messagesData.map(async (message) => {
-          const { data: userData } = await supabase
-            .from('users')
-            .select('id, name, email, avatar_url, department')
-            .eq('id', message.user_id)
-            .maybeSingle();
+          // Get user data using edge function
+          const { data: userData } = await supabase.functions.invoke('get-user-profile', {
+            body: { user_id: message.user_id }
+          });
           
           return { 
             ...message, 
@@ -244,11 +241,10 @@ export default function Comunidade() {
     if (typingData) {
       const typingWithUsers = await Promise.all(
         typingData.map(async (typing) => {
-          const { data: userData } = await supabase
-            .from('users')
-            .select('id, name, email, avatar_url, department')
-            .eq('id', typing.user_id)
-            .maybeSingle();
+          // Get user data using edge function
+          const { data: userData } = await supabase.functions.invoke('get-user-profile', {
+            body: { user_id: typing.user_id }
+          });
           
           return { 
             ...typing, 
@@ -314,11 +310,10 @@ export default function Comunidade() {
     if (commentsData) {
       const commentsWithUsers = await Promise.all(
         commentsData.map(async (comment) => {
-          const { data: userData } = await supabase
-            .from('users')
-            .select('id, name, email, avatar_url, department')
-            .eq('id', comment.user_id)
-            .maybeSingle();
+          // Get user data using edge function
+          const { data: userData } = await supabase.functions.invoke('get-user-profile', {
+            body: { user_id: comment.user_id }
+          });
           
           return { 
             ...comment, 

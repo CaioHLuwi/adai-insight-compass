@@ -20,7 +20,8 @@ import {
   Trophy,
   Settings,
   Crown,
-  Calculator
+  Calculator,
+  Wrench
 } from "lucide-react"
 import { useLocation } from "react-router-dom"
 import { useState, useEffect } from "react"
@@ -177,6 +178,13 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
         es: 'Networking',
         ru: 'Нетворкинг',
         de: 'Networking'
+      },
+      tools: {
+        en: 'Tools',
+        pt: 'Ferramentas',
+        es: 'Herramientas',
+        ru: 'Инструменты',
+        de: 'Werkzeuge'
       }
     };
 
@@ -256,6 +264,12 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
         url: "/comunidade",
         icon: Users,
         isActive: location.pathname === "/comunidade",
+      },
+      {
+        title: translations.tools[language] || translations.tools.en,
+        url: "/ferramentas",
+        icon: Wrench,
+        isActive: location.pathname === "/ferramentas",
       },
     ],
     navSecondary: [
