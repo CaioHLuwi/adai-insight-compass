@@ -1,5 +1,7 @@
 // services/googleAdsOAuthService.ts
 
+const API = process.env.BACKEND_OTMIZY_OAUTH;
+
 export interface GoogleAdsAccountInfo {
   id: string;
   name: string;
@@ -21,7 +23,7 @@ export function useGoogleAdsOAuth() {
    */
   async function completeOAuthFlow(): Promise<{ accessToken: string; accounts: GoogleAdsAccountInfo[] }> {
     // 1) Pega a URL de autorização
-    const initRes = await fetch('/api/google/initiate');
+    const initRes = await fetch(`${API}/api/google/initiate`);
     if (!initRes.ok) throw new Error('Erro ao iniciar OAuth do Google');
     const { authUrl } = await initRes.json();
 
