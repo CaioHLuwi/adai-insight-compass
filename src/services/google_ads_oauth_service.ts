@@ -23,7 +23,7 @@ export function useGoogleAdsOAuth() {
    */
   async function completeOAuthFlow(): Promise<{ accessToken: string; accounts: GoogleAdsAccountInfo[] }> {
     // 1) Pega a URL de autorização
-    const initRes = await fetch(`https://otmizy-meta.vercel.app/oauth_meta/api/google/initiate`);
+    const initRes = await fetch(`https://otmizy-meta.vercel.app/api/google/initiate`);
     if (!initRes.ok) throw new Error('Erro ao iniciar OAuth do Google');
     const { authUrl } = await initRes.json();
 
