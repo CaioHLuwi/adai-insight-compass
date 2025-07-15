@@ -14,7 +14,7 @@ interface ProcessedFile {
   size: number;
 }
 
-export default function Ferramentas() {
+export default function HashChanger() {
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [isProcessing, setIsProcessing] = useState(false);
   const [processedFile, setProcessedFile] = useState<ProcessedFile | null>(null);
@@ -180,9 +180,9 @@ export default function Ferramentas() {
   return (
     <div className="p-6 max-w-4xl mx-auto">
       <div className="mb-6">
-        <h1 className="text-3xl font-bold mb-2">Ferramentas</h1>
+        <h1 className="text-3xl font-bold mb-2">Hash Changer</h1>
         <p className="text-muted-foreground">
-          Utilitários para otimização de mídia
+          Remova metadados e hash de imagens e vídeos para proteger sua privacidade
         </p>
       </div>
 

@@ -194,7 +194,7 @@ export default function Comunidade() {
 
         return {
           ...post,
-          users: userData || { id: '', name: 'Usuario Deletado', email: '', avatar_url: '', department: '' },
+          users: userData || { id: post.user_id, name: 'Usuário', email: 'user@exemplo.com', avatar_url: '/avatars/default.jpg', department: '' },
           likes_count: postLikes?.length || 0,
           comments_count: commentsCount || 0,
           is_liked: postLikes?.some(like => like.user_id === user?.id) || false
@@ -225,7 +225,7 @@ export default function Comunidade() {
           
           return { 
             ...message, 
-            users: userData || { id: '', name: 'Usuario Deletado', email: '', avatar_url: '', department: '' }
+            users: userData || { id: message.user_id, name: 'Usuário', email: 'user@exemplo.com', avatar_url: '/avatars/default.jpg', department: '' }
           };
         })
       );
@@ -254,7 +254,7 @@ export default function Comunidade() {
           
           return { 
             ...typing, 
-            users: userData || { id: '', name: 'Usuario Deletado', email: '', avatar_url: '', department: '' }
+            users: userData || { id: typing.user_id, name: 'Usuário', email: 'user@exemplo.com', avatar_url: '/avatars/default.jpg', department: '' }
           };
         })
       );
@@ -325,7 +325,7 @@ export default function Comunidade() {
           
           return { 
             ...comment, 
-            users: userData || { id: '', name: 'Usuario Deletado', email: '', avatar_url: '', department: '' }
+            users: userData || { id: comment.user_id, name: 'Usuário', email: 'user@exemplo.com', avatar_url: '/avatars/default.jpg', department: '' }
           };
         })
       );

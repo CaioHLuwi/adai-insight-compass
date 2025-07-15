@@ -185,6 +185,13 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
         es: 'Herramientas',
         ru: 'Инструменты',
         de: 'Werkzeuge'
+      },
+      hashChanger: {
+        en: 'Hash Changer',
+        pt: 'Hash Changer',
+        es: 'Hash Changer',
+        ru: 'Смена хэша',
+        de: 'Hash Changer'
       }
     };
 
@@ -265,8 +272,10 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
         icon: Users,
         isActive: location.pathname === "/comunidade",
       },
+    ],
+    navTools: [
       {
-        title: translations.tools[language] || translations.tools.en,
+        title: translations.hashChanger[language] || translations.hashChanger.en,
         url: "/ferramentas",
         icon: Wrench,
         isActive: location.pathname === "/ferramentas",
@@ -320,6 +329,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
         <NavMain items={data.navMain} />
         <NavProjects projects={data.projects} progressItems={data.progressItems} />
         <NavSecondary items={data.navNetworking} title={translations.networking[language] || translations.networking.en} />
+        <NavSecondary items={data.navTools} title={translations.tools[language] || translations.tools.en} />
         <NavSecondary items={data.navSecondary} className="mt-auto" />
       </SidebarContent>
       <SidebarFooter>
