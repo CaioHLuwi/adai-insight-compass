@@ -163,6 +163,7 @@ export default function Comunidade() {
   }, [chatMessages]);
 
   const loadPosts = async () => {
+    // Get all posts with user data using a proper join approach
     const { data: postsData } = await supabase
       .from('posts')
       .select('*')
@@ -170,28 +171,22 @@ export default function Comunidade() {
 
     if (!postsData) return;
 
-    // Get posts with user data and stats
     const postsWithStats = await Promise.all(
       postsData.map(async (post) => {
-        // Get user data
+        // Get user data for each post
         const { data: userData } = await supabase
           .from('users')
           .select('id, name, email, avatar_url, department')
           .eq('id', post.user_id)
-          .single();
+          .maybeSingle();
 
-        const { count: likesCount } = await supabase
+        // Get likes count and check if current user liked
+        const { data: postLikes } = await supabase
           .from('post_likes')
-          .select('*', { count: 'exact', head: true })
+          .select('user_id')
           .eq('post_id', post.id);
 
-        const { data: userLike } = await supabase
-          .from('post_likes')
-          .select('id')
-          .eq('post_id', post.id)
-          .eq('user_id', user?.id)
-          .single();
-
+        // Get comments count
         const { count: commentsCount } = await supabase
           .from('post_comments')
           .select('*', { count: 'exact', head: true })
@@ -199,15 +194,15 @@ export default function Comunidade() {
 
         return {
           ...post,
-          users: userData,
-          likes_count: likesCount || 0,
+          users: userData || { id: '', name: 'Usuario Deletado', email: '', avatar_url: '', department: '' },
+          likes_count: postLikes?.length || 0,
           comments_count: commentsCount || 0,
-          is_liked: !!userLike
+          is_liked: postLikes?.some(like => like.user_id === user?.id) || false
         };
       })
     );
 
-    setPosts(postsWithStats.filter(post => post.users));
+    setPosts(postsWithStats);
   };
 
   const loadChatMessages = async () => {
@@ -225,12 +220,15 @@ export default function Comunidade() {
             .from('users')
             .select('id, name, email, avatar_url, department')
             .eq('id', message.user_id)
-            .single();
+            .maybeSingle();
           
-          return { ...message, users: userData };
+          return { 
+            ...message, 
+            users: userData || { id: '', name: 'Usuario Deletado', email: '', avatar_url: '', department: '' }
+          };
         })
       );
-      setChatMessages(messagesWithUsers.filter(msg => msg.users));
+      setChatMessages(messagesWithUsers);
     }
     loadTypingIndicators();
   };
@@ -250,12 +248,15 @@ export default function Comunidade() {
             .from('users')
             .select('id, name, email, avatar_url, department')
             .eq('id', typing.user_id)
-            .single();
+            .maybeSingle();
           
-          return { ...typing, users: userData };
+          return { 
+            ...typing, 
+            users: userData || { id: '', name: 'Usuario Deletado', email: '', avatar_url: '', department: '' }
+          };
         })
       );
-      setTypingUsers(typingWithUsers.filter(typing => typing.users));
+      setTypingUsers(typingWithUsers);
     }
   };
 
@@ -317,12 +318,15 @@ export default function Comunidade() {
             .from('users')
             .select('id, name, email, avatar_url, department')
             .eq('id', comment.user_id)
-            .single();
+            .maybeSingle();
           
-          return { ...comment, users: userData };
+          return { 
+            ...comment, 
+            users: userData || { id: '', name: 'Usuario Deletado', email: '', avatar_url: '', department: '' }
+          };
         })
       );
-      setComments(prev => ({ ...prev, [postId]: commentsWithUsers.filter(comment => comment.users) }));
+      setComments(prev => ({ ...prev, [postId]: commentsWithUsers }));
     }
   };
 
