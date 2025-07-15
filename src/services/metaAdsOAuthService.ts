@@ -33,7 +33,7 @@ export class MetaAdsOAuthService {
    */
   async initiateOAuth(): Promise<string> {
     try {
-      const response = await axios.get(`${API_BASE_URL}/oauth/initiate`);
+      const response = await axios.get<OAuthInitiateResponse>(`${API_BASE_URL}/oauth/initiate`);
       return response.data.authUrl;
     } catch (error: any) {
       console.error('Erro ao iniciar OAuth:', error);
@@ -46,10 +46,13 @@ export class MetaAdsOAuthService {
    */
   async exchangeCodeForToken(code: string): Promise<OAuthCallbackResponse> {
     try {
-      const response = await axios.get(`${API_BASE_URL}/oauth-callback`, {
+      const response = await axios.get<OAuthCallbackResponse>(`${API_BASE_URL}/oauth-callback`, {
         params: { code }
       });
-      return response.data;
+      return {
+        access_token: response.data.access_token,
+        expires_in: response.data.expires_in
+      };
     } catch (error: any) {
       console.error('Erro ao trocar código por token:', error);
       throw new Error(error.response?.data?.error || 'Erro ao obter access token');
@@ -61,7 +64,7 @@ export class MetaAdsOAuthService {
    */
   async getAccountInfo(accessToken: string): Promise<MetaAdsAccountInfo[]> {
     try {
-      const response = await axios.get(`${API_BASE_URL}/ad-accounts`, {
+      const response = await axios.get<{ ad_accounts: MetaAdsAccountInfo[] }>(`${API_BASE_URL}/ad-accounts`, {
         headers: {
           'Authorization': `Bearer ${accessToken}`
         }
@@ -78,12 +81,16 @@ export class MetaAdsOAuthService {
    */
   async validateToken(accessToken: string): Promise<{ valid: boolean; user?: any; error?: string }> {
     try {
-      const response = await axios.get(`${API_BASE_URL}/test-token`, {
+      const response = await axios.get<{ valid: boolean; user?: any; error?: string }>(`${API_BASE_URL}/test-token`, {
         headers: {
           'Authorization': `Bearer ${accessToken}`
         }
       });
-      return response.data;
+      return {
+        valid: response.data.valid || false,
+        user: response.data.user,
+        error: response.data.error
+      };
     } catch (error: any) {
       console.error('Erro ao validar token:', error);
       return {
@@ -120,33 +127,30 @@ export class MetaAdsOAuthService {
 
         // Monitorar localStorage para resultado do OAuth
         const checkResult = setInterval(() => {
-          // Verificar se popup foi fechado
-          if (popup.closed) {
+          // Verificar se há resultado no localStorage
+          const resultStr = localStorage.getItem('meta_ads_oauth_result');
+          if (resultStr) {
             clearInterval(checkResult);
-            
-            // Verificar se há resultado no localStorage
-            const resultStr = localStorage.getItem('meta_ads_oauth_result');
-            if (resultStr) {
-              try {
-                const result = JSON.parse(resultStr);
-                console.log('Resultado OAuth recebido via localStorage:', result);
-                
-                // Limpar localStorage
-                localStorage.removeItem('meta_ads_oauth_result');
-                
-                if (result.type === 'META_ADS_OAUTH_SUCCESS') {
-                  resolve(result.accessToken);
-                } else if (result.type === 'META_ADS_OAUTH_ERROR') {
-                  reject(new Error(result.error || 'Erro na autenticação'));
-                } else {
-                  reject(new Error('Resultado OAuth inválido'));
-                }
-              } catch (e) {
-                reject(new Error('Erro ao processar resultado OAuth'));
+            try {
+              const result = JSON.parse(resultStr);
+              console.log('Resultado OAuth recebido via localStorage:', result);
+              
+              // Limpar localStorage
+              localStorage.removeItem('meta_ads_oauth_result');
+              
+              if (result.type === 'META_ADS_OAUTH_SUCCESS') {
+                resolve(result.accessToken);
+              } else if (result.type === 'META_ADS_OAUTH_ERROR') {
+                reject(new Error(result.error || 'Erro na autenticação'));
+              } else {
+                reject(new Error('Resultado OAuth inválido'));
               }
-            } else {
-              reject(new Error('Autenticação cancelada pelo usuário'));
+            } catch (e) {
+              reject(new Error('Erro ao processar resultado OAuth'));
             }
+          } else if (popup.closed) { // Só rejeita se o popup fechar E não houver resultado
+            clearInterval(checkResult);
+            reject(new Error('Autenticação cancelada pelo usuário'));
           }
         }, 1000);
 
@@ -194,3 +198,6 @@ export const metaAdsOAuthService = new MetaAdsOAuthService();
 export const useMetaAdsOAuth = () => {
   return metaAdsOAuthService;
 };
+
+
+

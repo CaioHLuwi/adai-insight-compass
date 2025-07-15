@@ -89,11 +89,15 @@ export class MetaAdsService {
    */
   async testToken(): Promise<{ valid: boolean; user?: MetaAdsUser; error?: string }> {
     try {
-      const response = await axios.get(`${API_BASE_URL}/test-token`, {
+      const response = await axios.get<{ valid: boolean; user?: MetaAdsUser; error?: string }>(`${API_BASE_URL}/test-token`, {
         headers: this.getAuthHeaders()
       });
       
-      return response.data;
+      return {
+        valid: response.data.valid || false,
+        user: response.data.user,
+        error: response.data.error
+      };
     } catch (error: any) {
       console.error('Erro ao testar token:', error);
       return {
@@ -108,7 +112,7 @@ export class MetaAdsService {
    */
   async getAdAccounts(): Promise<MetaAdsAccount[]> {
     try {
-      const response = await axios.get(`${API_BASE_URL}/ad-accounts`, {
+      const response = await axios.get<{ ad_accounts: MetaAdsAccount[] }>(`${API_BASE_URL}/ad-accounts`, {
         headers: this.getAuthHeaders()
       });
       
@@ -124,7 +128,7 @@ export class MetaAdsService {
    */
   async getCampaigns(adAccountId: string): Promise<MetaAdsCampaign[]> {
     try {
-      const response = await axios.get(`${API_BASE_URL}/campaigns`, {
+      const response = await axios.get<{ campaigns: MetaAdsCampaign[] }>(`${API_BASE_URL}/campaigns`, {
         headers: this.getAuthHeaders(),
         params: { ad_account_id: adAccountId }
       });
@@ -154,7 +158,7 @@ export class MetaAdsService {
         params.campaign_ids = campaignIds.join(',');
       }
       
-      const response = await axios.get(`${API_BASE_URL}/campaigns/insights`, {
+      const response = await axios.get<{ insights: any[] }>(`${API_BASE_URL}/campaigns/insights`, {
         headers: this.getAuthHeaders(),
         params
       });
@@ -174,7 +178,7 @@ export class MetaAdsService {
     datePreset: string = 'last_30_days'
   ): Promise<MetaAdsCampaign[]> {
     try {
-      const response = await axios.get(`${API_BASE_URL}/campaigns/combined`, {
+      const response = await axios.get<{ campaigns: MetaAdsCampaign[] }>(`${API_BASE_URL}/campaigns/combined`, {
         headers: this.getAuthHeaders(),
         params: {
           ad_account_id: adAccountId,

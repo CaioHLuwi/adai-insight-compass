@@ -3,6 +3,7 @@ import { LucideIcon } from "lucide-react"
 import {
   SidebarGroup,
   SidebarGroupContent,
+  SidebarGroupLabel,
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
@@ -10,6 +11,7 @@ import {
 
 export function NavSecondary({
   items,
+  title,
   ...props
 }: {
   items: {
@@ -17,9 +19,11 @@ export function NavSecondary({
     url: string
     icon: LucideIcon
   }[]
+  title?: string
 } & React.ComponentPropsWithoutRef<typeof SidebarGroup>) {
   return (
     <SidebarGroup {...props}>
+      {title && <SidebarGroupLabel>{title}</SidebarGroupLabel>}
       <SidebarGroupContent>
         <SidebarMenu>
           {items.map((item) => (

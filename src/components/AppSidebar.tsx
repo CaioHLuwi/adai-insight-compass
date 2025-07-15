@@ -20,7 +20,8 @@ import {
   Trophy,
   Settings,
   Crown,
-  Calculator
+  Calculator,
+  Wrench
 } from "lucide-react"
 import { useLocation } from "react-router-dom"
 import { useState, useEffect } from "react"
@@ -145,7 +146,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
       },
       inProgress: {
         en: 'In Progress',
-        pt: 'Em Progresso',
+        pt: 'Progresso',
         es: 'En Progreso',
         ru: 'В процессе',
         de: 'In Bearbeitung'
@@ -163,6 +164,34 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
         es: 'Tasas',
         ru: 'Ставки',
         de: 'Tarife'
+      },
+      community: {
+        en: 'Community',
+        pt: 'Comunidade',
+        es: 'Comunidad',
+        ru: 'Сообщество',
+        de: 'Gemeinschaft'
+      },
+      networking: {
+        en: 'Networking',
+        pt: 'Networking',
+        es: 'Networking',
+        ru: 'Нетворкинг',
+        de: 'Networking'
+      },
+      tools: {
+        en: 'Tools',
+        pt: 'Ferramentas',
+        es: 'Herramientas',
+        ru: 'Инструменты',
+        de: 'Werkzeuge'
+      },
+      hashChanger: {
+        en: 'Hash Changer',
+        pt: 'Hash Changer',
+        es: 'Hash Changer',
+        ru: 'Смена хэша',
+        de: 'Hash Changer'
       }
     };
 
@@ -236,6 +265,22 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
         isActive: location.pathname === "/notifications",
       },
     ],
+    navNetworking: [
+      {
+        title: translations.community[language] || translations.community.en,
+        url: "/comunidade",
+        icon: Users,
+        isActive: location.pathname === "/comunidade",
+      },
+    ],
+    navTools: [
+      {
+        title: translations.hashChanger[language] || translations.hashChanger.en,
+        url: "/ferramentas",
+        icon: Wrench,
+        isActive: location.pathname === "/ferramentas",
+      },
+    ],
     navSecondary: [
       {
         title: translations.settings[language] || translations.settings.en,
@@ -283,6 +328,8 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
       <SidebarContent>
         <NavMain items={data.navMain} />
         <NavProjects projects={data.projects} progressItems={data.progressItems} />
+        <NavSecondary items={data.navNetworking} title={translations.networking[language] || translations.networking.en} />
+        <NavSecondary items={data.navTools} title={translations.tools[language] || translations.tools.en} />
         <NavSecondary items={data.navSecondary} className="mt-auto" />
       </SidebarContent>
       <SidebarFooter>
