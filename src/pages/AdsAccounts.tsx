@@ -371,9 +371,9 @@ const AdsAccountsUpdated = () => {
               <DialogTrigger asChild>
                 <Button 
                   className="bg-gradient-to-r from-blue-500 to-blue-600 text-white hover:from-blue-600 hover:to-blue-700"
-                  disabled={isConnecting}
+                  disabled={isMetaConnecting}
                 >
-                  {isConnecting ? (
+                  {isMetaConnecting ? (
                     <>
                       <Loader2 className="w-4 h-4 mr-2 animate-spin" />
                       {t.connecting}
@@ -405,9 +405,9 @@ const AdsAccountsUpdated = () => {
                   <Button 
                     onClick={handleMetaConnect} 
                     className="w-full bg-gradient-to-r from-blue-500 to-blue-600 text-white"
-                    disabled={isConnecting}
+                    disabled={isMetaConnecting}
                   >
-                    {isConnecting ? (
+                    {isMetaConnecting ? (
                       <>
                         <Loader2 className="w-4 h-4 mr-2 animate-spin" />
                         {t.connecting}
@@ -417,11 +417,11 @@ const AdsAccountsUpdated = () => {
                     )}
                   </Button>
 
-                  {connectionError && (
+                  {metaConnectionError && (
                     <Alert className="bg-red-500/10 border-red-500/20">
                       <XCircle className="w-4 h-4 text-red-400" />
                       <AlertDescription className="text-red-300">
-                        {connectionError}
+                        {metaConnectionError}
                       </AlertDescription>
                     </Alert>
                   )}
@@ -461,7 +461,7 @@ const AdsAccountsUpdated = () => {
                       variant="outline"
                       size="sm"
                       className="border-blue-500/50 hover:bg-blue-500/10 text-blue-400"
-                      onClick={() => handleEditAccount(account.id, 'meta')}
+                      // onClick={() => handleEditAccount(account.id, 'meta')}
                     >
                       <Settings className="w-4 h-4" />
                     </Button>
@@ -469,7 +469,7 @@ const AdsAccountsUpdated = () => {
                       variant="outline"
                       size="sm"
                       className="border-red-500/50 hover:bg-red-500/10 text-red-400"
-                      onClick={() => handleDeleteAccount(account.id, 'meta')}
+                      // onClick={() => handleDeleteAccount(account.id, 'meta')}
                     >
                       <Trash2 className="w-4 h-4" />
                     </Button>
