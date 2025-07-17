@@ -357,11 +357,156 @@ const AdsAccountsUpdated = () => {
         </CardContent>
       </Card>
 
-      {/* Meta Ads continua igual */}
-      {/* ... mesmíssima seção Meta do seu código anterior ... */}
+           {/* Meta Ads Section */}
+      <Card className="bg-gradient-to-r from-blue-800/30 to-blue-900/30 border-blue-500/20">
+        <CardHeader>
+          <div className="flex items-center justify-between">
+            <CardTitle className="flex items-center gap-3 text-white">
+              <div className="w-8 h-8 bg-gradient-to-r from-blue-500 to-blue-600 rounded-lg flex items-center justify-center">
+                <span className="text-xs font-bold text-white">f</span>
+              </div>
+              Meta Ads
+            </CardTitle>
+            <Dialog open={showMetaDialog} onOpenChange={setShowMetaDialog}>
+              <DialogTrigger asChild>
+                <Button 
+                  className="bg-gradient-to-r from-blue-500 to-blue-600 text-white hover:from-blue-600 hover:to-blue-700"
+                  disabled={isConnecting}
+                >
+                  {isConnecting ? (
+                    <>
+                      <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                      {t.connecting}
+                    </>
+                  ) : (
+                    <>
+                      <Plus className="w-4 h-4 mr-2" />
+                      {t.addAccount}
+                    </>
+                  )}
+                </Button>
+              </DialogTrigger>
+              <DialogContent className="bg-gray-800 border-blue-500/20">
+                <DialogHeader>
+                  <DialogTitle className="text-white">
+                    {t.addMetaAccount}
+                  </DialogTitle>
+                </DialogHeader>
+                <div className="space-y-4">
+                  <Alert className="bg-blue-500/10 border-blue-500/20">
+                    <AlertDescription className="text-blue-300">
+                      {language === 'pt' 
+                        ? 'Clique em "Conectar conta" para ser redirecionado ao Facebook e autorizar o acesso às suas contas de anúncio.'
+                        : 'Click "Connect Account" to be redirected to Facebook and authorize access to your ad accounts.'
+                      }
+                    </AlertDescription>
+                  </Alert>
+                  
+                  <Button 
+                    onClick={handleMetaConnect} 
+                    className="w-full bg-gradient-to-r from-blue-500 to-blue-600 text-white"
+                    disabled={isConnecting}
+                  >
+                    {isConnecting ? (
+                      <>
+                        <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                        {t.connecting}
+                      </>
+                    ) : (
+                      t.connectAccount
+                    )}
+                  </Button>
 
+                  {connectionError && (
+                    <Alert className="bg-red-500/10 border-red-500/20">
+                      <XCircle className="w-4 h-4 text-red-400" />
+                      <AlertDescription className="text-red-300">
+                        {connectionError}
+                      </AlertDescription>
+                    </Alert>
+                  )}
+                </div>
+              </DialogContent>
+            </Dialog>
+          </div>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          {metaAccounts.length === 0 ? (
+            <div className="text-center py-8 text-gray-400">
+              {language === 'pt' 
+                ? 'Nenhuma conta Meta Ads conectada. Clique em "Adicionar Conta" para começar.'
+                : 'No Meta Ads accounts connected. Click "Add Account" to get started.'
+              }
+            </div>
+          ) : (
+            metaAccounts.map((account) => (
+              <div key={account.id} className="bg-gray-700/30 rounded-lg p-4 border border-gray-600">
+                <div className="flex items-center justify-between mb-3">
+                  <div className="flex items-center space-x-3">
+                    <h3 className="font-semibold text-white">{account.name}</h3>
+                    <Badge variant={account.status === 'active' ? 'default' : 'secondary'}>
+                      {account.status === 'active' ? t.active : t.inactive}
+                    </Badge>
+                  </div>
+                  <div className="flex space-x-2">
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      className="border-green-500/50 hover:bg-green-500/10 text-green-400"
+                      onClick={() => handleSyncCampaigns(account)}
+                    >
+                      {t.syncCampaigns}
+                    </Button>
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      className="border-blue-500/50 hover:bg-blue-500/10 text-blue-400"
+                      onClick={() => handleEditAccount(account.id, 'meta')}
+                    >
+                      <Settings className="w-4 h-4" />
+                    </Button>
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      className="border-red-500/50 hover:bg-red-500/10 text-red-400"
+                      onClick={() => handleDeleteAccount(account.id, 'meta')}
+                    >
+                      <Trash2 className="w-4 h-4" />
+                    </Button>
+                  </div>
+                </div>
+                <p className="text-gray-300 text-sm mb-2">Account ID: {account.accountId}</p>
+                {account.connectedAt && (
+                  <p className="text-gray-400 text-xs mb-3">
+                    {t.connectedAt}: {new Date(account.connectedAt).toLocaleString()}
+                  </p>
+                )}
+                
+                {/* Sub Accounts */}
+                {account.subAccounts.length > 0 && (
+                  <div className="space-y-2">
+                    <h4 className="text-sm font-medium text-gray-300">{t.subAccounts}:</h4>
+                    {account.subAccounts.map((subAccount) => (
+                      <div key={subAccount.id} className="flex items-center justify-between bg-gray-600/30 rounded p-2">
+                        <div>
+                          <span className="text-white text-sm">{subAccount.name}</span>
+                          <span className="text-gray-400 text-xs ml-2">({subAccount.accountId})</span>
+                        </div>
+                        <Badge variant={subAccount.status === 'active' ? 'default' : 'secondary'} className="text-xs">
+                          {subAccount.status === 'active' ? t.active : t.inactive}
+                        </Badge>
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </div>
+            ))
+          )}
+        </CardContent>
+      </Card>
     </div>
   );
 };
 
 export default AdsAccountsUpdated;
+
