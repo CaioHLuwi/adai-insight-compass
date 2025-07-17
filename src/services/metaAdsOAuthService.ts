@@ -2,7 +2,7 @@ import axios from 'axios';
 
 // Configuração base da API
 const API_BASE_URL = process.env.NODE_ENV === 'production' 
-  ? 'https://otmizy-meta-ads.vercel.app/oauth_meta' // Em produção, usar URL da Vercel
+  ? 'https://backend.otmizy.com/oauth_meta' // Em produção, usar URL da Vercel
   : 'http://localhost:5000/api/meta-ads'; // Em desenvolvimento, usar URL completa
 
 // Tipos TypeScript para as respostas da API OAuth
