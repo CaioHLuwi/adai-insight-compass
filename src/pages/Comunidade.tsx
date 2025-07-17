@@ -488,6 +488,9 @@ export default function Comunidade() {
                     <div className="flex-1">
                       <div className="flex items-center space-x-2 mb-1">
                         <h4 className="font-medium">{post.users.name}</h4>
+                        {post.users.department && (
+                          <Badge variant="secondary">{post.users.department}</Badge>
+                        )}
                       </div>
                       <p className="text-sm text-muted-foreground">
                         {formatDate(post.created_at)}

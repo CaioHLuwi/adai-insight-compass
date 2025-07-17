@@ -10,7 +10,6 @@ import { Badge } from '@/components/ui/badge';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { useMetaAdsOAuth, MetaAdsAccountInfo } from '../services/metaAdsOAuthService';
 import { useMetaAdsCampaigns } from '../hooks/useMetaAdsCampaigns';
-import { useGoogleAdsOAuth, GoogleAdsAccountInfo } from '../services/google_ads_oauth_service'; // novo hook
 
 interface GoogleAdsAccount {
   id: string;
@@ -19,14 +18,6 @@ interface GoogleAdsAccount {
   status: 'active' | 'inactive';
   type: 'google';
   subAccounts: GoogleAdsSubAccount[];
-  connectedAt?: string;
-}
-
-interface GoogleAdsSubAccount {
-  id: string;
-  name: string;
-  customerId: string;
-  status: 'active' | 'inactive';
 }
 
 interface MetaAdsAccount {
@@ -40,6 +31,13 @@ interface MetaAdsAccount {
   connectedAt?: string;
 }
 
+interface GoogleAdsSubAccount {
+  id: string;
+  name: string;
+  customerId: string;
+  status: 'active' | 'inactive';
+}
+
 interface MetaAdsSubAccount {
   id: string;
   name: string;
@@ -49,131 +47,138 @@ interface MetaAdsSubAccount {
 
 const AdsAccountsUpdated = () => {
   const { language } = useLanguage();
-  
-  // diálogo Google
   const [showGoogleDialog, setShowGoogleDialog] = useState(false);
-  const [isGoogleConnecting, setIsGoogleConnecting] = useState(false);
-  const [googleConnectionError, setGoogleConnectionError] = useState<string | null>(null);
-  const [googleConnectionSuccess, setGoogleConnectionSuccess] = useState<string | null>(null);
-
-  // diálogo Meta
   const [showMetaDialog, setShowMetaDialog] = useState(false);
-  const [isMetaConnecting, setIsMetaConnecting] = useState(false);
-  const [metaConnectionError, setMetaConnectionError] = useState<string | null>(null);
-  const [metaConnectionSuccess, setMetaConnectionSuccess] = useState<string | null>(null);
-
   const [editingAccount, setEditingAccount] = useState<string | null>(null);
+  const [isConnecting, setIsConnecting] = useState(false);
+  const [connectionError, setConnectionError] = useState<string | null>(null);
+  const [connectionSuccess, setConnectionSuccess] = useState<string | null>(null);
 
-  // serviços OAuth
-  const googleOAuthService = useGoogleAdsOAuth();
-  const metaOAuthService   = useMetaAdsOAuth();
-
-  // hook de campanhas (só usado no Meta neste exemplo)
+  const metaOAuthService = useMetaAdsOAuth();
   const { setAccessToken, fetchCampaigns } = useMetaAdsCampaigns();
 
-  const [googleAccounts, setGoogleAccounts] = useState<GoogleAdsAccount[]>([]);
-  const [metaAccounts, setMetaAccounts]     = useState<MetaAdsAccount[]>([]);
+  const [googleAccounts, setGoogleAccounts] = useState<GoogleAdsAccount[]>([
+    {
+      id: '1',
+      name: 'Conta Principal Google',
+      customerId: '123-456-7890',
+      status: 'active',
+      type: 'google',
+      subAccounts: [
+        { id: '1', name: 'Subconta 1', customerId: '111-222-3333', status: 'active' },
+        { id: '2', name: 'Subconta 2', customerId: '444-555-6666', status: 'inactive' }
+      ]
+    }
+  ]);
 
-  // carrega Meta do localStorage
+  const [metaAccounts, setMetaAccounts] = useState<MetaAdsAccount[]>([]);
+
+  // Carregar contas do Meta Ads do localStorage na inicialização
   useEffect(() => {
-    const saved = localStorage.getItem('metaAdsAccounts');
-    if (saved) setMetaAccounts(JSON.parse(saved));
+    const savedAccounts = localStorage.getItem('metaAdsAccounts');
+    if (savedAccounts) {
+      try {
+        const accounts = JSON.parse(savedAccounts);
+        setMetaAccounts(accounts);
+      } catch (error) {
+        console.error('Erro ao carregar contas salvas:', error);
+      }
+    }
   }, []);
+
+  // Salvar contas do Meta Ads no localStorage sempre que mudarem
   useEffect(() => {
-    localStorage.setItem('metaAdsAccounts', JSON.stringify(metaAccounts));
+    if (metaAccounts.length > 0) {
+      localStorage.setItem('metaAdsAccounts', JSON.stringify(metaAccounts));
+    }
   }, [metaAccounts]);
 
-  // --- Google OAuth Handler ---
-  const handleGoogleConnect = async () => {
-    setIsGoogleConnecting(true);
-    setGoogleConnectionError(null);
-    setGoogleConnectionSuccess(null);
-
-    try {
-      const { accessToken, accounts } = await googleOAuthService.completeOAuthFlow();
-      const newGoogle: GoogleAdsAccount[] = accounts.map((acc: GoogleAdsAccountInfo, idx: number) => ({
-        id: `google-${Date.now()}-${idx}`,
-        name: acc.name,
-        customerId: acc.customerId,
-        status: acc.status,
-        type: 'google',
-        subAccounts: acc.subAccounts.map(sa => ({
-          id: sa.id,
-          name: sa.name,
-          customerId: sa.customerId,
-          status: sa.status
-        })),
-        connectedAt: new Date().toISOString()
-      }));
-      setGoogleAccounts(prev => [...prev, ...newGoogle]);
-
-      setGoogleConnectionSuccess(
-        language === 'pt'
-          ? `${newGoogle.length} conta(s) Google Ads conectada(s) com sucesso!`
-          : `${newGoogle.length} Google Ads account(s) connected!`
-      );
-      setShowGoogleDialog(false);
-    } catch (err: any) {
-      setGoogleConnectionError(err.message || 'Erro ao conectar com Google Ads');
-    } finally {
-      setIsGoogleConnecting(false);
-    }
+  const handleGoogleConnect = () => {
+    console.log('Connecting to Google Ads...');
+    // Google OAuth integration would go here
   };
 
-  // --- Meta OAuth Handler (já existente, só renomeado pra evitar ambiguidade) ---
   const handleMetaConnect = async () => {
-    setIsMetaConnecting(true);
-    setMetaConnectionError(null);
-    setMetaConnectionSuccess(null);
+    setIsConnecting(true);
+    setConnectionError(null);
+    setConnectionSuccess(null);
 
     try {
+      // Executar fluxo OAuth completo
       const { accessToken, accounts } = await metaOAuthService.completeOAuthFlow();
-      const newMeta: MetaAdsAccount[] = accounts.map((acc: MetaAdsAccountInfo, idx: number) => ({
-        id: `meta-${Date.now()}-${idx}`,
-        name: acc.name,
-        accountId: acc.id,
-        status: acc.account_status === 'ACTIVE' ? 'active' : 'inactive',
+      
+      // Processar contas retornadas
+      const newMetaAccounts: MetaAdsAccount[] = accounts.map((account, index) => ({
+        id: `meta-${Date.now()}-${index}`,
+        name: account.name,
+        accountId: account.id,
+        status: account.account_status === 'ACTIVE' ? 'active' : 'inactive',
         type: 'meta',
-        accessToken,
-        subAccounts: [],
+        accessToken: accessToken,
+        subAccounts: [], // Por enquanto, não estamos lidando com subcontas
         connectedAt: new Date().toISOString()
       }));
-      setMetaAccounts(prev => [...prev, ...newMeta]);
-      if (newMeta.length) setAccessToken(accessToken);
 
-      setMetaConnectionSuccess(
-        language === 'pt'
-          ? `${newMeta.length} conta(s) Meta Ads conectada(s) com sucesso!`
-          : `${newMeta.length} account(s) connected!`
+      // Adicionar novas contas à lista existente
+      setMetaAccounts(prev => [...prev, ...newMetaAccounts]);
+      
+      // Configurar token no serviço de campanhas
+      if (newMetaAccounts.length > 0) {
+        setAccessToken(accessToken);
+      }
+
+      setConnectionSuccess(
+        language === 'pt' 
+          ? `${newMetaAccounts.length} conta(s) conectada(s) com sucesso!`
+          : `${newMetaAccounts.length} account(s) connected successfully!`
       );
+      
       setShowMetaDialog(false);
-    } catch (err: any) {
-      setMetaConnectionError(err.message || 'Erro ao conectar com Meta Ads');
+
+    } catch (error: any) {
+      console.error('Erro ao conectar Meta Ads:', error);
+      setConnectionError(error.message || 'Erro ao conectar com Meta Ads');
     } finally {
-      setIsMetaConnecting(false);
+      setIsConnecting(false);
     }
   };
 
-  // sincroniza campanhas Meta
+  const handleEditAccount = (accountId: string, type: 'google' | 'meta') => {
+    setEditingAccount(`${type}-${accountId}`);
+    if (type === 'google') {
+      setShowGoogleDialog(true);
+    } else {
+      setShowMetaDialog(true);
+    }
+  };
+
+  const handleDeleteAccount = (accountId: string, type: 'google' | 'meta') => {
+    if (type === 'google') {
+      setGoogleAccounts(prev => prev.filter(acc => acc.id !== accountId));
+    } else {
+      setMetaAccounts(prev => prev.filter(acc => acc.id !== accountId));
+    }
+  };
+
   const handleSyncCampaigns = async (account: MetaAdsAccount) => {
     if (!account.accessToken) {
-      setMetaConnectionError('Token de acesso não encontrado');
+      setConnectionError('Token de acesso não encontrado para esta conta');
       return;
     }
+
     try {
       setAccessToken(account.accessToken);
       await fetchCampaigns(account.accountId);
-      setMetaConnectionSuccess(
+      setConnectionSuccess(
         language === 'pt'
           ? 'Campanhas sincronizadas com sucesso!'
-          : 'Campaigns synced!'
+          : 'Campaigns synced successfully!'
       );
-    } catch (err: any) {
-      setMetaConnectionError(err.message || 'Erro ao sincronizar campanhas');
+    } catch (error: any) {
+      setConnectionError(error.message || 'Erro ao sincronizar campanhas');
     }
   };
 
-  // textos internacionalizados
   const texts = {
     pt: {
       title: 'Contas de ADS',
@@ -204,6 +209,7 @@ const AdsAccountsUpdated = () => {
       connectedAt: 'Connected at'
     }
   };
+
   const t = texts[language];
 
   return (
@@ -212,20 +218,21 @@ const AdsAccountsUpdated = () => {
         {t.title}
       </h1>
 
-      {/* Google – alertas */}
-      {googleConnectionSuccess && (
+      {/* Alertas de sucesso/erro */}
+      {connectionSuccess && (
         <Alert className="bg-green-500/10 border-green-500/20">
           <CheckCircle className="w-4 h-4 text-green-400" />
           <AlertDescription className="text-green-300">
-            {googleConnectionSuccess}
+            {connectionSuccess}
           </AlertDescription>
         </Alert>
       )}
-      {googleConnectionError && (
+
+      {connectionError && (
         <Alert className="bg-red-500/10 border-red-500/20">
           <XCircle className="w-4 h-4 text-red-400" />
           <AlertDescription className="text-red-300">
-            {googleConnectionError}
+            {connectionError}
           </AlertDescription>
         </Alert>
       )}
@@ -254,28 +261,16 @@ const AdsAccountsUpdated = () => {
                   </DialogTitle>
                 </DialogHeader>
                 <div className="space-y-4">
-                  <Alert className="bg-blue-500/10 border-blue-500/20">
-                    <AlertDescription className="text-blue-300">
-                      {language === 'pt'
-                        ? 'Clique em "Conectar conta" para ser redirecionado ao Google e autorizar o acesso às suas contas de anúncio.'
-                        : 'Click "Connect Account" to be redirected to Google and authorize access to your ad accounts.'
-                      }
-                    </AlertDescription>
-                  </Alert>
-
-                  <Button
-                    onClick={handleGoogleConnect}
-                    className="w-full bg-gradient-to-r from-yellow-400 to-yellow-600 text-gray-900"
-                    disabled={isGoogleConnecting}
-                  >
-                    {isGoogleConnecting ? (
-                      <>
-                        <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                        {t.connecting}
-                      </>
-                    ) : (
-                      t.connectAccount
-                    )}
+                  <div>
+                    <Label className="text-white">{t.accountName}</Label>
+                    <Input className="bg-gray-700 border-yellow-500/20 text-white" />
+                  </div>
+                  <div>
+                    <Label className="text-white">Customer ID</Label>
+                    <Input className="bg-gray-700 border-yellow-500/20 text-white" placeholder="123-456-7890" />
+                  </div>
+                  <Button onClick={handleGoogleConnect} className="w-full bg-gradient-to-r from-yellow-400 to-yellow-600 text-gray-900">
+                    {t.connectAccount}
                   </Button>
                 </div>
               </DialogContent>
@@ -283,81 +278,57 @@ const AdsAccountsUpdated = () => {
           </div>
         </CardHeader>
         <CardContent className="space-y-4">
-          {googleAccounts.length === 0 ? (
-            <div className="text-center py-8 text-gray-400">
-              {language === 'pt'
-                ? 'Nenhuma conta Google Ads conectada. Clique em "Adicionar Conta" para começar.'
-                : 'No Google Ads accounts connected. Click "Add Account" to get started.'
-              }
-            </div>
-          ) : (
-            googleAccounts.map(acc => (
-              <div key={acc.id} className="bg-gray-700/30 rounded-lg p-4 border border-gray-600">
-                <div className="flex items-center justify-between mb-3">
-                  <div className="flex items-center space-x-3">
-                    <h3 className="font-semibold text-white">{acc.name}</h3>
-                    <Badge variant={acc.status === 'active' ? 'default' : 'secondary'}>
-                      {acc.status === 'active' ? t.active : t.inactive}
+          {googleAccounts.map((account) => (
+            <div key={account.id} className="bg-gray-700/30 rounded-lg p-4 border border-gray-600">
+              <div className="flex items-center justify-between mb-3">
+                <div className="flex items-center space-x-3">
+                  <h3 className="font-semibold text-white">{account.name}</h3>
+                  <Badge variant={account.status === 'active' ? 'default' : 'secondary'}>
+                    {account.status === 'active' ? t.active : t.inactive}
+                  </Badge>
+                </div>
+                <div className="flex space-x-2">
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    className="border-yellow-500/50 hover:bg-yellow-500/10 text-yellow-400"
+                    onClick={() => handleEditAccount(account.id, 'google')}
+                  >
+                    <Settings className="w-4 h-4" />
+                  </Button>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    className="border-red-500/50 hover:bg-red-500/10 text-red-400"
+                    onClick={() => handleDeleteAccount(account.id, 'google')}
+                  >
+                    <Trash2 className="w-4 h-4" />
+                  </Button>
+                </div>
+              </div>
+              <p className="text-gray-300 text-sm mb-3">Customer ID: {account.customerId}</p>
+              
+              {/* Sub Accounts */}
+              <div className="space-y-2">
+                <h4 className="text-sm font-medium text-gray-300">{t.subAccounts}:</h4>
+                {account.subAccounts.map((subAccount) => (
+                  <div key={subAccount.id} className="flex items-center justify-between bg-gray-600/30 rounded p-2">
+                    <div>
+                      <span className="text-white text-sm">{subAccount.name}</span>
+                      <span className="text-gray-400 text-xs ml-2">({subAccount.customerId})</span>
+                    </div>
+                    <Badge variant={subAccount.status === 'active' ? 'default' : 'secondary'} className="text-xs">
+                      {subAccount.status === 'active' ? t.active : t.inactive}
                     </Badge>
                   </div>
-                  <div className="flex space-x-2">
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      className="border-green-500/50 hover:bg-green-500/10 text-green-400"
-                      onClick={() => {/* aqui vc pode chamar sync campanhas Google */}}
-                    >
-                      {t.syncCampaigns}
-                    </Button>
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      className="border-yellow-500/50 hover:bg-yellow-500/10 text-yellow-400"
-                      onClick={() => {/* abrir edição se precisar */}}
-                    >
-                      <Settings className="w-4 h-4" />
-                    </Button>
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      className="border-red-500/50 hover:bg-red-500/10 text-red-400"
-                      onClick={() => setGoogleAccounts(prev => prev.filter(a => a.id !== acc.id))}
-                    >
-                      <Trash2 className="w-4 h-4" />
-                    </Button>
-                  </div>
-                </div>
-                <p className="text-gray-300 text-sm mb-2">Customer ID: {acc.customerId}</p>
-                {acc.connectedAt && (
-                  <p className="text-gray-400 text-xs">
-                    {t.connectedAt}: {new Date(acc.connectedAt).toLocaleString()}
-                  </p>
-                )}
-
-                {/* sub‑contas */}
-                {acc.subAccounts.length > 0 && (
-                  <div className="mt-2 space-y-2">
-                    <h4 className="text-sm font-medium text-gray-300">{t.subAccounts}:</h4>
-                    {acc.subAccounts.map(sa => (
-                      <div key={sa.id} className="flex items-center justify-between bg-gray-600/30 rounded p-2">
-                        <div>
-                          <span className="text-white text-sm">{sa.name}</span>
-                          <span className="text-gray-400 text-xs ml-2">({sa.customerId})</span>
-                        </div>
-                        <Badge variant={sa.status === 'active' ? 'default' : 'secondary'} className="text-xs">
-                          {sa.status === 'active' ? t.active : t.inactive}
-                        </Badge>
-                      </div>
-                    ))}
-                  </div>
-                )}
+                ))}
               </div>
-            ))
-          )}
+            </div>
+          ))}
         </CardContent>
       </Card>
 
-           {/* Meta Ads Section */}
+      {/* Meta Ads Section */}
       <Card className="bg-gradient-to-r from-blue-800/30 to-blue-900/30 border-blue-500/20">
         <CardHeader>
           <div className="flex items-center justify-between">
@@ -371,9 +342,9 @@ const AdsAccountsUpdated = () => {
               <DialogTrigger asChild>
                 <Button 
                   className="bg-gradient-to-r from-blue-500 to-blue-600 text-white hover:from-blue-600 hover:to-blue-700"
-                  disabled={isMetaConnecting}
+                  disabled={isConnecting}
                 >
-                  {isMetaConnecting ? (
+                  {isConnecting ? (
                     <>
                       <Loader2 className="w-4 h-4 mr-2 animate-spin" />
                       {t.connecting}
@@ -405,9 +376,9 @@ const AdsAccountsUpdated = () => {
                   <Button 
                     onClick={handleMetaConnect} 
                     className="w-full bg-gradient-to-r from-blue-500 to-blue-600 text-white"
-                    disabled={isMetaConnecting}
+                    disabled={isConnecting}
                   >
-                    {isMetaConnecting ? (
+                    {isConnecting ? (
                       <>
                         <Loader2 className="w-4 h-4 mr-2 animate-spin" />
                         {t.connecting}
@@ -417,11 +388,11 @@ const AdsAccountsUpdated = () => {
                     )}
                   </Button>
 
-                  {metaConnectionError && (
+                  {connectionError && (
                     <Alert className="bg-red-500/10 border-red-500/20">
                       <XCircle className="w-4 h-4 text-red-400" />
                       <AlertDescription className="text-red-300">
-                        {metaConnectionError}
+                        {connectionError}
                       </AlertDescription>
                     </Alert>
                   )}
@@ -461,7 +432,7 @@ const AdsAccountsUpdated = () => {
                       variant="outline"
                       size="sm"
                       className="border-blue-500/50 hover:bg-blue-500/10 text-blue-400"
-                      // onClick={() => handleEditAccount(account.id, 'meta')}
+                      onClick={() => handleEditAccount(account.id, 'meta')}
                     >
                       <Settings className="w-4 h-4" />
                     </Button>
@@ -469,7 +440,7 @@ const AdsAccountsUpdated = () => {
                       variant="outline"
                       size="sm"
                       className="border-red-500/50 hover:bg-red-500/10 text-red-400"
-                      // onClick={() => handleDeleteAccount(account.id, 'meta')}
+                      onClick={() => handleDeleteAccount(account.id, 'meta')}
                     >
                       <Trash2 className="w-4 h-4" />
                     </Button>
