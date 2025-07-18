@@ -13,6 +13,12 @@ export interface OAuthCallbackResponse {
   access_token: string;
   refresh_token?: string;
   expires_in?: number;
+  userInfo?: {
+    id: string;
+    email: string;
+    name: string;
+    picture?: string;
+  };
 }
 
 export interface GoogleAdsAccountInfo {
@@ -114,9 +120,20 @@ export class GoogleAdsOAuthService {
               localStorage.removeItem('google_ads_oauth_result');
               
               if (result.type === 'GOOGLE_ADS_OAUTH_SUCCESS') {
+                // Verificar se os dados estão na nova estrutura com 'data'
+                let accessToken, refreshToken;
+                if (result.data) {
+                  accessToken = result.data.access_token;
+                  refreshToken = result.data.refresh_token;
+                } else {
+                  // Fallback para estrutura antiga
+                  accessToken = result.accessToken;
+                  refreshToken = result.refreshToken;
+                }
+                
                 resolve({
-                  accessToken: result.accessToken,
-                  refreshToken: result.refreshToken
+                  accessToken,
+                  refreshToken
                 });
               } else if (result.type === 'GOOGLE_ADS_OAUTH_ERROR') {
                 reject(new Error(result.error || 'Erro na autenticação'));
@@ -154,12 +171,33 @@ export class GoogleAdsOAuthService {
   /**
    * Fluxo completo de OAuth: abre popup e obtém access token diretamente
    */
-  async completeOAuthFlow(): Promise<{ accessToken: string; refreshToken?: string }> {
+  async completeOAuthFlow(): Promise<{ accessToken: string; refreshToken?: string; userInfo?: any }> {
     try {
       // Abrir popup e obter tokens diretamente via localStorage
       const tokens = await this.openOAuthPopup();
       
-      return tokens;
+      // Tentar extrair informações do usuário do localStorage
+      let userInfo = null;
+      const oauthResultStr = localStorage.getItem('google_ads_oauth_result');
+      if (oauthResultStr) {
+        try {
+          const oauthResult = JSON.parse(oauthResultStr);
+          // Verificar se os dados estão na nova estrutura com 'data'
+          if (oauthResult.data) {
+            userInfo = oauthResult.data.userInfo;
+          } else {
+            // Fallback para estrutura antiga
+            userInfo = oauthResult.userInfo;
+          }
+        } catch (e) {
+          console.warn('Erro ao extrair userInfo do OAuth result:', e);
+        }
+      }
+      
+      return {
+        ...tokens,
+        userInfo
+      };
     } catch (error: any) {
       console.error('Erro no fluxo OAuth completo:', error);
       throw error;

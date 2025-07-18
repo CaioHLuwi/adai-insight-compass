@@ -51,16 +51,28 @@ export function useGoogleAdsOAuth() {
         if (!raw) {
           return reject(new Error('Resultado OAuth não encontrado no localStorage'));
         }
-        let result: OAuthResult;
+        let result: any;
         try {
-          result = JSON.parse(raw) as OAuthResult;
+          result = JSON.parse(raw);
         } catch {
           return reject(new Error('Formato inválido de OAuth result'));
         }
         if (result.type === 'GOOGLE_ADS_OAUTH_ERROR') {
           return reject(new Error(result.message || 'Erro no OAuth do Google'));
         }
-        const token = result.accessToken!;
+        
+        // Verificar se os dados estão na nova estrutura com 'data'
+        let token;
+        if (result.data) {
+          token = result.data.access_token;
+        } else {
+          // Fallback para estrutura antiga
+          token = result.accessToken;
+        }
+        
+        if (!token) {
+          return reject(new Error('Token de acesso não encontrado'));
+        }
 
         // 5) Busca contas via endpoint de campanhas (lista clientes acessíveis)
         fetch(`${API_BASE_URL}/api/google/campaigns`, {
