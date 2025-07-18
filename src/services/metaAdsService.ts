@@ -3,7 +3,7 @@ import axios from 'axios';
 // Configuração base da API
 const API_BASE_URL = process.env.NODE_ENV === 'production' 
   ? 'https://backend.otmizy.com' // Em produção, usar URL da Vercel
-  : 'https://backend.otmizy.com'; // Em desenvolvimento, usar URL completa
+  : ''; // Em desenvolvimento, usar proxy do Vite
 
 // Tipos TypeScript para as respostas da API
 export interface MetaAdsCampaign {

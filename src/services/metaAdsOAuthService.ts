@@ -1,9 +1,8 @@
 import axios from 'axios';
 
 // Configuração base da API
-const API_BASE_URL = process.env.NODE_ENV === 'production' 
-  ? 'https://backend.otmizy.com' // Em produção, usar URL da Vercel
-  : 'https://backend.otmizy.com'; // Em desenvolvimento, usar URL completa
+// OAuth sempre precisa usar o domínio real do backend
+const API_BASE_URL = 'https://backend.otmizy.com';
 
 // Tipos TypeScript para as respostas da API OAuth
 export interface OAuthInitiateResponse {
@@ -101,7 +100,7 @@ export class MetaAdsOAuthService {
   }
 
   /**
-   * Abre uma janela popup para o fluxo OAuth usando localStorage
+   * Abre uma janela popup para o fluxo OAuth usando postMessage
    * Retorna uma Promise que resolve com o access token diretamente
    */
   async openOAuthPopup(): Promise<string> {
@@ -125,15 +124,30 @@ export class MetaAdsOAuthService {
           return;
         }
 
-        // Monitorar localStorage para resultado do OAuth
-        const checkResult = setInterval(() => {
-          // Verificar se há resultado no localStorage
-          const resultStr = localStorage.getItem('meta_ads_oauth_result');
-          if (resultStr) {
-            clearInterval(checkResult);
+        let authCompleted = false;
+        let timeoutId: NodeJS.Timeout;
+
+        // Escutar mensagem de sucesso do popup
+        function handleMessage(event: MessageEvent) {
+          if (event.origin !== window.location.origin) return;
+          if (event.data !== 'meta_auth_success') return;
+          
+          authCompleted = true;
+          clearTimeout(timeoutId);
+          window.removeEventListener('message', handleMessage);
+
+          // Pequeno delay para garantir que o localStorage seja atualizado
+          setTimeout(() => {
+            // Ler resultado do localStorage após receber a mensagem
+            const resultStr = localStorage.getItem('meta_ads_oauth_result');
+            if (!resultStr) {
+              reject(new Error('Resultado OAuth não encontrado no localStorage'));
+              return;
+            }
+
             try {
               const result = JSON.parse(resultStr);
-              console.log('Resultado OAuth recebido via localStorage:', result);
+              console.log('Resultado OAuth recebido via postMessage:', result);
               
               // Limpar localStorage
               localStorage.removeItem('meta_ads_oauth_result');
@@ -148,19 +162,23 @@ export class MetaAdsOAuthService {
             } catch (e) {
               reject(new Error('Erro ao processar resultado OAuth'));
             }
-          } else if (popup.closed) { // Só rejeita se o popup fechar E não houver resultado
-            clearInterval(checkResult);
-            reject(new Error('Autenticação cancelada pelo usuário'));
-          }
-        }, 1000);
+          }, 100); // Delay de 100ms
+        }
 
-        // Timeout de segurança (5 minutos)
-        setTimeout(() => {
-          clearInterval(checkResult);
-          if (!popup.closed) {
-            popup.close();
+        // Adicionar listener para mensagens
+        window.addEventListener('message', handleMessage);
+
+        // Timeout de segurança (5 minutos) - removemos a verificação de popup.closed
+        timeoutId = setTimeout(() => {
+          if (!authCompleted) {
+            window.removeEventListener('message', handleMessage);
+            try {
+              popup.close();
+            } catch (e) {
+              // Ignorar erros ao fechar popup devido a políticas de segurança
+            }
+            reject(new Error('Timeout na autenticação'));
           }
-          reject(new Error('Timeout na autenticação'));
         }, 5 * 60 * 1000);
 
       } catch (error) {

@@ -119,7 +119,9 @@ const AdsAccountsUpdated = () => {
     setGoogleConnectionSuccess(null);
 
     try {
-      const { accessToken, accounts } = await googleOAuthService.completeOAuthFlow();
+      const result = await googleOAuthService.completeOAuthFlow();
+      const accessToken = result.accessToken;
+      const accounts = (result as any).accounts || [];
       const newGoogleAccounts: GoogleAdsAccount[] = accounts.map((acc: any, idx: number) => ({
         id: `google-${Date.now()}-${idx}`,
         name: acc.name,
@@ -318,16 +320,28 @@ const AdsAccountsUpdated = () => {
                   </DialogTitle>
                 </DialogHeader>
                 <div className="space-y-4">
-                  <div>
-                    <Label className="text-white">{t.accountName}</Label>
-                    <Input className="bg-gray-700 border-yellow-500/20 text-white" />
-                  </div>
-                  <div>
-                    <Label className="text-white">Customer ID</Label>
-                    <Input className="bg-gray-700 border-yellow-500/20 text-white" placeholder="123-456-7890" />
-                  </div>
-                  <Button onClick={handleGoogleConnect} className="w-full bg-gradient-to-r from-yellow-400 to-yellow-600 text-gray-900">
-                    {t.connectAccount}
+                  <Alert className="bg-yellow-500/10 border-yellow-500/20">
+                    <AlertDescription className="text-yellow-300">
+                      {language === 'pt'
+                        ? 'Clique em "Conectar conta" para ser redirecionado ao Google e autorizar o acesso às suas contas de anúncio.'
+                        : 'Click "Connect Account" to be redirected to Google and authorize access to your ad accounts.'
+                      }
+                    </AlertDescription>
+                  </Alert>
+
+                  <Button
+                    onClick={handleGoogleConnect}
+                    className="w-full bg-gradient-to-r from-yellow-400 to-yellow-600 text-gray-900"
+                    disabled={isGoogleConnecting}
+                  >
+                    {isGoogleConnecting ? (
+                      <>
+                        <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                        {t.connecting}
+                      </>
+                    ) : (
+                      t.connectAccount
+                    )}
                   </Button>
                 </div>
               </DialogContent>
@@ -406,163 +420,6 @@ const AdsAccountsUpdated = () => {
           )}
         </CardContent>
       </Card>
-
-      {/* Meta Ads Section */}
-      <Card className="bg-gradient-to-r from-blue-800/30 to-blue-900/30 border-blue-500/20">
-        <CardHeader>
-          <div className="flex items-center justify-between">
-            <CardTitle className="flex items-center gap-3 text-white">
-              <div className="w-8 h-8 bg-gradient-to-r from-blue-500 to-blue-600 rounded-lg flex items-center justify-center">
-                <span className="text-xs font-bold text-white">f</span>
-              </div>
-              Meta Ads
-            </CardTitle>
-            <Dialog open={showMetaDialog} onOpenChange={setShowMetaDialog}>
-              <DialogTrigger asChild>
-                <Button 
-                  className="bg-gradient-to-r from-blue-500 to-blue-600 text-white hover:from-blue-600 hover:to-blue-700"
-                  disabled={isMetaConnecting}
-                >
-                  {isMetaConnecting ? (
-                    <>
-                      <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                      {t.connecting}
-                    </>
-                  ) : (
-                    <>
-                      <Plus className="w-4 h-4 mr-2" />
-                      {t.addAccount}
-                    </>
-                  )}
-                </Button>
-              </DialogTrigger>
-              <DialogContent className="bg-gray-800 border-blue-500/20">
-                <DialogHeader>
-                  <DialogTitle className="text-white">
-                    {t.addMetaAccount}
-                  </DialogTitle>
-                </DialogHeader>
-                <div className="space-y-4">
-                  <Alert className="bg-blue-500/10 border-blue-500/20">
-                    <AlertDescription className="text-blue-300">
-                      {language === 'pt'
-                        ? 'Clique em "Conectar conta" para ser redirecionado ao Google e autorizar o acesso às suas contas de anúncio.'
-                        : 'Click "Connect Account" to be redirected to Google and authorize access to your ad accounts.'
-                      }
-                    </AlertDescription>
-                  </Alert>
-
-                  <Button
-                    onClick={handleMetaConnect}
-                    className="w-full bg-gradient-to-r from-blue-500 to-blue-600 text-white"
-                    disabled={isMetaConnecting}
-                  >
-                    {isMetaConnecting ? (
-                      <>
-                        <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                        {t.connecting}
-                      </>
-                    ) : (
-                      t.connectAccount
-                    )}
-                  </Button>
-                </div>
-              </DialogContent>
-            </Dialog>
-          </div>
-        </CardHeader>
-        <CardContent className="space-y-4">
-          {metaAccounts.length === 0 ? (
-            <div className="text-center py-8 text-gray-400">
-              {language === 'pt'
-                ? 'Nenhuma conta Meta Ads conectada. Clique em "Adicionar Conta" para começar.'
-                : 'No Meta Ads accounts connected. Click "Add Account" to get started.'
-              }
-            </div>
-          ) : (
-            metaAccounts.map(acc => (
-              <div key={acc.id} className="bg-gray-700/30 rounded-lg p-4 border border-gray-600">
-                <div className="flex items-center justify-between mb-3">
-                  <div className="flex items-center space-x-3">
-                    <h3 className="font-semibold text-white">{acc.name}</h3>
-                    <Badge variant={acc.status === 'active' ? 'default' : 'secondary'}>
-                      {acc.status === 'active' ? t.active : t.inactive}
-                    </Badge>
-                  </div>
-                  <div className="flex space-x-2">
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      className="border-green-500/50 hover:bg-green-500/10 text-green-400"
-                      onClick={() => handleSyncCampaigns(acc)}
-                    >
-                      {t.syncCampaigns}
-                    </Button>
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      className="border-yellow-500/50 hover:bg-yellow-500/10 text-yellow-400"
-                      onClick={() => handleEditAccount(acc.id, 'meta')}
-                    >
-                      <Settings className="w-4 h-4" />
-                    </Button>
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      className="border-red-500/50 hover:bg-red-500/10 text-red-400"
-                      onClick={() => handleDeleteAccount(acc.id, 'meta')}
-                    >
-                      <Trash2 className="w-4 h-4" />
-                    </Button>
-                  </div>
-                </div>
-                <p className="text-gray-300 text-sm mb-2">Account ID: {acc.accountId}</p>
-                {acc.connectedAt && (
-                  <p className="text-gray-400 text-xs">
-                    {t.connectedAt}: {new Date(acc.connectedAt).toLocaleString()}
-                  </p>
-                )}
-
-                {/* sub‑contas */}
-                {acc.subAccounts.length > 0 && (
-                  <div className="mt-2 space-y-2">
-                    <h4 className="text-sm font-medium text-gray-300">{t.subAccounts}:</h4>
-                    {acc.subAccounts.map(sa => (
-                      <div key={sa.id} className="flex items-center justify-between bg-gray-600/30 rounded p-2">
-                        <div>
-                          <span className="text-white text-sm">{sa.name}</span>
-                          <span className="text-gray-400 text-xs ml-2">({sa.accountId})</span>
-                        </div>
-                        <Badge variant={sa.status === 'active' ? 'default' : 'secondary'} className="text-xs">
-                          {sa.status === 'active' ? t.active : t.inactive}
-                        </Badge>
-                      </div>
-                    ))}
-                  </div>
-                )}
-              </div>
-            ))
-          )}
-        </CardContent>
-      </Card>
-
-      {/* Meta – alertas */}
-      {metaConnectionSuccess && (
-        <Alert className="bg-green-500/10 border-green-500/20">
-          <CheckCircle className="w-4 h-4 text-green-400" />
-          <AlertDescription className="text-green-300">
-            {metaConnectionSuccess}
-          </AlertDescription>
-        </Alert>
-      )}
-      {metaConnectionError && (
-        <Alert className="bg-red-500/10 border-red-500/20">
-          <XCircle className="w-4 h-4 text-red-400" />
-          <AlertDescription className="text-red-300">
-            {metaConnectionError}
-          </AlertDescription>
-        </Alert>
-      )}
 
       {/* Meta Ads Section */}
       <Card className="bg-gradient-to-r from-blue-800/30 to-blue-900/30 border-blue-500/20">
@@ -702,6 +559,24 @@ const AdsAccountsUpdated = () => {
           )}
         </CardContent>
       </Card>
+
+      {/* Meta – alertas */}
+      {metaConnectionSuccess && (
+        <Alert className="bg-green-500/10 border-green-500/20">
+          <CheckCircle className="w-4 h-4 text-green-400" />
+          <AlertDescription className="text-green-300">
+            {metaConnectionSuccess}
+          </AlertDescription>
+        </Alert>
+      )}
+      {metaConnectionError && (
+        <Alert className="bg-red-500/10 border-red-500/20">
+          <XCircle className="w-4 h-4 text-red-400" />
+          <AlertDescription className="text-red-300">
+            {metaConnectionError}
+          </AlertDescription>
+        </Alert>
+      )}
 
     </div>
   );
