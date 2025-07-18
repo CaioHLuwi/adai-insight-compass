@@ -10,6 +10,8 @@ import { Badge } from '@/components/ui/badge';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { useMetaAdsOAuth, MetaAdsAccountInfo } from '../services/metaAdsOAuthService';
 import { useMetaAdsCampaigns } from '../hooks/useMetaAdsCampaigns';
+import { useGoogleAdsOAuth } from '../services/googleAdsOAuthService';
+import { useGoogleAds } from '../services/googleAdsService';
 
 interface GoogleAdsAccount {
   id: string;
@@ -17,7 +19,9 @@ interface GoogleAdsAccount {
   customerId: string;
   status: 'active' | 'inactive';
   type: 'google';
+  accessToken?: string;
   subAccounts: GoogleAdsSubAccount[];
+  connectedAt?: string;
 }
 
 interface MetaAdsAccount {
@@ -56,46 +60,95 @@ const AdsAccountsUpdated = () => {
 
   const metaOAuthService = useMetaAdsOAuth();
   const { setAccessToken, fetchCampaigns } = useMetaAdsCampaigns();
+  const googleOAuthService = useGoogleAdsOAuth();
+  const googleAdsService = useGoogleAds();
 
-  const [googleAccounts, setGoogleAccounts] = useState<GoogleAdsAccount[]>([
-    {
-      id: '1',
-      name: 'Conta Principal Google',
-      customerId: '123-456-7890',
-      status: 'active',
-      type: 'google',
-      subAccounts: [
-        { id: '1', name: 'Subconta 1', customerId: '111-222-3333', status: 'active' },
-        { id: '2', name: 'Subconta 2', customerId: '444-555-6666', status: 'inactive' }
-      ]
-    }
-  ]);
+  const [googleAccounts, setGoogleAccounts] = useState<GoogleAdsAccount[]>([]);
 
   const [metaAccounts, setMetaAccounts] = useState<MetaAdsAccount[]>([]);
 
-  // Carregar contas do Meta Ads do localStorage na inicialização
+  // Carregar contas do localStorage na inicialização
   useEffect(() => {
-    const savedAccounts = localStorage.getItem('metaAdsAccounts');
-    if (savedAccounts) {
+    // Carregar contas Google
+    const savedGoogleAccounts = localStorage.getItem('googleAdsAccounts');
+    if (savedGoogleAccounts) {
       try {
-        const accounts = JSON.parse(savedAccounts);
+        const accounts = JSON.parse(savedGoogleAccounts);
+        setGoogleAccounts(accounts);
+      } catch (error) {
+        console.error('Erro ao carregar contas Google salvas:', error);
+      }
+    }
+
+    // Carregar contas Meta
+    const savedMetaAccounts = localStorage.getItem('metaAdsAccounts');
+    if (savedMetaAccounts) {
+      try {
+        const accounts = JSON.parse(savedMetaAccounts);
         setMetaAccounts(accounts);
       } catch (error) {
-        console.error('Erro ao carregar contas salvas:', error);
+        console.error('Erro ao carregar contas Meta salvas:', error);
       }
     }
   }, []);
 
-  // Salvar contas do Meta Ads no localStorage sempre que mudarem
+  // Salvar contas no localStorage sempre que mudarem
+  useEffect(() => {
+    if (googleAccounts.length > 0) {
+      localStorage.setItem('googleAdsAccounts', JSON.stringify(googleAccounts));
+    }
+  }, [googleAccounts]);
+
   useEffect(() => {
     if (metaAccounts.length > 0) {
       localStorage.setItem('metaAdsAccounts', JSON.stringify(metaAccounts));
     }
   }, [metaAccounts]);
 
-  const handleGoogleConnect = () => {
-    console.log('Connecting to Google Ads...');
-    // Google OAuth integration would go here
+  const handleGoogleConnect = async () => {
+    setIsConnecting(true);
+    setConnectionError(null);
+    setConnectionSuccess(null);
+
+    try {
+      // Executar fluxo OAuth completo do Google
+      const { accessToken, refreshToken } = await googleOAuthService.completeOAuthFlow();
+      
+      // Configurar token no serviço do Google Ads
+      googleAdsService.setAccessToken(accessToken);
+      
+      // Buscar contas do Google Ads
+      const accounts = await googleAdsService.getAdAccounts();
+      
+      // Processar contas retornadas
+      const newGoogleAccounts: GoogleAdsAccount[] = accounts.map((account, index) => ({
+        id: `google-${Date.now()}-${index}`,
+        name: account.descriptiveName || account.name,
+        customerId: account.customerId,
+        status: 'active', // Assumir ativo por padrão
+        type: 'google',
+        accessToken: accessToken,
+        subAccounts: [], // Por enquanto, não estamos lidando com subcontas
+        connectedAt: new Date().toISOString()
+      }));
+
+      // Adicionar novas contas à lista existente
+      setGoogleAccounts(prev => [...prev.filter(acc => !acc.accessToken), ...newGoogleAccounts]);
+
+      setConnectionSuccess(
+        language === 'pt' 
+          ? `${newGoogleAccounts.length} conta(s) Google conectada(s) com sucesso!`
+          : `${newGoogleAccounts.length} Google account(s) connected successfully!`
+      );
+      
+      setShowGoogleDialog(false);
+
+    } catch (error: any) {
+      console.error('Erro ao conectar Google Ads:', error);
+      setConnectionError(error.message || 'Erro ao conectar com Google Ads');
+    } finally {
+      setIsConnecting(false);
+    }
   };
 
   const handleMetaConnect = async () => {
@@ -176,6 +229,33 @@ const AdsAccountsUpdated = () => {
       );
     } catch (error: any) {
       setConnectionError(error.message || 'Erro ao sincronizar campanhas');
+    }
+  };
+
+  const handleSyncGoogleCampaigns = async (account: GoogleAdsAccount) => {
+    if (!account.accessToken) {
+      setConnectionError(
+        language === 'pt'
+          ? 'Token de acesso não encontrado para esta conta'
+          : 'Access token not found for this account'
+      );
+      return;
+    }
+
+    try {
+      // Configurar token no serviço do Google Ads
+      googleAdsService.setAccessToken(account.accessToken);
+      
+      // Sincronizar campanhas
+      await googleAdsService.syncCampaigns(account.customerId);
+      
+      setConnectionSuccess(
+        language === 'pt'
+          ? 'Campanhas Google sincronizadas com sucesso!'
+          : 'Google campaigns synced successfully!'
+      );
+    } catch (error: any) {
+      setConnectionError(error.message || 'Erro ao sincronizar campanhas Google');
     }
   };
 
@@ -261,16 +341,28 @@ const AdsAccountsUpdated = () => {
                   </DialogTitle>
                 </DialogHeader>
                 <div className="space-y-4">
-                  <div>
-                    <Label className="text-white">{t.accountName}</Label>
-                    <Input className="bg-gray-700 border-yellow-500/20 text-white" />
-                  </div>
-                  <div>
-                    <Label className="text-white">Customer ID</Label>
-                    <Input className="bg-gray-700 border-yellow-500/20 text-white" placeholder="123-456-7890" />
-                  </div>
-                  <Button onClick={handleGoogleConnect} className="w-full bg-gradient-to-r from-yellow-400 to-yellow-600 text-gray-900">
-                    {t.connectAccount}
+                  <Alert className="bg-blue-500/10 border-blue-500/20">
+                    <AlertDescription className="text-blue-300">
+                      {language === 'pt'
+                        ? 'Clique em "Conectar conta" para ser redirecionado ao Google e autorizar o acesso às suas contas de anúncio.'
+                        : 'Click "Connect Account" to be redirected to Google and authorize access to your ad accounts.'
+                      }
+                    </AlertDescription>
+                  </Alert>
+
+                  <Button
+                    onClick={handleGoogleConnect}
+                    className="w-full bg-gradient-to-r from-yellow-400 to-yellow-600 text-gray-900"
+                    disabled={isConnecting}
+                  >
+                    {isConnecting ? (
+                      <>
+                        <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                        {t.connecting}
+                      </>
+                    ) : (
+                      t.connectAccount
+                    )}
                   </Button>
                 </div>
               </DialogContent>
@@ -278,53 +370,77 @@ const AdsAccountsUpdated = () => {
           </div>
         </CardHeader>
         <CardContent className="space-y-4">
-          {googleAccounts.map((account) => (
-            <div key={account.id} className="bg-gray-700/30 rounded-lg p-4 border border-gray-600">
-              <div className="flex items-center justify-between mb-3">
-                <div className="flex items-center space-x-3">
-                  <h3 className="font-semibold text-white">{account.name}</h3>
-                  <Badge variant={account.status === 'active' ? 'default' : 'secondary'}>
-                    {account.status === 'active' ? t.active : t.inactive}
-                  </Badge>
-                </div>
-                <div className="flex space-x-2">
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    className="border-yellow-500/50 hover:bg-yellow-500/10 text-yellow-400"
-                    onClick={() => handleEditAccount(account.id, 'google')}
-                  >
-                    <Settings className="w-4 h-4" />
-                  </Button>
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    className="border-red-500/50 hover:bg-red-500/10 text-red-400"
-                    onClick={() => handleDeleteAccount(account.id, 'google')}
-                  >
-                    <Trash2 className="w-4 h-4" />
-                  </Button>
-                </div>
-              </div>
-              <p className="text-gray-300 text-sm mb-3">Customer ID: {account.customerId}</p>
-              
-              {/* Sub Accounts */}
-              <div className="space-y-2">
-                <h4 className="text-sm font-medium text-gray-300">{t.subAccounts}:</h4>
-                {account.subAccounts.map((subAccount) => (
-                  <div key={subAccount.id} className="flex items-center justify-between bg-gray-600/30 rounded p-2">
-                    <div>
-                      <span className="text-white text-sm">{subAccount.name}</span>
-                      <span className="text-gray-400 text-xs ml-2">({subAccount.customerId})</span>
-                    </div>
-                    <Badge variant={subAccount.status === 'active' ? 'default' : 'secondary'} className="text-xs">
-                      {subAccount.status === 'active' ? t.active : t.inactive}
+          {googleAccounts.length === 0 ? (
+            <div className="text-center py-8 text-gray-400">
+              {language === 'pt'
+                ? 'Nenhuma conta Google Ads conectada. Clique em "Adicionar Conta" para começar.'
+                : 'No Google Ads accounts connected. Click "Add Account" to get started.'
+              }
+            </div>
+          ) : (
+            googleAccounts.map(acc => (
+              <div key={acc.id} className="bg-gray-700/30 rounded-lg p-4 border border-gray-600">
+                <div className="flex items-center justify-between mb-3">
+                  <div className="flex items-center space-x-3">
+                    <h3 className="font-semibold text-white">{acc.name}</h3>
+                    <Badge variant={acc.status === 'active' ? 'default' : 'secondary'}>
+                      {acc.status === 'active' ? t.active : t.inactive}
                     </Badge>
                   </div>
-                ))}
+                  <div className="flex space-x-2">
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      className="border-green-500/50 hover:bg-green-500/10 text-green-400"
+                      onClick={() => handleSyncGoogleCampaigns(acc)}
+                    >
+                      {t.syncCampaigns}
+                    </Button>
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      className="border-yellow-500/50 hover:bg-yellow-500/10 text-yellow-400"
+                      onClick={() => {/* abrir edição se precisar */}}
+                    >
+                      <Settings className="w-4 h-4" />
+                    </Button>
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      className="border-red-500/50 hover:bg-red-500/10 text-red-400"
+                      onClick={() => setGoogleAccounts(prev => prev.filter(a => a.id !== acc.id))}
+                    >
+                      <Trash2 className="w-4 h-4" />
+                    </Button>
+                  </div>
+                </div>
+                <p className="text-gray-300 text-sm mb-2">Customer ID: {acc.customerId}</p>
+                {acc.connectedAt && (
+                  <p className="text-gray-400 text-xs">
+                    {t.connectedAt}: {new Date(acc.connectedAt).toLocaleString()}
+                  </p>
+                )}
+
+                {/* sub‑contas */}
+                {acc.subAccounts.length > 0 && (
+                  <div className="mt-2 space-y-2">
+                    <h4 className="text-sm font-medium text-gray-300">{t.subAccounts}:</h4>
+                    {acc.subAccounts.map(sa => (
+                      <div key={sa.id} className="flex items-center justify-between bg-gray-600/30 rounded p-2">
+                        <div>
+                          <span className="text-white text-sm">{sa.name}</span>
+                          <span className="text-gray-400 text-xs ml-2">({sa.customerId})</span>
+                        </div>
+                        <Badge variant={sa.status === 'active' ? 'default' : 'secondary'} className="text-xs">
+                          {sa.status === 'active' ? t.active : t.inactive}
+                        </Badge>
+                      </div>
+                    ))}
+                  </div>
+                )}
               </div>
-            </div>
-          ))}
+            ))
+          )}
         </CardContent>
       </Card>
 

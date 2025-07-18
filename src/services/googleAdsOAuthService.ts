@@ -12,28 +12,29 @@ export interface OAuthInitiateResponse {
 
 export interface OAuthCallbackResponse {
   access_token: string;
+  refresh_token?: string;
   expires_in?: number;
 }
 
-export interface MetaAdsAccountInfo {
+export interface GoogleAdsAccountInfo {
   id: string;
   name: string;
-  account_status: string;
-  currency: string;
-  timezone_name: string;
-  business_name?: string;
+  descriptiveName: string;
+  currencyCode: string;
+  timeZone: string;
+  customerId: string;
 }
 
-// Classe para gerenciar o fluxo OAuth do Meta Ads
-export class MetaAdsOAuthService {
+// Classe para gerenciar o fluxo OAuth do Google Ads
+export class GoogleAdsOAuthService {
   
   /**
-   * Inicia o fluxo OAuth do Meta Ads
+   * Inicia o fluxo OAuth do Google Ads
    * Retorna a URL de autorização para redirecionar o usuário
    */
   async initiateOAuth(): Promise<string> {
     try {
-      const response = await axios.get<OAuthInitiateResponse>(`${API_BASE_URL}/api/meta/initiate`);
+      const response = await axios.get<OAuthInitiateResponse>(`${API_BASE_URL}/api/google/initiate`);
       return response.data.authUrl;
     } catch (error: any) {
       console.error('Erro ao iniciar OAuth:', error);
@@ -46,11 +47,12 @@ export class MetaAdsOAuthService {
    */
   async exchangeCodeForToken(code: string): Promise<OAuthCallbackResponse> {
     try {
-      const response = await axios.get<OAuthCallbackResponse>(`${API_BASE_URL}/api/meta/callback`, {
+      const response = await axios.get<OAuthCallbackResponse>(`${API_BASE_URL}/api/google/callback`, {
         params: { code }
       });
       return {
         access_token: response.data.access_token,
+        refresh_token: response.data.refresh_token,
         expires_in: response.data.expires_in
       };
     } catch (error: any) {
@@ -60,55 +62,14 @@ export class MetaAdsOAuthService {
   }
 
   /**
-   * Busca informações das contas de anúncio usando um access token
-   */
-  async getAccountInfo(accessToken: string): Promise<MetaAdsAccountInfo[]> {
-    try {
-      const response = await axios.get<{ ad_accounts: MetaAdsAccountInfo[] }>(`${API_BASE_URL}/api/meta/ad-accounts`, {
-        headers: {
-          'Authorization': `Bearer ${accessToken}`
-        }
-      });
-      return response.data.ad_accounts || [];
-    } catch (error: any) {
-      console.error('Erro ao buscar informações da conta:', error);
-      throw new Error(error.response?.data?.error || 'Erro ao buscar informações da conta');
-    }
-  }
-
-  /**
-   * Valida se um access token é válido
-   */
-  async validateToken(accessToken: string): Promise<{ valid: boolean; user?: any; error?: string }> {
-    try {
-      const response = await axios.get<{ valid: boolean; user?: any; error?: string }>(`${API_BASE_URL}/api/meta/test-token`, {
-        headers: {
-          'Authorization': `Bearer ${accessToken}`
-        }
-      });
-      return {
-        valid: response.data.valid || false,
-        user: response.data.user,
-        error: response.data.error
-      };
-    } catch (error: any) {
-      console.error('Erro ao validar token:', error);
-      return {
-        valid: false,
-        error: error.response?.data?.error || error.message
-      };
-    }
-  }
-
-  /**
    * Abre uma janela popup para o fluxo OAuth usando localStorage
    * Retorna uma Promise que resolve com o access token diretamente
    */
-  async openOAuthPopup(): Promise<string> {
+  async openOAuthPopup(): Promise<{ accessToken: string; refreshToken?: string }> {
     return new Promise(async (resolve, reject) => {
       try {
         // Limpar resultado anterior do localStorage
-        localStorage.removeItem('meta_ads_oauth_result');
+        localStorage.removeItem('google_ads_oauth_result');
         
         // Obter URL de autorização
         const authUrl = await this.initiateOAuth();
@@ -116,7 +77,7 @@ export class MetaAdsOAuthService {
         // Abrir popup
         const popup = window.open(
           authUrl,
-          'meta-ads-oauth',
+          'google-ads-oauth',
           'width=600,height=700,scrollbars=yes,resizable=yes'
         );
 
@@ -128,7 +89,7 @@ export class MetaAdsOAuthService {
         // Monitorar localStorage para resultado do OAuth
         const checkResult = setInterval(() => {
           // Verificar se há resultado no localStorage
-          const resultStr = localStorage.getItem('meta_ads_oauth_result');
+          const resultStr = localStorage.getItem('google_ads_oauth_result');
           if (resultStr) {
             clearInterval(checkResult);
             try {
@@ -136,11 +97,14 @@ export class MetaAdsOAuthService {
               console.log('Resultado OAuth recebido via localStorage:', result);
               
               // Limpar localStorage
-              localStorage.removeItem('meta_ads_oauth_result');
+              localStorage.removeItem('google_ads_oauth_result');
               
-              if (result.type === 'META_ADS_OAUTH_SUCCESS') {
-                resolve(result.accessToken);
-              } else if (result.type === 'META_ADS_OAUTH_ERROR') {
+              if (result.type === 'GOOGLE_ADS_OAUTH_SUCCESS') {
+                resolve({
+                  accessToken: result.accessToken,
+                  refreshToken: result.refreshToken
+                });
+              } else if (result.type === 'GOOGLE_ADS_OAUTH_ERROR') {
                 reject(new Error(result.error || 'Erro na autenticação'));
               } else {
                 reject(new Error('Resultado OAuth inválido'));
@@ -172,18 +136,12 @@ export class MetaAdsOAuthService {
   /**
    * Fluxo completo de OAuth: abre popup e obtém access token diretamente
    */
-  async completeOAuthFlow(): Promise<{ accessToken: string; accounts: MetaAdsAccountInfo[] }> {
+  async completeOAuthFlow(): Promise<{ accessToken: string; refreshToken?: string }> {
     try {
-      // Abrir popup e obter access token diretamente via localStorage
-      const accessToken = await this.openOAuthPopup();
+      // Abrir popup e obter tokens diretamente via localStorage
+      const tokens = await this.openOAuthPopup();
       
-      // Buscar informações das contas
-      const accounts = await this.getAccountInfo(accessToken);
-      
-      return {
-        accessToken,
-        accounts
-      };
+      return tokens;
     } catch (error: any) {
       console.error('Erro no fluxo OAuth completo:', error);
       throw error;
@@ -192,12 +150,9 @@ export class MetaAdsOAuthService {
 }
 
 // Instância singleton do serviço OAuth
-export const metaAdsOAuthService = new MetaAdsOAuthService();
+export const googleAdsOAuthService = new GoogleAdsOAuthService();
 
 // Hook personalizado para usar o serviço OAuth no React
-export const useMetaAdsOAuth = () => {
-  return metaAdsOAuthService;
+export const useGoogleAdsOAuth = () => {
+  return googleAdsOAuthService;
 };
-
-
-

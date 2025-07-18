@@ -2,8 +2,8 @@ import axios from 'axios';
 
 // Configuração base da API
 const API_BASE_URL = process.env.NODE_ENV === 'production' 
-  ? 'https://otmizy-meta-ads.vercel.app/oauth_meta' // Em produção, usar URL relativa
-  : 'localhost:8080/oauth_meta'; // Em desenvolvimento, usar URL completa
+  ? 'https://backend.otmizy.com' // Em produção, usar URL da Vercel
+  : 'https://backend.otmizy.com'; // Em desenvolvimento, usar URL completa
 
 // Tipos TypeScript para as respostas da API
 export interface MetaAdsCampaign {
@@ -89,7 +89,7 @@ export class MetaAdsService {
    */
   async testToken(): Promise<{ valid: boolean; user?: MetaAdsUser; error?: string }> {
     try {
-      const response = await axios.get<{ valid: boolean; user?: MetaAdsUser; error?: string }>(`${API_BASE_URL}/test-token`, {
+      const response = await axios.get<{ valid: boolean; user?: MetaAdsUser; error?: string }>(`${API_BASE_URL}/api/meta/test-token`, {
         headers: this.getAuthHeaders()
       });
       
@@ -112,7 +112,7 @@ export class MetaAdsService {
    */
   async getAdAccounts(): Promise<MetaAdsAccount[]> {
     try {
-      const response = await axios.get<{ ad_accounts: MetaAdsAccount[] }>(`${API_BASE_URL}/ad-accounts`, {
+      const response = await axios.get<{ ad_accounts: MetaAdsAccount[] }>(`${API_BASE_URL}/api/meta/ad-accounts`, {
         headers: this.getAuthHeaders()
       });
       
@@ -128,7 +128,7 @@ export class MetaAdsService {
    */
   async getCampaigns(adAccountId: string): Promise<MetaAdsCampaign[]> {
     try {
-      const response = await axios.get<{ campaigns: MetaAdsCampaign[] }>(`${API_BASE_URL}/campaigns`, {
+      const response = await axios.get<{ campaigns: MetaAdsCampaign[] }>(`${API_BASE_URL}/api/meta/campaigns`, {
         headers: this.getAuthHeaders(),
         params: { ad_account_id: adAccountId }
       });
@@ -158,7 +158,7 @@ export class MetaAdsService {
         params.campaign_ids = campaignIds.join(',');
       }
       
-      const response = await axios.get<{ insights: any[] }>(`${API_BASE_URL}/campaigns/insights`, {
+      const response = await axios.get<{ insights: any[] }>(`${API_BASE_URL}/api/meta/campaigns/insights`, {
         headers: this.getAuthHeaders(),
         params
       });
@@ -178,7 +178,7 @@ export class MetaAdsService {
     datePreset: string = 'last_30_days'
   ): Promise<MetaAdsCampaign[]> {
     try {
-      const response = await axios.get<{ campaigns: MetaAdsCampaign[] }>(`${API_BASE_URL}/campaigns/combined`, {
+      const response = await axios.get<{ campaigns: MetaAdsCampaign[] }>(`${API_BASE_URL}/api/meta/campaigns/combined`, {
         headers: this.getAuthHeaders(),
         params: {
           ad_account_id: adAccountId,
