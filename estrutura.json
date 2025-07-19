@@ -1,0 +1,21 @@
+{
+  type: 'meta_auth_success',
+  data: {
+    type: 'META_OAUTH_SUCCESS',
+    accessToken: 'token_do_usuario',
+    userInfo: {
+      id: 'user_id',
+      name: 'Nome do Usuário',
+      email: 'email@usuario.com', // ✅ Email incluído
+      picture: { data: { url: 'foto_url' } }
+    },
+    adAccounts: {
+      data: [/* array de contas de anúncio */]
+    },
+    businessManagers: {
+      data: [/* array de business managers */]
+    },
+    permissionErrors: [/* erros de permissão se houver */],
+    timestamp: Date.now()
+  }
+}

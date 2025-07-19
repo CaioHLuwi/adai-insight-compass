@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { useLanguage } from '@/hooks/useLanguage';
 import { Button } from '@/components/ui/button';
 import { Plus, Settings, Edit, Trash2, Loader2, CheckCircle, XCircle, User } from 'lucide-react';
@@ -8,305 +8,202 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Badge } from '@/components/ui/badge';
 import { Alert, AlertDescription } from '@/components/ui/alert';
-import { useMetaAdsOAuth, MetaAdsAccountInfo } from '../services/metaAdsOAuthService';
-import { useMetaAdsCampaigns } from '../hooks/useMetaAdsCampaigns';
-import { useGoogleAdsOAuth } from '../services/googleAdsOAuthService';
-import { useGoogleAds } from '../services/googleAdsService';
+import { metaAdsOAuthService } from '@/services/metaAdsOAuthService';
 
-interface GoogleAdsSubAccount {
-  id: string;
-  name: string;
-  customerId: string;
-  status: 'active' | 'inactive';
+interface GoogleAuthResult {
+  accessToken: string;
+  refreshToken: string;
+  userInfo: {
+    id: string;
+    name: string;
+    email: string;
+    picture?: string;
+  };
+  adsAccounts: {
+    resourceNames: string[];
+  };
+  timestamp: number;
 }
 
-interface GoogleMainAccount {
-  id: string;
-  email: string;
-  name: string;
-  picture?: string;
-  connectedAt: string;
+interface MetaAuthResult {
+  accessToken: string;
+  userInfo: {
+    id: string;
+    name: string;
+    email: string;
+  };
+  adAccounts: {
+    data: Array<{
+      id: string;
+      name: string;
+      account_status: string;
+      currency: string;
+      business_manager?: {
+        id: string;
+        name: string;
+        verification_status: string;
+      };
+    }>;
+  };
+  businessManagers: {
+    data: Array<{
+      id: string;
+      name: string;
+      verification_status: string;
+    }>;
+  };
+  permissionErrors: any[];
 }
 
-interface GoogleAdsAccount {
-  id: string;
-  name: string;
-  customerId: string;
-  status: 'active' | 'inactive';
-  type: 'google';
-  accessToken?: string;
-  subAccounts: GoogleAdsSubAccount[];
-  connectedAt?: string;
-}
-
-interface MetaAdsAccount {
-  id: string;
-  name: string;
-  accountId: string;
-  status: 'active' | 'inactive';
-  type: 'meta';
-  accessToken?: string;
-  subAccounts: MetaAdsSubAccount[];
-  connectedAt?: string;
-}
-
-interface MetaAdsSubAccount {
-  id: string;
-  name: string;
-  accountId: string;
-  status: 'active' | 'inactive';
-}
-
-const AdsAccountsUpdated = () => {
+const AdsAccounts = () => {
   const { language } = useLanguage();
-  
-  // diálogo Google
+  const [googleData, setGoogleData] = useState<GoogleAuthResult | null>(null);
+  const [metaData, setMetaData] = useState<MetaAuthResult | null>(null);
+  const [authErrors, setAuthErrors] = useState<string[]>([]);
+  const [googleSearchTerm, setGoogleSearchTerm] = useState('');
+  const [metaSearchTerm, setMetaSearchTerm] = useState('');
   const [showGoogleDialog, setShowGoogleDialog] = useState(false);
-  const [isGoogleConnecting, setIsGoogleConnecting] = useState(false);
-  const [googleConnectionError, setGoogleConnectionError] = useState<string | null>(null);
-  const [googleConnectionSuccess, setGoogleConnectionSuccess] = useState<string | null>(null);
-
-  // diálogo Meta
   const [showMetaDialog, setShowMetaDialog] = useState(false);
+  const [isGoogleConnecting, setIsGoogleConnecting] = useState(false);
   const [isMetaConnecting, setIsMetaConnecting] = useState(false);
-  const [metaConnectionError, setMetaConnectionError] = useState<string | null>(null);
-  const [metaConnectionSuccess, setMetaConnectionSuccess] = useState<string | null>(null);
 
-  const [editingAccount, setEditingAccount] = useState<string | null>(null);
 
-  // serviços OAuth
-  const googleOAuthService = useGoogleAdsOAuth();
-  const googleAdsService = useGoogleAds();
-  const metaOAuthService = useMetaAdsOAuth();
-
-  // hook de campanhas
-  const { setAccessToken, fetchCampaigns } = useMetaAdsCampaigns();
-
-  const [googleMainAccount, setGoogleMainAccount] = useState<GoogleMainAccount | null>(null);
-  const [googleAccounts, setGoogleAccounts] = useState<GoogleAdsAccount[]>([]);
-  const [metaAccounts, setMetaAccounts] = useState<MetaAdsAccount[]>([]);
-
-  // Carregar contas do localStorage na inicialização
   useEffect(() => {
-    // Carregar conta principal Google
-    const savedGoogleMainAccount = localStorage.getItem('googleMainAccount');
-    if (savedGoogleMainAccount) {
-      try {
-        const mainAccount = JSON.parse(savedGoogleMainAccount);
-        setGoogleMainAccount(mainAccount);
-      } catch (error) {
-        console.error('Erro ao carregar conta principal Google salva:', error);
-      }
-    }
+    const handleMessage = (event: MessageEvent) => {
+      // Verificar origem se necessário
+      // if (event.origin !== 'https://otmizy-oauth-backend-97mlxnheu-otmizy-ais-projects.vercel.app') return;
+      
+      switch (event.data.type) {
+        case 'GOOGLE_AUTH_SUCCESS':
+        case 'google_auth_success':
+          console.log('Google Auth Success:', event.data);
+          const googleData = event.data.data || event.data.result;
+          setGoogleData(googleData);
+          setIsGoogleConnecting(false);
+          setShowGoogleDialog(false);
+          
+          console.log('Google data processed:', googleData);
+          
 
-    // Carregar contas Google
-    const savedGoogleAccounts = localStorage.getItem('googleAdsAccounts');
-    if (savedGoogleAccounts) {
-      try {
-        const accounts = JSON.parse(savedGoogleAccounts);
-        setGoogleAccounts(accounts);
-      } catch (error) {
-        console.error('Erro ao carregar contas Google salvas:', error);
-      }
-    }
+          break;
+          
+        case 'GOOGLE_AUTH_ERROR':
+          console.error('Google Auth Error:', event.data.result.error);
+          setAuthErrors(prev => [...prev, `Google: ${event.data.result.error}`]);
+          setIsGoogleConnecting(false);
+          break;
 
-    // Carregar contas Meta
-    const savedMetaAccounts = localStorage.getItem('metaAdsAccounts');
-    if (savedMetaAccounts) {
-      try {
-        const accounts = JSON.parse(savedMetaAccounts);
-        setMetaAccounts(accounts);
-      } catch (error) {
-        console.error('Erro ao carregar contas Meta salvas:', error);
+        case 'META_AUTH_SUCCESS':
+        case 'meta_auth_success':
+          console.log('Meta Auth Success:', event.data);
+          const metaData = event.data.data || event.data.result;
+          
+          // Transformar o resultado para o formato esperado pelo componente
+          const metaAuthResult: MetaAuthResult = {
+            accessToken: metaData.accessToken || '',
+            userInfo: {
+              id: metaData.userInfo?.id || '',
+              name: metaData.userInfo?.name || '',
+              email: metaData.userInfo?.email || ''
+            },
+            adAccounts: {
+              data: metaData.adAccounts?.data || []
+            },
+            businessManagers: {
+              data: metaData.businessManagers?.data || []
+            },
+            permissionErrors: metaData.permissionErrors || []
+          };
+          
+          setMetaData(metaAuthResult);
+          setIsMetaConnecting(false);
+          setShowMetaDialog(false);
+          
+          console.log('Meta data processed:', metaAuthResult);
+          
+
+          break;
+          
+        case 'META_AUTH_ERROR':
+          console.error('Meta Auth Error:', event.data.result.error);
+          setAuthErrors(prev => [...prev, `Meta: ${event.data.result.error}`]);
+          setIsMetaConnecting(false);
+          break;
       }
-    }
+    };
+
+    window.addEventListener('message', handleMessage);
+    return () => window.removeEventListener('message', handleMessage);
   }, []);
 
-  // Salvar contas no localStorage sempre que mudarem
-  useEffect(() => {
-    if (googleMainAccount) {
-      localStorage.setItem('googleMainAccount', JSON.stringify(googleMainAccount));
-    }
-  }, [googleMainAccount]);
 
-  useEffect(() => {
-    if (googleAccounts.length > 0) {
-      localStorage.setItem('googleAdsAccounts', JSON.stringify(googleAccounts));
-    }
-  }, [googleAccounts]);
 
-  useEffect(() => {
-    localStorage.setItem('metaAdsAccounts', JSON.stringify(metaAccounts));
-  }, [metaAccounts]);
-
-  const handleGoogleConnect = async () => {
+  const openGoogleAuth = () => {
     setIsGoogleConnecting(true);
-    setGoogleConnectionError(null);
-    setGoogleConnectionSuccess(null);
-
-    try {
-      const result = await googleOAuthService.completeOAuthFlow();
-      const accessToken = result.accessToken;
-      const userInfo = result.userInfo;
-
-      // Criar conta principal se temos informações do usuário
-      if (userInfo && userInfo.email) {
-        const mainAccount: GoogleMainAccount = {
-          id: `google-main-${Date.now()}`,
-          email: userInfo.email,
-          name: userInfo.name || userInfo.email,
-          picture: userInfo.picture,
-          connectedAt: new Date().toISOString()
-        };
-        setGoogleMainAccount(mainAccount);
-      }
-      
-      // Verificar se temos contas de anúncios na nova estrutura
-      let accounts = [];
-      
-      // Primeiro, tentar extrair do localStorage com a nova estrutura
-      const oauthResultStr = localStorage.getItem('google_ads_oauth_result');
-      if (oauthResultStr) {
-        try {
-          const oauthResult = JSON.parse(oauthResultStr);
-          if (oauthResult.data && oauthResult.data.adsAccounts && oauthResult.data.adsAccounts.resourceNames) {
-            // Nova estrutura: converter resourceNames em contas
-            accounts = oauthResult.data.adsAccounts.resourceNames.map((resourceName: string) => {
-              const parts = resourceName.split('/');
-              const customerId = parts[1] || resourceName;
-              return {
-                id: resourceName,
-                name: resourceName,
-                customerId,
-                status: 'active'
-              };
-            });
-          }
-        } catch (e) {
-          console.warn('Erro ao extrair adsAccounts do OAuth result:', e);
-        }
-      }
-      
-      // Fallback para estrutura antiga
-      if (accounts.length === 0) {
-        accounts = (result as any).accounts || [];
-      }
-      
-      const newGoogleAccounts: GoogleAdsAccount[] = accounts.map((acc: any, idx: number) => ({
-        id: `google-${Date.now()}-${idx}`,
-        name: acc.name || acc.id,
-        customerId: acc.customerId,
-        status: acc.status === 'ENABLED' ? 'active' : 'inactive',
-        type: 'google',
-        accessToken,
-        subAccounts: [],
-        connectedAt: new Date().toISOString()
-      }));
-      setGoogleAccounts(prev => [...prev, ...newGoogleAccounts]);
-      
-      setGoogleConnectionSuccess(
-        language === 'pt'
-          ? `Conta Google conectada! ${newGoogleAccounts.length} conta(s) de anúncio encontrada(s).`
-          : `Google account connected! ${newGoogleAccounts.length} ad account(s) found.`
-      );
-      setShowGoogleDialog(false);
-    } catch (err: any) {
-      setGoogleConnectionError(err.message || 'Erro ao conectar com Google Ads');
-    } finally {
-      setIsGoogleConnecting(false);
-    }
+    const popup = window.open(
+      'https://backend.otmizy.com/api/google/initiate',
+      'google_auth',
+      'width=500,height=600,scrollbars=yes,resizable=yes'
+    );
   };
 
-  const handleMetaConnect = async () => {
+  const openMetaAuth = async () => {
     setIsMetaConnecting(true);
-    setMetaConnectionError(null);
-    setMetaConnectionSuccess(null);
-
     try {
-      const { accessToken, accounts } = await metaOAuthService.completeOAuthFlow();
-      const newMeta: MetaAdsAccount[] = accounts.map((acc: MetaAdsAccountInfo, idx: number) => ({
-        id: `meta-${Date.now()}-${idx}`,
-        name: acc.name,
-        accountId: acc.id,
-        status: acc.account_status === 'ACTIVE' ? 'active' : 'inactive',
-        type: 'meta',
-        accessToken,
-        subAccounts: [],
-        connectedAt: new Date().toISOString()
-      }));
-      setMetaAccounts(prev => [...prev, ...newMeta]);
-      if (newMeta.length) setAccessToken(accessToken);
-
-      setMetaConnectionSuccess(
-        language === 'pt'
-          ? `${newMeta.length} conta(s) Meta Ads conectada(s) com sucesso!`
-          : `${newMeta.length} account(s) connected!`
+      // Buscar a URL de autenticação do backend
+      const response = await fetch('https://backend.otmizy.com/api/meta/initiate');
+      const data = await response.json();
+      
+      if (!data.authUrl) {
+        throw new Error('URL de autenticação não encontrada');
+      }
+      
+      // Abrir popup com a URL de autenticação
+      const popup = window.open(
+        data.authUrl,
+        'meta_auth',
+        'width=500,height=600,scrollbars=yes,resizable=yes'
       );
-      setShowMetaDialog(false);
-    } catch (err: any) {
-      setMetaConnectionError(err.message || 'Erro ao conectar com Meta Ads');
-    } finally {
+      
+      if (!popup) {
+        throw new Error('Popup foi bloqueado. Permita popups para este site.');
+      }
+      
+    } catch (error) {
+      console.error('Erro ao iniciar autenticação Meta:', error);
+      setAuthErrors(prev => [...prev, `Meta: ${error.message}`]);
       setIsMetaConnecting(false);
     }
   };
 
-  // sincroniza campanhas Meta
-  const handleSyncCampaigns = async (account: MetaAdsAccount) => {
-    if (!account.accessToken) {
-      setMetaConnectionError('Token de acesso não encontrado');
-      return;
-    }
-    try {
-      setAccessToken(account.accessToken);
-      await fetchCampaigns(account.accountId);
-      setMetaConnectionSuccess(
-        language === 'pt'
-          ? 'Campanhas sincronizadas com sucesso!'
-          : 'Campaigns synced!'
+  // Função para filtrar contas Google
+  const getFilteredGoogleAccounts = () => {
+    if (!googleData?.adsAccounts?.resourceNames) return [];
+    
+    const accounts = googleData.adsAccounts.resourceNames.map((resourceName, index) => ({
+      id: `google-${index}`,
+      name: resourceName,
+      resourceName
+    }));
+    
+    if (googleSearchTerm) {
+      return accounts.filter(acc => 
+        acc.name.toLowerCase().includes(googleSearchTerm.toLowerCase())
       );
-    } catch (err: any) {
-      setMetaConnectionError(err.message || 'Erro ao sincronizar campanhas');
     }
+    return accounts;
   };
 
-  const handleSyncGoogleCampaigns = async (account: GoogleAdsAccount) => {
-    if (!account.accessToken) {
-      setGoogleConnectionError(
-        language === 'pt'
-          ? 'Token de acesso não encontrado para esta conta'
-          : 'Access token not found for this account'
+  // Função para filtrar contas Meta
+  const getFilteredMetaAccounts = () => {
+    if (!metaData?.adAccounts?.data) return [];
+    
+    if (metaSearchTerm) {
+      return metaData.adAccounts.data.filter(acc => 
+        acc.name.toLowerCase().includes(metaSearchTerm.toLowerCase())
       );
-      return;
     }
-
-    try {
-      // Configurar token no serviço do Google Ads
-      googleAdsService.setAccessToken(account.accessToken);
-      
-      // Sincronizar campanhas
-      await googleAdsService.syncCampaigns(account.customerId);
-      
-      setGoogleConnectionSuccess(
-        language === 'pt'
-          ? 'Campanhas Google sincronizadas com sucesso!'
-          : 'Google campaigns synced successfully!'
-      );
-    } catch (error: any) {
-      setGoogleConnectionError(error.message || 'Erro ao sincronizar campanhas Google');
-    }
-  };
-
-  const handleEditAccount = (accountId: string, type: 'google' | 'meta') => {
-    setEditingAccount(accountId);
-    // Implementar lógica de edição
-  };
-
-  const handleDeleteAccount = (accountId: string, type: 'google' | 'meta') => {
-    if (type === 'google') {
-      setGoogleAccounts(prev => prev.filter(acc => acc.id !== accountId));
-    } else {
-      setMetaAccounts(prev => prev.filter(acc => acc.id !== accountId));
-    }
+    return metaData.adAccounts.data;
   };
 
   // textos internacionalizados
@@ -318,7 +215,6 @@ const AdsAccountsUpdated = () => {
       addGoogleAccount: 'Adicionar Conta Google Ads',
       addMetaAccount: 'Adicionar Conta Meta Ads',
       accountName: 'Nome da Conta',
-      subAccounts: 'Subcontas',
       active: 'Ativo',
       inactive: 'Inativo',
       connecting: 'Conectando...',
@@ -327,7 +223,10 @@ const AdsAccountsUpdated = () => {
       mainAccount: 'Conta Principal',
       adAccounts: 'Contas de Anúncio',
       noMainAccount: 'Nenhuma conta principal conectada.',
-      noAdAccounts: 'Nenhuma conta de anúncio encontrada.'
+      noAdAccounts: 'Nenhuma conta de anúncio encontrada.',
+      searchPlaceholder: 'Buscar conta...',
+      noAccountsFound: 'Nenhuma conta encontrada.',
+
     },
     en: {
       title: 'ADS Accounts',
@@ -336,7 +235,6 @@ const AdsAccountsUpdated = () => {
       addGoogleAccount: 'Add Google Ads Account',
       addMetaAccount: 'Add Meta Ads Account',
       accountName: 'Account Name',
-      subAccounts: 'Sub Accounts',
       active: 'Active',
       inactive: 'Inactive',
       connecting: 'Connecting...',
@@ -345,7 +243,10 @@ const AdsAccountsUpdated = () => {
       mainAccount: 'Main Account',
       adAccounts: 'Ad Accounts',
       noMainAccount: 'No main account connected.',
-      noAdAccounts: 'No ad accounts found.'
+      noAdAccounts: 'No ad accounts found.',
+      searchPlaceholder: 'Search account...',
+      noAccountsFound: 'No accounts found.',
+
     }
   };
   const t = texts[language];
@@ -356,20 +257,14 @@ const AdsAccountsUpdated = () => {
         {t.title}
       </h1>
 
-      {/* Google – alertas */}
-      {googleConnectionSuccess && (
-        <Alert className="bg-green-500/10 border-green-500/20">
-          <CheckCircle className="w-4 h-4 text-green-400" />
-          <AlertDescription className="text-green-300">
-            {googleConnectionSuccess}
-          </AlertDescription>
-        </Alert>
-      )}
-      {googleConnectionError && (
+      {/* Exibir Erros */}
+      {authErrors.length > 0 && (
         <Alert className="bg-red-500/10 border-red-500/20">
           <XCircle className="w-4 h-4 text-red-400" />
           <AlertDescription className="text-red-300">
-            {googleConnectionError}
+            {authErrors.map((error, index) => (
+              <p key={index}>{error}</p>
+            ))}
           </AlertDescription>
         </Alert>
       )}
@@ -408,7 +303,7 @@ const AdsAccountsUpdated = () => {
                   </Alert>
 
                   <Button
-                    onClick={handleGoogleConnect}
+                    onClick={openGoogleAuth}
                     className="w-full bg-gradient-to-r from-yellow-400 to-yellow-600 text-gray-900"
                     disabled={isGoogleConnecting}
                   >
@@ -427,119 +322,104 @@ const AdsAccountsUpdated = () => {
           </div>
         </CardHeader>
         <CardContent className="space-y-6">
-          {/* Conta Principal */}
-          <div>
-            <h3 className="text-lg font-semibold text-white mb-3 flex items-center gap-2">
-              <User className="w-5 h-5" />
-              {t.mainAccount}
-            </h3>
-            {googleMainAccount ? (
-              <div className="bg-gray-700/30 rounded-lg p-4 border border-gray-600">
+          {/* Busca de Contas Google */}
+          <div className="space-y-4">
+            <div>
+              <Label htmlFor="googleSearch" className="text-gray-300 text-sm">
+                {t.searchPlaceholder}
+              </Label>
+              <Input
+                id="googleSearch"
+                type="text"
+                placeholder={t.searchPlaceholder}
+                value={googleSearchTerm}
+                onChange={(e) => setGoogleSearchTerm(e.target.value)}
+                className="bg-gray-800 border-gray-600 text-white"
+              />
+            </div>
+          </div>
+
+          {/* Dados do Google */}
+          {googleData && (
+            <div>
+              <h3 className="text-lg font-semibold text-white mb-3 flex items-center gap-2">
+                <User className="w-5 h-5" />
+                {t.mainAccount}
+              </h3>
+              <div className="bg-gray-700/30 rounded-lg p-4 border border-gray-600 mb-4">
                 <div className="flex items-center space-x-3 mb-2">
-                  {googleMainAccount.picture && (
+                  {googleData.userInfo.picture && (
                     <img 
-                      src={googleMainAccount.picture} 
-                      alt={googleMainAccount.name}
+                      src={googleData.userInfo.picture} 
+                      alt={googleData.userInfo.name}
                       className="w-10 h-10 rounded-full"
                     />
                   )}
                   <div>
-                    <h4 className="font-semibold text-white">{googleMainAccount.name}</h4>
-                    <p className="text-gray-300 text-sm">{googleMainAccount.email}</p>
+                    <h4 className="font-semibold text-white">{googleData.userInfo.name}</h4>
+                    <p className="text-gray-300 text-sm">{googleData.userInfo.email}</p>
                   </div>
                 </div>
-                <p className="text-gray-400 text-xs">
-                  {t.connectedAt}: {new Date(googleMainAccount.connectedAt).toLocaleString()}
-                </p>
               </div>
-            ) : (
-              <div className="text-center py-4 text-gray-400 bg-gray-700/20 rounded-lg border border-gray-600">
-                {t.noMainAccount}
-              </div>
-            )}
-          </div>
 
-          {/* Contas de Anúncio */}
-          <div>
-            <h3 className="text-lg font-semibold text-white mb-3 flex items-center gap-2">
-              <Settings className="w-5 h-5" />
-              {t.adAccounts}
-            </h3>
-            {googleAccounts.length === 0 ? (
-              <div className="text-center py-4 text-gray-400 bg-gray-700/20 rounded-lg border border-gray-600">
-                {googleMainAccount ? t.noAdAccounts : (
-                  language === 'pt'
-                    ? 'Nenhuma conta Google Ads conectada. Clique em "Adicionar Conta" para começar.'
-                    : 'No Google Ads accounts connected. Click "Add Account" to get started.'
-                )}
-              </div>
-            ) : (
-              <div className="space-y-3">
-                {googleAccounts.map((account) => (
-                  <div key={account.id} className="bg-gray-700/30 rounded-lg p-4 border border-gray-600">
-                    <div className="flex items-center justify-between mb-3">
-                      <div className="flex items-center space-x-3">
-                        <h4 className="font-semibold text-white">{account.name}</h4>
-                        <Badge variant={account.status === 'active' ? 'default' : 'secondary'}>
-                          {account.status === 'active' ? t.active : t.inactive}
-                        </Badge>
-                      </div>
-                      <div className="flex space-x-2">
-                        <Button
-                          variant="outline"
-                          size="sm"
-                          className="border-green-500/50 hover:bg-green-500/10 text-green-400"
-                          onClick={() => handleSyncGoogleCampaigns(account)}
-                        >
-                          {t.syncCampaigns}
-                        </Button>
-                        <Button
-                          variant="outline"
-                          size="sm"
-                          className="border-yellow-500/50 hover:bg-yellow-500/10 text-yellow-400"
-                          onClick={() => handleEditAccount(account.id, 'google')}
-                        >
-                          <Edit className="w-4 h-4" />
-                        </Button>
-                        <Button
-                          variant="outline"
-                          size="sm"
-                          className="border-red-500/50 hover:bg-red-500/10 text-red-400"
-                          onClick={() => handleDeleteAccount(account.id, 'google')}
-                        >
-                          <Trash2 className="w-4 h-4" />
-                        </Button>
+              <h3 className="text-lg font-semibold text-white mb-3 flex items-center gap-2">
+                <Settings className="w-5 h-5" />
+                {t.adAccounts}
+              </h3>
+              {getFilteredGoogleAccounts().length === 0 ? (
+                <div className="text-center py-4 text-gray-400 bg-gray-700/20 rounded-lg border border-gray-600">
+                  {googleSearchTerm ? t.noAccountsFound : t.noAdAccounts}
+                </div>
+              ) : (
+                <div className="space-y-3">
+                  {getFilteredGoogleAccounts().map((account) => (
+                    <div key={account.id} className="bg-gray-700/30 rounded-lg p-4 border border-gray-600">
+                      <div className="flex items-center justify-between mb-3">
+                        <div className="flex items-center space-x-3">
+                          <h4 className="font-semibold text-white">{account.name}</h4>
+                          <Badge variant="default">
+                            {t.active}
+                          </Badge>
+                        </div>
+                        <div className="flex space-x-2">
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            className="border-green-500/50 hover:bg-green-500/10 text-green-400"
+                          >
+                            {t.syncCampaigns}
+                          </Button>
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            className="border-yellow-500/50 hover:bg-yellow-500/10 text-yellow-400"
+                          >
+                            <Edit className="w-4 h-4" />
+                          </Button>
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            className="border-red-500/50 hover:bg-red-500/10 text-red-400"
+                          >
+                            <Trash2 className="w-4 h-4" />
+                          </Button>
+                        </div>
                       </div>
                     </div>
-                    <p className="text-gray-300 text-sm mb-3">Customer ID: {account.customerId}</p>
-                    {account.connectedAt && (
-                      <p className="text-gray-400 text-xs mb-3">
-                        {t.connectedAt}: {new Date(account.connectedAt).toLocaleString()}
-                      </p>
-                    )}
-                    
-                    {/* Sub Accounts */}
-                    {account.subAccounts.length > 0 && (
-                      <div className="space-y-2">
-                        <h5 className="text-sm font-medium text-gray-300">{t.subAccounts}:</h5>
-                        {account.subAccounts.map((subAccount) => (
-                          <div key={subAccount.id} className="flex items-center justify-between bg-gray-600/30 rounded p-2">
-                            <div>
-                              <span className="text-white text-sm">{subAccount.name}</span>
-                              <span className="text-gray-400 text-xs ml-2">({subAccount.customerId})</span>
-                            </div>
-                            <Badge variant={subAccount.status === 'active' ? 'default' : 'secondary'} className="text-xs">
-                              {subAccount.status === 'active' ? t.active : t.inactive}
-                            </Badge>
-                          </div>
-                        ))}
-                      </div>
-                    )}
-                  </div>
-                ))}
-              </div>
-            )}
-          </div>
+                  ))}
+                </div>
+              )}
+            </div>
+          )}
+
+          {!googleData && (
+            <div className="text-center py-4 text-gray-400 bg-gray-700/20 rounded-lg border border-gray-600">
+              {language === 'pt'
+                ? 'Nenhuma conta Google Ads conectada. Clique em "Adicionar Conta" para começar.'
+                : 'No Google Ads accounts connected. Click "Add Account" to get started.'
+              }
+            </div>
+          )}
         </CardContent>
       </Card>
 
@@ -555,21 +435,9 @@ const AdsAccountsUpdated = () => {
             </CardTitle>
             <Dialog open={showMetaDialog} onOpenChange={setShowMetaDialog}>
               <DialogTrigger asChild>
-                <Button 
-                  className="bg-gradient-to-r from-blue-500 to-blue-600 text-white hover:from-blue-600 hover:to-blue-700"
-                  disabled={isMetaConnecting}
-                >
-                  {isMetaConnecting ? (
-                    <>
-                      <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                      {t.connecting}
-                    </>
-                  ) : (
-                    <>
-                      <Plus className="w-4 h-4 mr-2" />
-                      {t.addAccount}
-                    </>
-                  )}
+                <Button className="bg-gradient-to-r from-blue-500 to-blue-600 text-white hover:from-blue-600 hover:to-blue-700">
+                  <Plus className="w-4 h-4 mr-2" />
+                  {t.addAccount}
                 </Button>
               </DialogTrigger>
               <DialogContent className="bg-gray-800 border-blue-500/20">
@@ -589,7 +457,7 @@ const AdsAccountsUpdated = () => {
                   </Alert>
 
                   <Button
-                    onClick={handleMetaConnect}
+                    onClick={openMetaAuth}
                     className="w-full bg-gradient-to-r from-blue-500 to-blue-600 text-white"
                     disabled={isMetaConnecting}
                   >
@@ -607,101 +475,112 @@ const AdsAccountsUpdated = () => {
             </Dialog>
           </div>
         </CardHeader>
-        <CardContent className="space-y-4">
-          {metaAccounts.length === 0 ? (
-            <div className="text-center py-8 text-gray-400">
+        <CardContent className="space-y-6">
+          {/* Busca de Contas Meta */}
+          <div className="space-y-4">
+            <div>
+              <Label htmlFor="metaSearch" className="text-gray-300 text-sm">
+                {t.searchPlaceholder}
+              </Label>
+              <Input
+                id="metaSearch"
+                type="text"
+                placeholder={t.searchPlaceholder}
+                value={metaSearchTerm}
+                onChange={(e) => setMetaSearchTerm(e.target.value)}
+                className="bg-gray-800 border-gray-600 text-white"
+              />
+            </div>
+          </div>
+
+          {/* Dados da Meta */}
+          {metaData && (
+            <div>
+              <h3 className="text-lg font-semibold text-white mb-3 flex items-center gap-2">
+                <User className="w-5 h-5" />
+                {t.mainAccount}
+              </h3>
+              <div className="bg-gray-700/30 rounded-lg p-4 border border-gray-600 mb-4">
+                <div className="flex items-center space-x-3 mb-2">
+                  <div>
+                    <h4 className="font-semibold text-white">{metaData.userInfo.name}</h4>
+                    <p className="text-gray-300 text-sm">{metaData.userInfo.email}</p>
+                  </div>
+                </div>
+              </div>
+
+              <h3 className="text-lg font-semibold text-white mb-3 flex items-center gap-2">
+                <Settings className="w-5 h-5" />
+                {t.adAccounts}
+              </h3>
+              {getFilteredMetaAccounts().length === 0 ? (
+                <div className="text-center py-4 text-gray-400 bg-gray-700/20 rounded-lg border border-gray-600">
+                  {metaSearchTerm ? t.noAccountsFound : t.noAdAccounts}
+                </div>
+              ) : (
+                <div className="space-y-3">
+                  {getFilteredMetaAccounts().map((account) => (
+                    <div key={account.id} className="bg-gray-700/30 rounded-lg p-4 border border-gray-600">
+                      <div className="flex items-center justify-between mb-3">
+                        <div className="flex items-center space-x-3">
+                          <h4 className="font-semibold text-white">{account.name}</h4>
+                          <Badge variant={account.account_status === 'ACTIVE' ? 'default' : 'secondary'}>
+                            {account.account_status === 'ACTIVE' ? t.active : t.inactive}
+                          </Badge>
+                          {account.business_manager && (
+                            <Badge variant="outline" className="text-xs">
+                              BM: {account.business_manager.name}
+                            </Badge>
+                          )}
+                        </div>
+                        <div className="flex space-x-2">
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            className="border-green-500/50 hover:bg-green-500/10 text-green-400"
+                          >
+                            {t.syncCampaigns}
+                          </Button>
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            className="border-yellow-500/50 hover:bg-yellow-500/10 text-yellow-400"
+                          >
+                            <Edit className="w-4 h-4" />
+                          </Button>
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            className="border-red-500/50 hover:bg-red-500/10 text-red-400"
+                          >
+                            <Trash2 className="w-4 h-4" />
+                          </Button>
+                        </div>
+                      </div>
+                      <p className="text-gray-300 text-sm mb-3">Account ID: {account.id}</p>
+                      <p className="text-gray-300 text-sm mb-3">Currency: {account.currency}</p>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+          )}
+
+          {!metaData && (
+            <div className="text-center py-4 text-gray-400 bg-gray-700/20 rounded-lg border border-gray-600">
               {language === 'pt'
                 ? 'Nenhuma conta Meta Ads conectada. Clique em "Adicionar Conta" para começar.'
                 : 'No Meta Ads accounts connected. Click "Add Account" to get started.'
               }
             </div>
-          ) : (
-            metaAccounts.map(acc => (
-              <div key={acc.id} className="bg-gray-700/30 rounded-lg p-4 border border-gray-600">
-                <div className="flex items-center justify-between mb-3">
-                  <div className="flex items-center space-x-3">
-                    <h3 className="font-semibold text-white">{acc.name}</h3>
-                    <Badge variant={acc.status === 'active' ? 'default' : 'secondary'}>
-                      {acc.status === 'active' ? t.active : t.inactive}
-                    </Badge>
-                  </div>
-                  <div className="flex space-x-2">
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      className="border-green-500/50 hover:bg-green-500/10 text-green-400"
-                      onClick={() => handleSyncCampaigns(acc)}
-                    >
-                      {t.syncCampaigns}
-                    </Button>
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      className="border-yellow-500/50 hover:bg-yellow-500/10 text-yellow-400"
-                      onClick={() => handleEditAccount(acc.id, 'meta')}
-                    >
-                      <Settings className="w-4 h-4" />
-                    </Button>
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      className="border-red-500/50 hover:bg-red-500/10 text-red-400"
-                      onClick={() => handleDeleteAccount(acc.id, 'meta')}
-                    >
-                      <Trash2 className="w-4 h-4" />
-                    </Button>
-                  </div>
-                </div>
-                <p className="text-gray-300 text-sm mb-2">Account ID: {acc.accountId}</p>
-                {acc.connectedAt && (
-                  <p className="text-gray-400 text-xs">
-                    {t.connectedAt}: {new Date(acc.connectedAt).toLocaleString()}
-                  </p>
-                )}
-
-                {/* sub‑contas */}
-                {acc.subAccounts.length > 0 && (
-                  <div className="mt-2 space-y-2">
-                    <h4 className="text-sm font-medium text-gray-300">{t.subAccounts}:</h4>
-                    {acc.subAccounts.map(sa => (
-                      <div key={sa.id} className="flex items-center justify-between bg-gray-600/30 rounded p-2">
-                        <div>
-                          <span className="text-white text-sm">{sa.name}</span>
-                          <span className="text-gray-400 text-xs ml-2">({sa.accountId})</span>
-                        </div>
-                        <Badge variant={sa.status === 'active' ? 'default' : 'secondary'} className="text-xs">
-                          {sa.status === 'active' ? t.active : t.inactive}
-                        </Badge>
-                      </div>
-                    ))}
-                  </div>
-                )}
-              </div>
-            ))
           )}
         </CardContent>
       </Card>
 
-      {/* Meta – alertas */}
-      {metaConnectionSuccess && (
-        <Alert className="bg-green-500/10 border-green-500/20">
-          <CheckCircle className="w-4 h-4 text-green-400" />
-          <AlertDescription className="text-green-300">
-            {metaConnectionSuccess}
-          </AlertDescription>
-        </Alert>
-      )}
-      {metaConnectionError && (
-        <Alert className="bg-red-500/10 border-red-500/20">
-          <XCircle className="w-4 h-4 text-red-400" />
-          <AlertDescription className="text-red-300">
-            {metaConnectionError}
-          </AlertDescription>
-        </Alert>
-      )}
+
 
     </div>
   );
 };
 
-export default AdsAccountsUpdated;
+export default AdsAccounts;
