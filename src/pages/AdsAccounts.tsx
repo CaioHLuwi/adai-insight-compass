@@ -149,14 +149,22 @@ const AdsAccounts = () => {
 
   useEffect(() => {
     const handleMessage = (event: MessageEvent) => {
+      console.log('📨 Mensagem recebida:', {
+        origin: event.origin,
+        type: event.data?.type,
+        data: event.data
+      });
+      
       // Verificar origem se necessário
-      // if (event.origin !== 'https://otmizy-oauth-backend-97mlxnheu-otmizy-ais-projects.vercel.app') return;
+      // if (event.origin !== 'https://backend.otmizy.com') return;
       
       switch (event.data.type) {
         case 'GOOGLE_AUTH_SUCCESS':
         case 'google_auth_success':
-          console.log('Google Auth Success:', event.data);
+          console.log('✅ Google Auth Success:', event.data);
           const googleData = event.data.data || event.data.result;
+          console.log('📊 Dados do Google processados:', googleData);
+          
           setGoogleData(googleData);
           setIsGoogleConnecting(false);
           setShowGoogleDialog(false);
@@ -164,14 +172,17 @@ const AdsAccounts = () => {
           // Salvar dados do Google no localStorage
           saveToLocalStorage('otmizy_google_auth', googleData);
           
-          console.log('Google data processed and saved:', googleData);
+          console.log('💾 Dados do Google salvos no localStorage');
           
 
           break;
           
         case 'GOOGLE_AUTH_ERROR':
-          console.error('Google Auth Error:', event.data.result.error);
-          setAuthErrors(prev => [...prev, `Google: ${event.data.result.error}`]);
+        case 'google_auth_error':
+          console.error('❌ Google Auth Error:', event.data);
+          const errorMessage = event.data.result?.error || event.data.error || 'Erro desconhecido na autenticação';
+          console.error('📋 Detalhes do erro:', errorMessage);
+          setAuthErrors(prev => [...prev, `Google: ${errorMessage}`]);
           setIsGoogleConnecting(false);
           break;
 
@@ -223,13 +234,53 @@ const AdsAccounts = () => {
 
 
 
-  const openGoogleAuth = () => {
+  const openGoogleAuth = async () => {
     setIsGoogleConnecting(true);
-    const popup = window.open(
-      'https://backend.otmizy.com/api/google/initiate',
-      'google_auth',
-      'width=500,height=600,scrollbars=yes,resizable=yes'
-    );
+    try {
+      console.log('🔄 Iniciando autenticação Google...');
+      
+      // Primeiro, vamos verificar se o endpoint está respondendo corretamente
+      const response = await fetch('https://backend.otmizy.com/api/google/initiate');
+      console.log('📡 Resposta do /api/google/initiate:', response.status, response.statusText);
+      
+      if (!response.ok) {
+        throw new Error(`Erro no endpoint: ${response.status} ${response.statusText}`);
+      }
+      
+      const data = await response.json();
+      console.log('📋 Dados recebidos do backend:', data);
+      
+      // Verificar se temos a authUrl
+      const authUrl = data.authUrl || data.url || 'https://backend.otmizy.com/api/google/initiate';
+      console.log('🔗 URL de autenticação:', authUrl);
+      
+      // Abrir popup
+      const popup = window.open(
+        authUrl,
+        'google_auth',
+        'width=500,height=600,scrollbars=yes,resizable=yes'
+      );
+      
+      if (!popup) {
+        throw new Error('Popup foi bloqueado. Permita popups para este site.');
+      }
+      
+      console.log('✅ Popup aberto com sucesso');
+      
+      // Verificar se o popup foi fechado pelo usuário
+      const checkClosed = setInterval(() => {
+        if (popup.closed) {
+          console.log('❌ Popup foi fechado pelo usuário');
+          clearInterval(checkClosed);
+          setIsGoogleConnecting(false);
+        }
+      }, 1000);
+      
+    } catch (error) {
+      console.error('❌ Erro ao iniciar autenticação Google:', error);
+      setAuthErrors(prev => [...prev, `Google: ${error.message}`]);
+      setIsGoogleConnecting(false);
+    }
   };
 
   const openMetaAuth = async () => {
