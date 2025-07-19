@@ -67,6 +67,85 @@ const AdsAccounts = () => {
   const [isGoogleConnecting, setIsGoogleConnecting] = useState(false);
   const [isMetaConnecting, setIsMetaConnecting] = useState(false);
 
+  // Funções para persistência de dados
+  const saveToLocalStorage = (key: string, data: any) => {
+    try {
+      const dataWithTimestamp = {
+        ...data,
+        savedAt: Date.now()
+      };
+      localStorage.setItem(key, JSON.stringify(dataWithTimestamp));
+    } catch (error) {
+      console.error('Erro ao salvar dados no localStorage:', error);
+    }
+  };
+
+  const loadFromLocalStorage = (key: string, maxAgeInDays: number = 30) => {
+    try {
+      const stored = localStorage.getItem(key);
+      if (!stored) return null;
+      
+      const data = JSON.parse(stored);
+      const maxAge = maxAgeInDays * 24 * 60 * 60 * 1000; // Converter dias para milissegundos
+      
+      if (data.savedAt && (Date.now() - data.savedAt) > maxAge) {
+        localStorage.removeItem(key);
+        return null;
+      }
+      
+      return data;
+    } catch (error) {
+      console.error('Erro ao carregar dados do localStorage:', error);
+      return null;
+    }
+  };
+
+  const clearStoredData = (key: string) => {
+    try {
+      localStorage.removeItem(key);
+    } catch (error) {
+      console.error('Erro ao limpar dados do localStorage:', error);
+    }
+  };
+
+  // Funções para desconectar contas
+  const disconnectGoogleAccount = () => {
+    if (window.confirm(t.disconnectConfirm)) {
+      setGoogleData(null);
+      clearStoredData('otmizy_google_auth');
+      console.log('Conta Google desconectada e dados removidos do localStorage');
+    }
+  };
+
+  const disconnectMetaAccount = () => {
+    if (window.confirm(t.disconnectConfirm)) {
+      setMetaData(null);
+      clearStoredData('otmizy_meta_auth');
+      console.log('Conta Meta desconectada e dados removidos do localStorage');
+    }
+  };
+
+
+  // useEffect para carregar dados salvos na inicialização
+  useEffect(() => {
+    const loadSavedData = () => {
+      // Carregar dados do Google (válidos por 30 dias)
+      const savedGoogleData = loadFromLocalStorage('otmizy_google_auth', 30);
+      if (savedGoogleData) {
+        setGoogleData(savedGoogleData);
+        console.log('Dados do Google carregados do localStorage:', savedGoogleData);
+      }
+      
+      // Carregar dados do Meta (válidos por 60 dias - tokens do Meta duram mais)
+      const savedMetaData = loadFromLocalStorage('otmizy_meta_auth', 60);
+      if (savedMetaData) {
+        setMetaData(savedMetaData);
+        console.log('Dados do Meta carregados do localStorage:', savedMetaData);
+      }
+    };
+    
+    loadSavedData();
+  }, []);
 
   useEffect(() => {
     const handleMessage = (event: MessageEvent) => {
@@ -82,7 +161,10 @@ const AdsAccounts = () => {
           setIsGoogleConnecting(false);
           setShowGoogleDialog(false);
           
-          console.log('Google data processed:', googleData);
+          // Salvar dados do Google no localStorage
+          saveToLocalStorage('otmizy_google_auth', googleData);
+          
+          console.log('Google data processed and saved:', googleData);
           
 
           break;
@@ -119,7 +201,10 @@ const AdsAccounts = () => {
           setIsMetaConnecting(false);
           setShowMetaDialog(false);
           
-          console.log('Meta data processed:', metaAuthResult);
+          // Salvar dados do Meta no localStorage
+          saveToLocalStorage('otmizy_meta_auth', metaAuthResult);
+          
+          console.log('Meta data processed and saved:', metaAuthResult);
           
 
           break;
@@ -226,6 +311,8 @@ const AdsAccounts = () => {
       noAdAccounts: 'Nenhuma conta de anúncio encontrada.',
       searchPlaceholder: 'Buscar conta...',
       noAccountsFound: 'Nenhuma conta encontrada.',
+      disconnect: 'Desconectar',
+      disconnectConfirm: 'Tem certeza que deseja desconectar esta conta?',
 
     },
     en: {
@@ -246,6 +333,8 @@ const AdsAccounts = () => {
       noAdAccounts: 'No ad accounts found.',
       searchPlaceholder: 'Search account...',
       noAccountsFound: 'No accounts found.',
+      disconnect: 'Disconnect',
+      disconnectConfirm: 'Are you sure you want to disconnect this account?',
 
     }
   };
@@ -347,18 +436,28 @@ const AdsAccounts = () => {
                 {t.mainAccount}
               </h3>
               <div className="bg-gray-700/30 rounded-lg p-4 border border-gray-600 mb-4">
-                <div className="flex items-center space-x-3 mb-2">
-                  {googleData.userInfo.picture && (
-                    <img 
-                      src={googleData.userInfo.picture} 
-                      alt={googleData.userInfo.name}
-                      className="w-10 h-10 rounded-full"
-                    />
-                  )}
-                  <div>
-                    <h4 className="font-semibold text-white">{googleData.userInfo.name}</h4>
-                    <p className="text-gray-300 text-sm">{googleData.userInfo.email}</p>
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center space-x-3">
+                    {googleData.userInfo.picture && (
+                      <img 
+                        src={googleData.userInfo.picture} 
+                        alt={googleData.userInfo.name}
+                        className="w-10 h-10 rounded-full"
+                      />
+                    )}
+                    <div>
+                      <h4 className="font-semibold text-white">{googleData.userInfo.name}</h4>
+                      <p className="text-gray-300 text-sm">{googleData.userInfo.email}</p>
+                    </div>
                   </div>
+                  <Button
+                    onClick={disconnectGoogleAccount}
+                    variant="outline"
+                    size="sm"
+                    className="border-red-500/50 hover:bg-red-500/10 text-red-400"
+                  >
+                    {t.disconnect}
+                  </Button>
                 </div>
               </div>
 
@@ -501,11 +600,21 @@ const AdsAccounts = () => {
                 {t.mainAccount}
               </h3>
               <div className="bg-gray-700/30 rounded-lg p-4 border border-gray-600 mb-4">
-                <div className="flex items-center space-x-3 mb-2">
-                  <div>
-                    <h4 className="font-semibold text-white">{metaData.userInfo.name}</h4>
-                    <p className="text-gray-300 text-sm">{metaData.userInfo.email}</p>
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center space-x-3">
+                    <div>
+                      <h4 className="font-semibold text-white">{metaData.userInfo.name}</h4>
+                      <p className="text-gray-300 text-sm">{metaData.userInfo.email}</p>
+                    </div>
                   </div>
+                  <Button
+                    onClick={disconnectMetaAccount}
+                    variant="outline"
+                    size="sm"
+                    className="border-red-500/50 hover:bg-red-500/10 text-red-400"
+                  >
+                    {t.disconnect}
+                  </Button>
                 </div>
               </div>
 
