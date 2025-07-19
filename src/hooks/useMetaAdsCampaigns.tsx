@@ -49,8 +49,14 @@ export const useMetaAdsCampaigns = ({
    * Configura o access token
    */
   const setAccessToken = useCallback((token: string) => {
+    console.log('🔑 === CONFIGURANDO ACCESS TOKEN ===');
+    console.log('📥 Token recebido:', token ? token.substring(0, 20) + '...' : 'VAZIO');
+    console.log('📏 Tamanho do token:', token?.length || 0);
+    
     setCurrentAccessToken(token);
     metaAdsService.setAccessToken(token);
+    
+    console.log('✅ Token configurado no hook e no serviço');
   }, []);
 
   /**
@@ -100,19 +106,34 @@ export const useMetaAdsCampaigns = ({
    * Busca todas as contas de anúncio do usuário
    */
   const fetchAdAccounts = useCallback(async (): Promise<void> => {
+    console.log('🔍 fetchAdAccounts chamado - Estado atual:', {
+      currentAccessToken: currentAccessToken ? 'PRESENTE' : 'AUSENTE',
+      tokenLength: currentAccessToken?.length || 0
+    });
+    
     if (!currentAccessToken) {
+      console.warn('⚠️ Access token não configurado para buscar contas');
       setError('Access token não configurado');
       return;
     }
 
     try {
+      console.log('🔄 Iniciando busca de contas de anúncio...');
+      console.log('🔑 Token sendo usado:', currentAccessToken.substring(0, 20) + '...');
       setLoading(true);
       setError(null);
       
+      // Configurar o token no serviço antes de fazer a requisição
+      metaAdsService.setAccessToken(currentAccessToken);
+      
       const accounts = await metaAdsService.getAdAccounts();
+      console.log('✅ Contas de anúncio encontradas:', accounts);
+      console.log('📊 Número de contas:', accounts.length);
       setAdAccounts(accounts);
       
     } catch (err: any) {
+      console.error('❌ Erro ao buscar contas de anúncio:', err);
+      console.error('📄 Detalhes completos do erro:', err.response?.data);
       setError(err.message || 'Erro ao buscar contas de anúncio');
       setAdAccounts([]);
     } finally {
@@ -121,34 +142,96 @@ export const useMetaAdsCampaigns = ({
   }, [currentAccessToken]);
 
   /**
-   * Busca campanhas de uma conta específica
+   * Busca campanhas de uma ou múltiplas contas específicas
    */
-  const fetchCampaigns = useCallback(async (accountId?: string): Promise<void> => {
-    const targetAccountId = accountId || currentAdAccountId;
+  const fetchCampaigns = useCallback(async (accountIds?: string | string[]): Promise<void> => {
+    console.log('🔍 === FETCHCAMPAIGNS CHAMADO ===');
+    console.log('📥 Parâmetros recebidos:', accountIds);
+    console.log('🔑 Token atual:', currentAccessToken ? 'PRESENTE' : 'AUSENTE');
+    console.log('📋 currentAdAccountId:', currentAdAccountId);
+    
+    let targetAccountIds: string[];
+    
+    if (Array.isArray(accountIds)) {
+      targetAccountIds = accountIds;
+      console.log('📊 Usando array de contas fornecido:', targetAccountIds);
+    } else if (accountIds) {
+      targetAccountIds = [accountIds];
+      console.log('📊 Convertendo conta única para array:', targetAccountIds);
+    } else if (currentAdAccountId) {
+      targetAccountIds = [currentAdAccountId];
+      console.log('📊 Usando currentAdAccountId:', targetAccountIds);
+    } else {
+      targetAccountIds = [];
+      console.log('📊 Nenhuma conta definida');
+    }
+    
+    console.log('🎯 Contas finais para busca:', targetAccountIds);
     
     if (!currentAccessToken) {
+      console.warn('⚠️ Access token não configurado para buscar campanhas');
       setError('Access token não configurado');
       return;
     }
     
-    if (!targetAccountId) {
-      setError('ID da conta de anúncio não configurado');
+    if (targetAccountIds.length === 0) {
+      console.warn('⚠️ Nenhuma conta de anúncio configurada');
+      setError('Nenhuma conta de anúncio configurada');
       return;
     }
 
     try {
+      console.log('🔄 Buscando campanhas para múltiplas contas...');
       setLoading(true);
       setError(null);
       
-      // Usar o endpoint combinado para obter campanhas com insights
-      const campaignsData = await metaAdsService.getCampaignsWithInsights(
-        targetAccountId,
-        currentDatePreset
-      );
+      let allCampaigns: MetaAdsCampaign[] = [];
       
-      setCampaigns(campaignsData);
+      // Buscar campanhas para cada conta selecionada
+      for (const accountId of targetAccountIds) {
+        try {
+          console.log(`📋 Buscando campanhas para conta: ${accountId}`);
+          const campaignsData = await metaAdsService.getCampaigns(accountId);
+          console.log(`✅ Campanhas encontradas para ${accountId}:`, campaignsData);
+          
+          if (campaignsData && campaignsData.length > 0) {
+            // Adicionar ID da conta a cada campanha para identificação
+            const campaignsWithAccount = campaignsData.map(campaign => ({
+              ...campaign,
+              account_id: accountId
+            }));
+            
+            console.log('📊 Buscando insights para as campanhas...');
+            const campaignIds = campaignsData.map(campaign => campaign.id);
+            const insightsData = await metaAdsService.getCampaignInsights(
+              accountId,
+              campaignIds,
+              currentDatePreset
+            );
+            console.log(`✅ Insights encontrados para ${accountId}:`, insightsData);
+            
+            // Combinar campanhas com insights
+            const campaignsWithInsights = campaignsWithAccount.map(campaign => {
+              const insight = insightsData.find(insight => insight.campaign_id === campaign.id);
+              return {
+                ...campaign,
+                insights: insight || {}
+              };
+            });
+            
+            allCampaigns.push(...campaignsWithInsights);
+          }
+        } catch (accountError: any) {
+          console.error(`❌ Erro ao buscar campanhas da conta ${accountId}:`, accountError);
+          // Continue com as outras contas mesmo se uma falhar
+        }
+      }
+      
+      console.log('📊 Total de campanhas encontradas:', allCampaigns.length);
+      setCampaigns(allCampaigns);
       
     } catch (err: any) {
+      console.error('❌ Erro geral ao buscar campanhas:', err);
       setError(err.message || 'Erro ao buscar campanhas');
       setCampaigns([]);
     } finally {

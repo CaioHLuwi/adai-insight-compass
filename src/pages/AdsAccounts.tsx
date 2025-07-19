@@ -120,7 +120,7 @@ const AdsAccounts = () => {
   const disconnectMetaAccount = () => {
     if (window.confirm(t.disconnectConfirm)) {
       setMetaData(null);
-      clearStoredData('otmizy_meta_auth');
+      clearStoredData('metaAuthData');
       console.log('Conta Meta desconectada e dados removidos do localStorage');
     }
   };
@@ -137,7 +137,19 @@ const AdsAccounts = () => {
       }
       
       // Carregar dados do Meta (válidos por 60 dias - tokens do Meta duram mais)
-      const savedMetaData = loadFromLocalStorage('otmizy_meta_auth', 60);
+      let savedMetaData = loadFromLocalStorage('metaAuthData', 60);
+      
+      // Migrar dados da chave antiga se existir
+      if (!savedMetaData) {
+        const oldMetaData = loadFromLocalStorage('otmizy_meta_auth', 60);
+        if (oldMetaData) {
+          console.log('Migrando dados do Meta da chave antiga para nova');
+          saveToLocalStorage('metaAuthData', oldMetaData);
+          clearStoredData('otmizy_meta_auth');
+          savedMetaData = oldMetaData;
+        }
+      }
+      
       if (savedMetaData) {
         setMetaData(savedMetaData);
         console.log('Dados do Meta carregados do localStorage:', savedMetaData);
@@ -213,7 +225,7 @@ const AdsAccounts = () => {
           setShowMetaDialog(false);
           
           // Salvar dados do Meta no localStorage
-          saveToLocalStorage('otmizy_meta_auth', metaAuthResult);
+          saveToLocalStorage('metaAuthData', metaAuthResult);
           
           console.log('Meta data processed and saved:', metaAuthResult);
           
